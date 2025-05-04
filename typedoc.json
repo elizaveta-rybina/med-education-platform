@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["frontend"],
+  "out": "docs/frontend-docs",
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "includeVersion": true
+}
