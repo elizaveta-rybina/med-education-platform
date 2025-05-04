@@ -1,0 +1,46 @@
+# Laravel
+src/vendor/
+src/node_modules/
+src/public/storage
+src/storage/*.key
+src/.env
+src/.env.*
+
+# Laravel logs, compiled files, etc.
+src/storage/app/public
+src/storage/framework/cache/*
+src/storage/framework/sessions/*
+src/storage/framework/views/*
+src/storage/logs/*.log
+
+# Composer
+composer.lock
+
+# NPM/Yarn
+src/yarn.lock
+src/package-lock.json
+src/npm-debug.log
+src/pnpm-lock.yaml
+
+# IDE/OS/Editor
+*.swp
+*.swo
+*.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Docker build cache (optional)
+docker/**/tmp/
+docker/**/logs/
+docker/**/.env
+
+# Ignore dotenv in root or docker
+.env
+.env.*
+
+# Ignore global vendor (if someone misplaces it)
+vendor/
+
+# Optional: exclude local scripts
+scripts/
