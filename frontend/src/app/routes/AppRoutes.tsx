@@ -1,10 +1,16 @@
-import { CoursePage, HomePage, NotFoundPage, Physiology, RegistrationPage } from 'pages'
+import { ScrollToTop } from 'components/common/ScrollToTop'
+import AppLayout from 'layout/AppLayout'
+import { CoursePage, HomePage, NotFound, Physiology, RegistrationPage } from 'pages'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-const router = createBrowserRouter(
-[
+const router = createBrowserRouter([
   {
-    path: '/',
+    element: (
+      <>
+        <ScrollToTop />
+        <AppLayout />
+      </>
+    ),
     children: [
       {
         path: '/',
@@ -18,18 +24,21 @@ const router = createBrowserRouter(
         path: '/course/physiology',
         element: <Physiology />
       },
-      {
-        path: '/registration',
-        element: <RegistrationPage />
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
-      },
+      // Другие защищенные маршруты могут быть добавлены здесь
     ]
+  },
+  // Незащищенные маршруты (без AppLayout)
+  {
+    path: '/registration',
+    element: <RegistrationPage />
+  },
+  // Fallback route
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
 
 export const AppRouter = () => {
-	return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }
