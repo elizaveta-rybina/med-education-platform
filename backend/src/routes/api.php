@@ -1,19 +1,45 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\RegistrationController;
+use App\Http\Controllers\Auth\StaffManagementController;
+use App\Http\Controllers\Auth\StudentVerificationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UniversityController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Artisan;
 
-Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware('auth:api');
-Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware('auth:api');
+// Public routes
+Route::prefix('auth')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [RegistrationController::class, 'register']);
+    Route::post('refresh-token', [AuthController::class, 'refresh']);
+});
+
+// Authenticated user routes
 Route::middleware('auth:api')->group(function () {
-    Route::get('/me', [AuthController::class, 'me']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::prefix('auth')->group(function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::get('me', [ProfileController::class, 'show']);
+    });
+
+    // Shared teacher and admin routes
+    Route::middleware('role:teacher,admin')->prefix('teacher')->group(function () {
+        // Список неподтвержденных студентов
+        Route::get('students/pending-approval', [StudentVerificationController::class, 'pending']);
+
+        // Подтверждение конкретного студента
+        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verification']);
+    });
+
+    // Admin-specific routes
+    Route::middleware('role:admin')->prefix('admin')->group(function () {
+        // Регистрация сотрудника (преподавателя/админа)
+        Route::post('staff/register', [StaffManagementController::class, 'register']);
+
+        // Подтверждение студента
+        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verification']);
+    });
 });
-Route::middleware(['auth:api', 'admin'])->group(function () {
-    Route::post('/universities', [UniversityController::class, 'store']);
-});
-Route::get('/universities', [UniversityController::class, 'index']);
+
+// Public university list
+Route::get('universities', [UniversityController::class, 'index']);
