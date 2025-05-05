@@ -10,12 +10,15 @@ return new class extends Migration {
             $table->id();
             $table->string('username', 50)->unique();
             $table->string('email', 100)->unique();
-            $table->string('password');
-            $table->date('birth_date');
+            $table->string('password', 255);
+            $table->date('birth_date')->nullable();
             $table->string('last_name', 50);
             $table->string('first_name', 50);
             $table->string('middle_name', 50)->nullable();
+            $table->boolean('is_verified')->default(false);
             $table->timestamps();
+
+            $table->index(['last_name', 'first_name']);
         });
     }
 
