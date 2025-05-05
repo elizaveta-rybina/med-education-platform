@@ -31,7 +31,7 @@ class RegistrationController extends Controller
 
         return response()->json([
             'message' => $this->getSuccessMessage($user),
-            'user' => $user->load('roles'),
+            //'user' => $user->load('roles'),
             'token' => $token,
         ], 201);
     }

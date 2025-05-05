@@ -19,7 +19,7 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
-        Route::get('me', [ProfileController::class, 'show']);
+        Route::get('me', [ProfileController::class, 'me']);
     });
 
     // Shared teacher and admin routes
@@ -28,7 +28,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('students/pending-approval', [StudentVerificationController::class, 'pending']);
 
         // Подтверждение конкретного студента
-        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verification']);
+        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verifyStudent']);
     });
 
     // Admin-specific routes
@@ -36,9 +36,7 @@ Route::middleware('auth:api')->group(function () {
         // Регистрация сотрудника (преподавателя/админа)
         Route::post('staff/register', [StaffManagementController::class, 'register']);
 
-        // Подтверждение студента
-        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verification']);
-    });
+     });
 });
 
 // Public university list
