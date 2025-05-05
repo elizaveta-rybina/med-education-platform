@@ -35,10 +35,10 @@ class AuthController extends Controller
         }
 
         return response()->json([
-            'user' => auth()->user(),
+            //'user' => auth()->user(),
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => JWTAuth::factory()->getTTL() * 60
         ]);
     }
     public function logout()

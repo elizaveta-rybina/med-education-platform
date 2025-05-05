@@ -82,6 +82,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->roles()->where('name', $role)->exists();
     }
 
+    public function hasAnyRole(array $roles): bool
+    {
+        return $this->roles->pluck('name')->intersect($roles)->isNotEmpty();
+    }
+
     /**
      * Check if user is verified.
      */

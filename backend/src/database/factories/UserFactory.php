@@ -2,43 +2,78 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Role;
+use App\Models\UsersEducation;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function definition()
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'username' => $this->faker->userName,
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => bcrypt('password'),
+            'birth_date' => $this->faker->date,
+            'last_name' => $this->faker->lastName,
+            'first_name' => $this->faker->firstName,
+            'middle_name' => $this->faker->firstName,
+            'is_verified' => false, // по умолчанию пользователи не подтверждены
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    // Состояние для обычного пользователя
+    public function normal()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(function (array $attributes) {
+            return [
+                'is_verified' => false, // обычный пользователь, не подтвержден
+            ];
+        })->afterCreating(function (User $user) {
+            $user->roles()->attach(Role::where('name', 'user')->first()); // Привязка роли
+        });
+    }
+
+    // Состояние для подтвержденного студента
+    public function verifiedStudent()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_verified' => true, // подтвержденный студент
+            ];
+        })->afterCreating(function (User $user) {
+            $user->roles()->attach(Role::where('name', 'student')->first()); // Привязка роли
+            $user->education()->create(UsersEducation::factory()->student()->make()->toArray()); // Создание записи об образовании
+        });
+    }
+
+    // Состояние для неподтвержденного студента
+    public function unverifiedStudent()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_verified' => false, // неподтвержденный студент
+            ];
+        })->afterCreating(function (User $user) {
+            $user->roles()->attach(Role::where('name', 'unverified_student')->first()); // Привязка роли
+            $user->education()->create(UsersEducation::factory()->student()->make()->toArray()); // Создание записи об образовании
+        });
+    }
+
+    // Состояние для преподавателя
+    public function teacher()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'is_verified' => true, // преподаватель подтвержден
+            ];
+        })->afterCreating(function (User $user) {
+            $user->roles()->attach(Role::where('name', 'teacher')->first()); // Привязка роли
+            $user->education()->create(UsersEducation::factory()->teacher()->make()->toArray()); // Создание записи об образовании
+        });
     }
 }
+
