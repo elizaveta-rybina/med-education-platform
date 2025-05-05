@@ -3,8 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
@@ -13,7 +11,7 @@ class RoleMiddleware
     {
         $user = Auth::user();
 
-        if (!$user || !in_array($user->role, $roles)) {
+        if (!$user || !$user->hasAnyRole($roles)) {
             abort(403, 'Доступ запрещён');
         }
 
