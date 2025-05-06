@@ -1,4 +1,4 @@
-import { ModalButtonAuthentication, ModalSignIn, NavButton } from 'components/shared'
+import { ModalButtonAuthentication, ModalSignIn, NavButton } from '@/components/shared'
 import React, { useState } from 'react'
 
 interface CourseButtonProps {
