@@ -1,1 +1,0 @@
-export { mainStore } from './mainStore'
