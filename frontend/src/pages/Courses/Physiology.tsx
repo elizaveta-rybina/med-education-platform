@@ -1,17 +1,16 @@
-import { Content, SideBar } from 'components/coursePage'
-import { contentItems, chapters as initialChapters } from 'data/content'
-import { useState } from 'react'
+// pages/CoursePage.tsx
+import { Content, SideBarCourse } from '@/components/coursePage'
+import { CourseProvider } from '@/context/CourseContext'
 
-const CoursePage = () => {
-  const [chapters, setChapters] = useState(initialChapters);
-  const [content] = useState(contentItems);
-
+const CourseInnerPage = () => {
   return (
-    <div className="flex h-screen border-t-1 border-gray-200">
-      <SideBar chapters={chapters} moduleName="Гипоксия" />
-      <Content content={content} />
-    </div>
+    <CourseProvider>
+      <div className="flex h-max">
+        <SideBarCourse />
+        <Content />
+      </div>
+    </CourseProvider>
   );
 };
 
-export default CoursePage;
+export default CourseInnerPage
