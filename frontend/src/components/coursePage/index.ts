@@ -1,5 +1,5 @@
 import Content from './Content'
-import SideBar from './SideBar'
+import SideBarCourse from './SideBar'
 
-export { Content, SideBar }
+export { Content, SideBarCourse }
 
