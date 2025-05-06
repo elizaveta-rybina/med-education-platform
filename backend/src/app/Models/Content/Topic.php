@@ -2,6 +2,7 @@
 
 namespace App\Models\Content;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Topic extends Model
