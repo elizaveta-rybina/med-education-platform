@@ -1,4 +1,3 @@
-// data/types.ts
 export interface Course {
   id: string;
   title: string;
@@ -22,7 +21,13 @@ export interface Chapter {
   testPassed?: boolean;
 }
 
-export type Block = TextBlock | ImageBlock | QuestionBlock;
+export type Block = 
+  | TextBlock 
+  | ImageBlock 
+  | QuestionBlock 
+  | DragDropTableBlock
+  | FreeInputBlock
+  | GameBlock;
 
 export interface TextBlock {
   id: string;
@@ -50,18 +55,15 @@ export interface QuestionBlock {
   question: string;
   options: QuestionOption[];
   explanation?: string;
-  userAnswer?: string; // ID выбранного ответа
-  isCorrect?: boolean; // Был ли ответ правильным
+  userAnswer?: string;
+  isCorrect?: boolean;
 }
 
-// types.ts
-
-// types.ts
 export interface DragDropTableBlock {
   id: string;
   type: 'drag-drop-table';
-  title: string;                   // Заголовок страницы
-  tableTitle: string;              // Название таблицы
+  title: string;
+  tableTitle: string;
   columns: {
     id: string;
     title: string;
@@ -69,20 +71,47 @@ export interface DragDropTableBlock {
   }[];
   rows: {
     id: string;
-    column1: string | React.ReactNode;  // Фиксированное содержимое 1-го столбца
-    column2: string | React.ReactNode;  // Фиксированное содержимое 2-го столбца
+    column1: string | React.ReactNode;
+    column2: string | React.ReactNode;
   }[];
   answers: {
     id: string;
     content: string | React.ReactNode;
   }[];
-  correctAnswers: Record<string, string[]>; // { [rowId]: [answerId1, answerId2] }
+  correctAnswers: Record<string, string[]>;
+}
+
+// Новый тип: Блок свободного ввода ответа
+export interface FreeInputBlock {
+  id: string;
+  type: 'free-input';
+  title: string;
+  caseDescription?: string; // HTML-форматированное описание кейса
+  questions: {
+    id: string;
+    text: string;
+    maxLength?: number;
+    placeholder?: string;
+  }[];
+  timeLimit: number; // В секундах
+  submissionText: string; // Сообщение после отправки
+}
+
+export interface GameBlock {
+  id: string;
+  type: 'game';
+  title?: string;
+  gameUrl: string; // Обязательное поле для URL игры
+  width?: string;  // Например "800px" или "100%"
+  height?: string; // Например "600px"
+  // Дополнительные параметры игры при необходимости
+  // например, параметры запуска, настройки и т.д.
 }
 
 export interface TableColumn {
   id: string;
   title: string;
-  width?: string;                  // CSS-значение ширины (например, "30%")
+  width?: string;
 }
 
 export interface TableRow {
@@ -91,17 +120,17 @@ export interface TableRow {
 }
 
 export interface TableCell {
-  columnId: string;                // Соответствует id колонки
+  columnId: string;
   content: string | React.ReactNode;
-  accepts?: string[];              // Типы ответов, которые можно сюда бросать
-  className?: string;              // Дополнительные классы стилей
+  accepts?: string[];
+  className?: string;
 }
 
 export interface DraggableAnswer {
   id: string;
   content: string | React.ReactNode;
-  type?: string;                   // Тип ответа для фильтрации (соответствует accepts в ячейках)
-  className?: string;              // Дополнительные классы стилей
+  type?: string;
+  className?: string;
 }
 
-export type CorrectAnswers = Record<string, string[]>; // { [rowId]: answerId[] }
+export type CorrectAnswers = Record<string, string[]>;

@@ -146,7 +146,7 @@ export default function SignInForm() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox 
-                      checked={isChecked} 
+                      checked={isChecked}
                       onChange={(checked) => setValue("remember_me", checked)} 
                     />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
