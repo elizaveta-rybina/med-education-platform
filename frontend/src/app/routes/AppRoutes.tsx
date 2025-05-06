@@ -1,6 +1,9 @@
-import { ScrollToTop } from 'components/common/ScrollToTop'
-import AppLayout from 'layout/AppLayout'
-import { CoursePage, HomePage, NotFound, Physiology, RegistrationPage } from 'pages'
+import { ScrollToTop } from '@/components/common/ScrollToTop'
+import AppLayout from '@/layout/AppLayout'
+import { CoursePage, HomePage, NotFound } from '@/pages'
+import SignIn from '@/pages/AuthPages/SignIn'
+import SignUp from '@/pages/AuthPages/SignUp'
+import CourseInnerPage from '@/pages/Courses/Physiology'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 const router = createBrowserRouter([
@@ -22,15 +25,17 @@ const router = createBrowserRouter([
       },
       {
         path: '/course/physiology',
-        element: <Physiology />
+        element: <CourseInnerPage />
       },
-      // Другие защищенные маршруты могут быть добавлены здесь
     ]
   },
-  // Незащищенные маршруты (без AppLayout)
   {
-    path: '/registration',
-    element: <RegistrationPage />
+    path: '/signin',
+    element: <SignIn />
+  },
+  {
+    path: '/signup',
+    element: <SignUp />
   },
   // Fallback route
   {
