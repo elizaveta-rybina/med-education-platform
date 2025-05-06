@@ -1,5 +1,7 @@
-// components/ContentRenderer.tsx
 import { Block } from '@/data/types'
+import { DragDropTableComponent } from './DragDropTableComponent'
+import FreeInputBlock from './FreeInputBlock'
+import { GameBlock } from './GameBlock'
 import { TestBlock } from './TestBlock'
 import { TheoryBlock } from './TheoryBlock'
 
@@ -24,20 +26,48 @@ export const ContentRenderer = ({
   onPrev = () => {},
   onComplete = () => {}
 }: ContentRendererProps) => {
-  if (block.type === 'question') {
-    return (
-      <TestBlock 
-        block={block}
-        moduleId={moduleId}
-        chapterId={chapterId}
-        questionIndex={questionIndex}
-        totalQuestions={totalQuestions}
-        onNext={onNext}
-        onPrev={onPrev}
-        onComplete={onComplete}
-      />
-    );
+  switch (block.type) {
+    case 'question':
+      return (
+        <TestBlock 
+          block={block}
+          moduleId={moduleId}
+          chapterId={chapterId}
+          questionIndex={questionIndex}
+          totalQuestions={totalQuestions}
+          onNext={onNext}
+          onPrev={onPrev}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'drag-drop-table':
+      return (
+        <DragDropTableComponent 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'free-input':
+      return (
+        <FreeInputBlock 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'game':
+      return (
+        <GameBlock 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'image':
+    case 'text':
+    default:
+      return <TheoryBlock block={block} />;
   }
-  
-  return <TheoryBlock block={block} />;
 };

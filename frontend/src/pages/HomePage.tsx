@@ -1,6 +1,5 @@
+
 import HeroSection from '@/components/shared/title'
-import { DragDropTableComponent } from '@/components/test/dnd'
-import { exampleData } from '@/data/content'
 
 const HomePage = () => {
   return (
@@ -13,7 +12,6 @@ const HomePage = () => {
         imageSrc="/src/assets/heroImage.jpg"
         imageAlt="Медицинские курсы"
       />
-      <DragDropTableComponent  block={exampleData}/>
     </div>
   );
 };
