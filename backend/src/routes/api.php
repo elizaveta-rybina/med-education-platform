@@ -4,6 +4,10 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\StaffManagementController;
 use App\Http\Controllers\Auth\StudentVerificationController;
+use App\Http\Controllers\Content\CourseController;
+use App\Http\Controllers\Content\ModuleController;
+use App\Http\Controllers\Content\TopicContentController;
+use App\Http\Controllers\Content\TopicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Support\Facades\Route;
@@ -36,7 +40,32 @@ Route::middleware('auth:api')->group(function () {
         // Регистрация сотрудника (преподавателя/админа)
         Route::post('staff/register', [StaffManagementController::class, 'register']);
 
-     });
+        // --- Курсы ---
+        Route::post('courses', [CourseController::class, 'store']);
+        Route::get('courses', [CourseController::class, 'index']);          // при желании получить список
+        Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
+        Route::put('courses/{course}', [CourseController::class, 'update']);
+        Route::delete('courses/{course}', [CourseController::class, 'destroy']);
+
+        // --- Модули ---
+        Route::post('modules/bulk', [ModuleController::class, 'storeBulk']);
+        Route::get('modules/{module}', [ModuleController::class, 'show']);
+        Route::put('modules/{module}', [ModuleController::class, 'update']);
+        Route::delete('modules/{module}', [ModuleController::class, 'destroy']);
+
+        // --- Темы ---
+        Route::post('topics/bulk', [TopicController::class, 'storeBulk']);
+        Route::get('topics/{topic}', [TopicController::class, 'show']);
+        Route::put('topics/{topic}', [TopicController::class, 'update']);
+        Route::delete('topics/{topic}', [TopicController::class, 'destroy']);
+
+        // --- Контент тем (лекции и тесты) ---
+        Route::post('topics/{topic}/contents', [TopicContentController::class, 'store']);
+        Route::get('topics/{topic}/contents', [TopicContentController::class, 'index']); // список элементов по порядку
+        Route::put('topics/{topic}/contents/{item}', [TopicContentController::class, 'update']);
+        Route::delete('topics/{topic}/contents/{item}', [TopicContentController::class, 'destroy']);
+
+    });
 });
 
 // Public university list
