@@ -1,10 +1,18 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './app/App'
+import App from '@/app/App.tsx'
+import "flatpickr/dist/flatpickr.css"
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import "swiper/swiper-bundle.css"
+import { AppWrapper } from "./components/common/PageMeta.tsx"
+import { ThemeProvider } from "./context/ThemeContext.tsx"
+import "./index.css"
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <ThemeProvider>
+      <AppWrapper>
+        <App />
+      </AppWrapper>
+    </ThemeProvider>
   </StrictMode>,
-)
+);
