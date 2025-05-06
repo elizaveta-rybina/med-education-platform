@@ -123,7 +123,7 @@ export default function Header() {
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" className="text-base font-semibold text-black">
+          <a href="signin" className="text-base font-semibold text-black">
             Войти <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
@@ -179,7 +179,7 @@ export default function Header() {
               </div>
               <div className="py-6">
                 <a
-                  href="#"
+                  href="signin"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Войти
