@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('file_type', 50);
             $table->integer('file_size');
             $table->timestampTz('uploaded_at')->useCurrent();
+            $table->timestamps();
         });
 
     }

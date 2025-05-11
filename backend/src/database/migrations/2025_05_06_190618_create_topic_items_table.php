@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('topic_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade');
-            $table->enum('item_type', ['lecture', 'quiz']);
+            $table->enum('item_type', ['lecture', 'quiz', 'assignment']);
             $table->unsignedBigInteger('item_id'); // ID лекции или теста
             $table->integer('order_number');
+            $table->boolean('is_published')->default(false);
             $table->timestampsTz();
         });
     }

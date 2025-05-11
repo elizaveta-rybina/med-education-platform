@@ -9,16 +9,11 @@ class Topic extends Model
 {
     //use HasFactory;
 
-    protected $fillable = ['module_id', 'title', 'description', 'order_number', 'created_by'];
+    protected $fillable = ['module_id', 'title', 'description', 'order_number', 'is_published'];
 
     public function module()
     {
         return $this->belongsTo(Module::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function lectures()

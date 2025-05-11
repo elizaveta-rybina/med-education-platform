@@ -2,16 +2,14 @@
 
 namespace App\Models\Content;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
-class Lecture extends Model
+class Assignment extends Model
 {
-    //use HasFactory;
-
     protected $fillable = [
-        'topic_id', 'title', 'content', 'content_type',
-        'order_number'
+        'topic_id',
+        'title',
+        'description'
     ];
 
     public function quiz()
@@ -24,8 +22,4 @@ class Lecture extends Model
         return $this->belongsTo(Topic::class);
     }
 
-    public function attachments()
-    {
-        return $this->hasMany(LectureAttachment::class);
-    }
 }

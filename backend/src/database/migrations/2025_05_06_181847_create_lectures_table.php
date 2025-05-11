@@ -15,10 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade');
             $table->string('title');
-            $table->longText('content');
+            $table->longText('content')->nullable();
             $table->enum('content_type', ['html', 'markdown'])->default('html');
             $table->integer('order_number');
-            $table->foreignId('created_by')->constrained('users');
             $table->timestampsTz();
         });
 

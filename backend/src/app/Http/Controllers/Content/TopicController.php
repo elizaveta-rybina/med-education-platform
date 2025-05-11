@@ -12,18 +12,18 @@ class TopicController extends Controller
     {
         $validated = $request->validate([
             'module_id' => 'required|exists:modules,id',
-            'created_by' => 'required|exists:users,id',
             'topics' => 'required|array|min:1',
             'topics.*.title' => 'required|string|max:255',
             'topics.*.description' => 'nullable|string',
-            'topics.*.order_number' => 'required|integer'
+            'topics.*.order_number' => 'required|integer',
+            'topics.*.is_published' => 'sometimes|boolean',
         ]);
 
         $saved = [];
 
         foreach ($validated['topics'] as $topicData) {
             $topicData['module_id'] = $validated['module_id'];
-            $topicData['created_by'] = $validated['created_by'];
+            $topicData['is_published'] = $topicData['is_published'] ?? false;
             $saved[] = Topic::create($topicData);
         }
 

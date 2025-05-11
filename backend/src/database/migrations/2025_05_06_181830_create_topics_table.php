@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->integer('order_number');
-            $table->foreignId('created_by')->constrained('users');
+            $table->boolean('is_published')->default(false);
             $table->timestampsTz();
         });
 

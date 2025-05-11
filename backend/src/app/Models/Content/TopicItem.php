@@ -13,7 +13,7 @@ class TopicItem extends Model
 
     protected $table = 'topic_items'; // на всякий случай
 
-    protected $fillable = ['topic_id', 'item_type', 'item_id', 'order_number'];
+    protected $fillable = ['topic_id', 'item_type', 'item_id', 'order_number', 'is_published'];
 
     public function lecture()
     {
