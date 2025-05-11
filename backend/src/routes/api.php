@@ -1,10 +1,11 @@
-<?php
+    <?php
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\StaffManagementController;
 use App\Http\Controllers\Auth\StudentVerificationController;
 use App\Http\Controllers\Content\CourseController;
+use App\Http\Controllers\Content\LectureController;
 use App\Http\Controllers\Content\ModuleController;
 use App\Http\Controllers\Content\TopicContentController;
 use App\Http\Controllers\Content\TopicController;
@@ -18,6 +19,7 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [RegistrationController::class, 'register']);
     Route::post('refresh-token', [AuthController::class, 'refresh']);
 });
+Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
 
 // Authenticated user routes
 Route::middleware('auth:api')->group(function () {
@@ -43,9 +45,9 @@ Route::middleware('auth:api')->group(function () {
         // --- Курсы ---
         Route::post('courses', [CourseController::class, 'store']);
         Route::get('courses', [CourseController::class, 'index']);          // при желании получить список
-        Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
         Route::put('courses/{course}', [CourseController::class, 'update']);
         Route::delete('courses/{course}', [CourseController::class, 'destroy']);
+        Route::get('courses/{course}', [CourseController::class, 'show']);  // новый маршрут
 
         // --- Модули ---
         Route::post('modules/bulk', [ModuleController::class, 'storeBulk']);
@@ -67,6 +69,7 @@ Route::middleware('auth:api')->group(function () {
 
     });
 });
+Route::post('/lectures/upload-doc', [LectureController::class, 'upload']);
 
 // Public university list
 Route::get('universities', [UniversityController::class, 'index']);

@@ -11,17 +11,17 @@ class Quiz extends Model
 
     protected $fillable = [
         'topic_id', 'title', 'description', 'quiz_type',
-        'max_attempts', 'passing_score', 'time_limit_minutes', 'created_by'
+        'max_attempts', 'passing_score', 'time_limit_minutes', 'questions_count'
     ];
+
+    public function quizable()
+    {
+        return $this->morphTo();
+    }
 
     public function topic()
     {
         return $this->belongsTo(Topic::class);
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function questions()
