@@ -2,6 +2,7 @@
 
 namespace App\Models\Content;
 
+use App\Models\Content\Assessments\Quiz;
 use Illuminate\Database\Eloquent\Model;
 
 class Assignment extends Model
@@ -12,7 +13,7 @@ class Assignment extends Model
         'description'
     ];
 
-    public function quiz()
+    public function quizzes()
     {
         return $this->morphOne(Quiz::class, 'quizable');
     }

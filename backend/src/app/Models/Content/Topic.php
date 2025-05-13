@@ -2,7 +2,7 @@
 
 namespace App\Models\Content;
 
-use App\Models\User;
+use App\Models\Content\Assessments\Quiz;
 use Illuminate\Database\Eloquent\Model;
 
 class Topic extends Model

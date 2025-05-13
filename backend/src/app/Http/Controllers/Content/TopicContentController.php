@@ -24,11 +24,17 @@ class TopicContentController extends Controller
 
             // Для самостоятельных тестов
             'items.*.quiz_type' => 'required_if:items.*.type,quiz|in:module,topic_final,additional,embedded',
+            'items.*.max_attempts' => 'nullable|integer|min:1',
+            'items.*.passing_score' => 'nullable|integer|min:0|max:100',
+            'items.*.time_limit_minutes' => 'nullable|integer|min:1',
 
             // Для тестов, прикрепленных к лекциям/заданиям
             'items.*.attached_quiz' => 'nullable|array',
             'items.*.attached_quiz.title' => 'required_with:items.*.attached_quiz|string|max:255',
             'items.*.attached_quiz.quiz_type' => 'required_with:items.*.attached_quiz|in:embedded',
+            'items.*.attached_quiz.max_attempts' => 'nullable|integer|min:1',
+            'items.*.attached_quiz.passing_score' => 'nullable|integer|min:0|max:100',
+            'items.*.attached_quiz.time_limit_minutes' => 'nullable|integer|min:1',
         ]);
 
         try {

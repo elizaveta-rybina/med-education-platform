@@ -49,54 +49,36 @@ class LectureUploadService
 
     protected function extractAndStoreImages($file, int $lectureId, string $html): string
     {
-        $zip = new ZipArchive;
-        if ($zip->open($file->getRealPath()) === true) {
-            $mediaDir = 'word/media/';
-            $mediaFiles = [];
+        // Найдём все base64-изображения
+        $matches = [];
+        preg_match_all('/<img[^>]+src="data:image\/([^;]+);base64,([^"]+)"[^>]*>/i', $html, $matches, PREG_SET_ORDER);
 
-            // Извлекаем все изображения из папки word/media/
-            for ($i = 0; $i < $zip->numFiles; $i++) {
-                $entry = $zip->getNameIndex($i);
-                if (strpos($entry, $mediaDir) === 0) {
-                    $mediaFiles[] = $entry;
-                }
-            }
+        foreach ($matches as $match) {
+            $extension = $match[1];
+            $base64 = $match[2];
 
-            // Сохраняем изображения в хранилище
-            foreach ($mediaFiles as $mediaFile) {
-                $imageContent = $zip->getFromName($mediaFile);
-                $extension = pathinfo($mediaFile, PATHINFO_EXTENSION);
-                $fileName = Str::random(40) . '.' . $extension;
-                $filePath = 'lectures/images/' . $fileName;
+            $imageContent = base64_decode($base64);
+            $fileName = Str::random(40) . '.' . $extension;
+            $filePath = 'lectures/images/' . $fileName;
 
-                Storage::disk('public')->put($filePath, $imageContent);
+            // Сохраняем файл
+            Storage::disk('public')->put($filePath, $imageContent);
+            $imageUrl = Storage::disk('public')->url($filePath);
 
-                // Получаем URL для доступа к изображению
-                $imageUrl = Storage::disk('public')->url($filePath);
+            // Заменяем в HTML ссылку на новую
+            $html = str_replace($match[0], '<img src="' . $imageUrl . '" />', $html);
 
-                // Получаем оригинальное имя файла из архива
-                $originalName = basename($mediaFile);
-
-                // Заменяем в HTML ссылки на изображения
-                $html = str_replace(
-                    'src="' . $mediaDir . $originalName . '"',
-                    'src="' . $imageUrl . '"',
-                    $html
-                );
-
-                // Создаем запись о вложении
-                LectureAttachment::create([
-                    'lecture_id' => $lectureId,
-                    'file_name' => $fileName,
-                    'file_path' => $filePath,
-                    'file_type' => mime_content_type(Storage::disk('public')->path($filePath)),
-                    'file_size' => Storage::disk('public')->size($filePath),
-                ]);
-            }
-
-            $zip->close();
+            // Сохраняем как вложение
+            LectureAttachment::create([
+                'lecture_id' => $lectureId,
+                'file_name' => $fileName,
+                'file_path' => $filePath,
+                'file_type' => mime_content_type(Storage::disk('public')->path($filePath)),
+                'file_size' => Storage::disk('public')->size($filePath),
+            ]);
         }
 
         return $html;
     }
+
 }

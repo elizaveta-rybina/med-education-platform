@@ -7,7 +7,8 @@ use App\Http\Controllers\Auth\StudentVerificationController;
 use App\Http\Controllers\Content\CourseController;
 use App\Http\Controllers\Content\LectureController;
 use App\Http\Controllers\Content\ModuleController;
-use App\Http\Controllers\Content\TopicContentController;
+    use App\Http\Controllers\Content\QuizController;
+    use App\Http\Controllers\Content\TopicContentController;
 use App\Http\Controllers\Content\TopicController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UniversityController;
@@ -66,6 +67,8 @@ Route::middleware('auth:api')->group(function () {
         Route::get('topics/{topic}/contents', [TopicContentController::class, 'index']); // список элементов по порядку
         Route::put('topics/{topic}/contents/{item}', [TopicContentController::class, 'update']);
         Route::delete('topics/{topic}/contents/{item}', [TopicContentController::class, 'destroy']);
+
+        Route::post('/quizzes', [QuizController::class, 'create']);
 
     });
 });

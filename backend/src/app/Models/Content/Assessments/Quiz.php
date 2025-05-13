@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Models\Content;
+namespace App\Models\Content\Assessments;
 
-use App\Models\User;
+use App\Models\Content\Topic;
 use Illuminate\Database\Eloquent\Model;
 
 class Quiz extends Model
@@ -14,6 +14,10 @@ class Quiz extends Model
         'max_attempts', 'passing_score', 'time_limit_minutes', 'questions_count'
     ];
 
+    protected $attributes = [
+        'max_attempts' => 1,
+        'passing_score' => 80,
+    ];
     public function quizable()
     {
         return $this->morphTo();

@@ -2,10 +2,8 @@
 
 namespace App\Models\Content;
 
+use App\Models\Content\Assessments\Quiz;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\Content\Lecture;
-use App\Models\Content\Quiz;
 
 class TopicItem extends Model
 {
