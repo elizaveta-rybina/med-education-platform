@@ -2,9 +2,10 @@
 
 namespace App\Services\Content;
 
-use Illuminate\Support\Facades\DB;
-use App\Models\Content\Lecture;
 use App\Models\Content\Assignment;
+use App\Models\Content\Lecture;
+use App\Services\Content\Assessments\QuizService;
+use Illuminate\Support\Facades\DB;
 
 class TopicContentService
 {
@@ -21,17 +22,13 @@ class TopicContentService
         DB::beginTransaction();
 
         try {
-            // Сначала создаем все основные элементы
             foreach ($validated['items'] as $itemData) {
                 $type = $itemData['type'];
-                $order = $itemData['order_number'] * 10; // Умножаем на 10 для "промежуточных" позиций
+                $order = $itemData['order_number'] * 10;
                 $topicId = $validated['topic_id'];
 
                 if ($type === 'lecture' || $type === 'assignment') {
-                    // Создание лекции/задания
-                    $service = $type === 'lecture'
-                        ? $this->lectureService
-                        : $this->assignmentService;
+                    $service = $type === 'lecture' ? $this->lectureService : $this->assignmentService;
 
                     $item = $service->create([
                         'topic_id' => $topicId,
@@ -46,13 +43,18 @@ class TopicContentService
                         'order_number' => $order,
                         'is_published' => $itemData['is_published'],
                     ]);
-                } elseif ($type === 'quiz') {
-                    // Создание самостоятельного теста
+                }
+
+                // Самостоятельный тест
+                if ($type === 'quiz') {
                     $quiz = $this->quizService->create([
                         'topic_id' => $topicId,
                         'title' => $itemData['title'],
                         'quiz_type' => $itemData['quiz_type'],
                         'order_number' => $order,
+                        'max_attempts' => $itemData['max_attempts'] ?? 1, // Добавляем с fallback на default
+                        'passing_score' => $itemData['passing_score'] ?? 80,
+                        'time_limit_minutes' => $itemData['time_limit_minutes'] ?? null,
                     ]);
 
                     $savedItems[] = $this->topicItemService->create([
@@ -65,34 +67,37 @@ class TopicContentService
                 }
             }
 
-            // Затем создаем прикрепленные тесты
+            // Теперь обрабатываем прикрепленные тесты
             foreach ($validated['items'] as $itemData) {
-                if (($itemData['type'] === 'lecture' || $itemData['type'] === 'assignment')
-                    && !empty($itemData['attached_quiz'])) {
-
+                if (
+                    ($itemData['type'] === 'lecture' || $itemData['type'] === 'assignment')
+                    && !empty($itemData['attached_quiz'])
+                ) {
                     $parentOrder = $itemData['order_number'] * 10;
-                    $quizOrder = $parentOrder + 5; // +5 чтобы был после родителя, но перед следующим элементом
-
+                    $quizOrder = $parentOrder + 5;
                     $quizData = $itemData['attached_quiz'];
                     $type = $itemData['type'];
 
-                    // Находим родительский элемент
-                    $parentItem = null;
-                    foreach ($savedItems as $item) {
-                        if ($item->item_type === $type && $item->order_number === $parentOrder) {
-                            $parentItem = $item;
-                            break;
-                        }
-                    }
+                    // Находим родительский TopicItem
+                    $parentItem = collect($savedItems)->first(function ($item) use ($type, $parentOrder) {
+                        return $item->item_type === $type && $item->order_number === $parentOrder;
+                    });
 
                     if ($parentItem) {
+                        // Находим модель родителя
+                        $parentModel = $type === 'lecture'
+                            ? Lecture::find($parentItem->item_id)
+                            : Assignment::find($parentItem->item_id);
+
                         $quiz = $this->quizService->create([
                             'topic_id' => $validated['topic_id'],
-                            $type.'_id' => $parentItem->item_id,
                             'title' => $quizData['title'],
                             'quiz_type' => 'embedded',
                             'order_number' => $quizOrder,
-                        ]);
+                            'max_attempts' => $quizData['max_attempts'] ?? 1, // Добавляем с fallback
+                            'passing_score' => $quizData['passing_score'] ?? 80,
+                            'time_limit_minutes' => $quizData['time_limit_minutes'] ?? null,
+                        ], $parentModel);
 
                         $savedItems[] = $this->topicItemService->create([
                             'topic_id' => $validated['topic_id'],
@@ -107,11 +112,12 @@ class TopicContentService
 
             DB::commit();
             return $savedItems;
-
         } catch (\Throwable $e) {
             DB::rollBack();
             throw $e;
         }
     }
+
+
 }
 

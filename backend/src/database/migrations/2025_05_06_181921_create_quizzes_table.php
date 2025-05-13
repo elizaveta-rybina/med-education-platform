@@ -10,7 +10,9 @@ return new class extends Migration {
         Schema::create('quizzes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade');
-            $table->foreignId('lecture_id')->nullable()->constrained('lectures')->onDelete('cascade'); // <-- новое
+
+            $table->nullableMorphs('quizable'); // создаёт quizable_id и quizable_type
+
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('quiz_type', ['topic_final', 'additional', 'embedded'])->default('topic_final'); // <-- новое
