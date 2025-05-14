@@ -26,7 +26,7 @@ export default function AuthLayout({
         
         {/* Фоновая картинка (видна только на десктопах) */}
         <div className="hidden lg:block lg:w-1/2 h-full bg-cover bg-center" 
-          style={{ backgroundImage: "url('/images/auth/AuthPageBackground.jpg')" }}>
+          style={{ backgroundImage: "url('/images/auth/photo_2025-05-07_12-00-10.jpg')" }}>
         </div>
         
         {/* Переключатель темы (фиксированный в правом нижнем углу) */}
