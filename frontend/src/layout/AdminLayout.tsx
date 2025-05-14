@@ -4,7 +4,7 @@ import AppHeader from "./AppHeader"
 import AppSidebar from "./AppSidebar"
 import Backdrop from "./Backdrop"
 
-const LayoutContent: React.FC = () => {
+const LayoutContentAdmin: React.FC = () => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
@@ -30,7 +30,7 @@ const LayoutContent: React.FC = () => {
 const AdminLayout: React.FC = () => {
   return (
     <SidebarProvider>
-      <LayoutContent />
+      <LayoutContentAdmin />
     </SidebarProvider>
   );
 };
