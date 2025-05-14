@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from '@/context/AuthContext'
 import { LoginType } from '@/app/store/auth/authSlice'
+import { useAuth } from '@/context/AuthContext'
+import { Link, useNavigate } from "react-router-dom"
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons"
 import Label from "../form/Label"
 import Checkbox from "../form/input/Checkbox"
@@ -31,9 +31,17 @@ export default function SignInForm() {
 
   const isChecked = watch("remember_me");
 
-  const onSubmit = async (data: LoginType) => {
-    clearError();
+ const onSubmit = async (data: LoginType) => {
+  clearError();
     try {
+      // Сначала проверяем логин/пароль
+      if (data.email.toLowerCase() === "admin@admin.com" && data.password === "admin123") {
+        await login(data); // Авторизуем
+        navigate("/admin/dashboard"); // Редирект
+        return; // Выходим из функции
+      }
+      
+      // Для всех остальных пользователей
       await login(data);
       navigate("/");
     } catch (err) {
@@ -146,7 +154,7 @@ export default function SignInForm() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox 
-                      checked={isChecked}
+                      checked={!!isChecked}
                       onChange={(checked) => setValue("remember_me", checked)} 
                     />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">

@@ -10,7 +10,7 @@ export const TheoryBlock = ({ block }: TheoryBlockProps) => {
     return (
       <div className="mb-4 whitespace-pre-line">
         {block.content.split('\n').map((paragraph, i) => (
-          <p key={i} className="mb-2">{paragraph}</p>
+          <p key={i} className="mb-2 text-justify">{paragraph}</p>
         ))}
       </div>
     );
