@@ -27,7 +27,6 @@ class ModuleController extends Controller
 
         return response()->json([
             'message' => 'Модули успешно добавлены',
-            'modules' => $saved
         ], 201);
     }
 }

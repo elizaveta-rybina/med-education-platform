@@ -42,7 +42,6 @@ class TopicContentController extends Controller
 
             return response()->json([
                 'message' => 'Контент темы успешно добавлен',
-                'items' => $savedItems,
             ], 201);
 
         } catch (\Throwable $e) {

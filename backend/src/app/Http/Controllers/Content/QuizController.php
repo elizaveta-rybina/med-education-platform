@@ -23,28 +23,30 @@ class QuizController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'quiz_type' => 'required|string',
+            'quiz_type' => 'required|string|in:topic_final,module_final,embedded,additional',
             'max_attempts' => 'nullable|integer',
             'passing_score' => 'nullable|integer',
             'time_limit_minutes' => 'nullable|integer',
             'questions_count' => 'nullable|integer',
-            'topic_id' => 'required|exists:topics,id', // Предполагаем, что тест привязан к теме
-            'questions' => 'required|array', // Массив вопросов
-            'parent_type' => 'nullable|string|in:lecture,assignment', // Тип родительского объекта
-            'parent_id' => 'nullable|exists:lectures,id,assignments,id', // Идентификатор родительского объекта
+            'parent_type' => 'required|string|in:topic,module,assignment,lecture',
+            'parent_id' => 'required|integer',
+            'questions' => 'nullable|array',
         ]);
 
-        // Определяем родительский объект
-        $parentModel = null;
-        if ($validated['parent_type'] && $validated['parent_id']) {
-            $parentModel = app('App\Models\Content\\' . ucfirst($validated['parent_type']))->find($validated['parent_id']);
-        }
+        $parentClass = match ($validated['parent_type']) {
+            'topic' => \App\Models\Content\Topic::class,
+            'module' => \App\Models\Content\Module::class,
+            'assignment' => \App\Models\Content\Assignment::class,
+            'lecture' => \App\Models\Content\Lecture::class,
+        };
 
-        // Используем сервис для создания квиза с вопросами и ответами
+        $parentModel = $parentClass::findOrFail($validated['parent_id']);
+
         $quiz = $this->quizService->create($validated, $parentModel);
 
         return response()->json([
             'message' => 'Тест успешно создан!',
-            'quiz' => $quiz
         ], 201);
-    }}
+    }
+
+}
