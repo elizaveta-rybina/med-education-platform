@@ -29,7 +29,6 @@ class TopicController extends Controller
 
         return response()->json([
             'message' => 'Темы успешно добавлены',
-            'topics' => $saved
         ], 201);
     }
 }

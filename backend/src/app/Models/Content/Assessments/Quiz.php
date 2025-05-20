@@ -10,8 +10,15 @@ class Quiz extends Model
     //use HasFactory;
 
     protected $fillable = [
-        'topic_id', 'title', 'description', 'quiz_type',
-        'max_attempts', 'passing_score', 'time_limit_minutes', 'questions_count'
+        'title',
+        'description',
+        'quiz_type',
+        'max_attempts',
+        'passing_score',
+        'time_limit_minutes',
+        'questions_count',
+        'quizable_type',
+        'quizable_id',
     ];
 
     protected $attributes = [

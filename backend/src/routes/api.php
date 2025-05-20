@@ -1,4 +1,4 @@
-    <?php
+<?php
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
@@ -7,9 +7,10 @@ use App\Http\Controllers\Auth\StudentVerificationController;
 use App\Http\Controllers\Content\CourseController;
 use App\Http\Controllers\Content\LectureController;
 use App\Http\Controllers\Content\ModuleController;
-    use App\Http\Controllers\Content\QuizController;
-    use App\Http\Controllers\Content\TopicContentController;
+use App\Http\Controllers\Content\QuizController;
+use App\Http\Controllers\Content\TopicContentController;
 use App\Http\Controllers\Content\TopicController;
+use App\Http\Controllers\Content\UserAnswerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,7 @@ Route::get('courses/{course}', [CourseController::class, 'show']); // при ж�
 
 // Authenticated user routes
 Route::middleware('auth:api')->group(function () {
+    Route::post('quizzes/{quiz}/submit', [UserAnswerController::class, 'store']);
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [ProfileController::class, 'me']);

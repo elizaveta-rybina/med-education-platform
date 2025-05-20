@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
-            $table->text('answer_text')->nullable(); // пользовательский ввод
-            $table->json('answer_ids')->nullable();  // если выбирали варианты
-            $table->integer('score')->nullable();    // выставленный балл (для open_answer_reviewed)
+            $table->enum('question_type', ['single_choice', 'multiple_choice', 'open_answer', 'open_answer_reviewed', 'matching', 'ordering', 'open_schema', 'matching_schema']);
+            $table->string('match_key')->nullable();     // Для ячеек таблиц (matching_schema)
+            $table->text('answer_text')->nullable();     // Текстовый ответ
+            $table->json('answer_ids')->nullable();      // Выбор вариантов (single/multiple choice)
+            $table->integer('score')->nullable();        // Балл, если есть
             $table->timestampsTz();
         });
+
     }
 
     /**

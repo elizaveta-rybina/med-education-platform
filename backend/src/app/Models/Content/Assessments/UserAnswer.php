@@ -2,7 +2,7 @@
 
 namespace App\Models\Content\Assessments;
 
-use App\Models\Content\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class UserAnswer extends Model
@@ -12,9 +12,15 @@ class UserAnswer extends Model
     protected $fillable = [
         'user_id',
         'question_id',
+        'question_type',
+        'match_key',
         'answer_text',
         'answer_ids',
         'score',
+    ];
+
+    protected $casts = [
+        'answer_ids' => 'array',  // автоматически преобразует JSON в массив и обратно
     ];
 
     /**

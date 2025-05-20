@@ -60,7 +60,7 @@ class SchemaQuestionService
                     'row_id' => $row->id,
                     'column_id' => $columnId,
                     'cell_key' => $cellData['cell_key'] ?? null,
-                    'static_content' => $cellData['static_content'] ?? null,
+                    'content' => $cellData['content'] ?? null,
                     'is_fillable' => $cellData['is_fillable'] ?? false,
                 ]);
             }
