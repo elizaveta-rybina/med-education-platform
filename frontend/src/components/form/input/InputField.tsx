@@ -4,11 +4,13 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   success?: boolean;
   error?: boolean | string;
   hint?: string;
+  label?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
+      label,
       type = "text",
       className = "",
       disabled = false,
@@ -37,6 +39,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative">
         <input
+          aria-label={label}
           type={type}
           ref={ref}
           disabled={disabled}

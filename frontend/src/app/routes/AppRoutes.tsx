@@ -2,6 +2,8 @@ import { ScrollToTop } from '@/components/common/ScrollToTop'
 import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
 import { CoursePage, HomePage, NotFound } from '@/pages'
+import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
+import StudentUsers from '@/pages/Admin/StudentUsers'
 import TeacherUsers from '@/pages/Admin/TeacherUsers'
 import SignIn from '@/pages/AuthPages/SignIn'
 import SignUp from '@/pages/AuthPages/SignUp'
@@ -49,6 +51,15 @@ const router = createBrowserRouter([
         path: '/admin/teachers',
         element: <TeacherUsers />,
       },
+      {
+        path: '/admin/students',
+        element: <StudentUsers />,
+      },
+      {
+        path: '/admin/courses/new',
+        element: <CourseCreatePage />
+      }
+      
     ]
   },
   {
