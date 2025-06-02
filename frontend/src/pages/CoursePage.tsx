@@ -10,7 +10,7 @@ import { useState } from 'react'
 
 const CoursePage = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(true);
 
   return (
     <div className='my-8 container mx-auto px-4'>
