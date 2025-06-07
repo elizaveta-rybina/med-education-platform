@@ -36,35 +36,42 @@ class UserAnswerController extends Controller
      */
     public function store(Request $request)
     {
-        $userId = $request->user()->id;
+        try {
+            $userId = $request->user()->id;
 
-        $validated = $request->validate([
-            'quiz_id' => 'required|integer|exists:quizzes,id',
-            'answers' => 'required|array|min:1',
-            'answers.*.question_id' => 'required|integer|exists:questions,id',
-            'answers.*.question_type' => 'required|string|in:single_choice,multiple_choice,open_answer,open_answer_reviewed,matching,ordering,open_schema,matching_schema',
-            'answers.*.match_key' => 'nullable|string',
-            'answers.*.answer_text' => 'nullable|string',
-            'answers.*.answer_ids' => 'nullable|array',
-            'answers.*.answer_ids.*' => 'integer',
-            'answers.*.score' => 'nullable|integer',
-        ]);
+            $validated = $request->validate([
+                'quiz_id' => 'required|integer|exists:quizzes,id',
+                'answers' => 'required|array|min:1',
+                'answers.*.question_id' => 'required|integer|exists:questions,id',
+                'answers.*.question_type' => 'required|string|in:single_choice,multiple_choice,open_answer,open_answer_reviewed,matching,ordering,open_schema,matching_schema',
+                'answers.*.match_key' => 'nullable|string',
+                'answers.*.answer_text' => 'nullable|string',
+                'answers.*.answer_ids' => 'nullable|array',
+                'answers.*.answer_ids.*' => 'integer',
+                'answers.*.score' => 'nullable|integer',
+                'answers.*.table_answers' => 'nullable|array',
+            ]);
 
-        $quizId = $validated['quiz_id'];
+            $quizId = $validated['quiz_id'];
 
-        // Получаем номер новой попытки
-        $attemptNumber = $this->answerService->getNextAttemptNumber($userId, $quizId);
+//            // Получаем номер новой попытки
+//            $attemptNumber = $this->answerService->getNextAttemptNumber($userId, $quizId);
+//
+//            // Сохраняем ответы
+//            $this->answerService->saveUserAnswers($userId, $validated['answers']);
+//
+//            // Пересчитываем и сохраняем результат
+//            $result = $this->answerService->calculateAndSaveResult($userId, $quizId, $attemptNumber);
 
-        // Сохраняем ответы
-        $this->answerService->saveUserAnswers($userId, $validated['answers']);
-
-        // Пересчитываем и сохраняем результат
-        $result = $this->answerService->calculateAndSaveResult($userId, $quizId, $attemptNumber);
-
-        return response()->json([
-            'message' => 'Ответы успешно сохранены',
-            'result' => $result,
-        ]);
+            return response()->json([
+                'message' => 'Ответы успешно сохранены'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(), // Только для разработки!
+            ], 500);
+        }
     }
 
 }
