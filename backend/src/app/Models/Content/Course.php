@@ -35,4 +35,9 @@ class Course extends Model
             }
         ])->find($this->id);
     }
+    public function users()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'course_user')->withTimestamps();
+    }
+
 }

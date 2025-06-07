@@ -58,6 +58,8 @@ class RegistrationController extends Controller
                 'faculty' => 'required|string|max:255',
                 'course' => 'required|integer|between:1,6',
                 'group' => 'required|string|max:50',
+                'specialization' => 'required|string|max:100',
+
             ];
         }
 
@@ -105,6 +107,7 @@ class RegistrationController extends Controller
             'faculty' => $request->faculty,
             'course' => $request->course,
             'group' => $request->group,
+            'specialization' => $request->specialization,
             'start_date' => now(),
             'is_current' => true,
         ]);

@@ -21,6 +21,7 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName,
             'first_name' => $this->faker->firstName,
             'middle_name' => $this->faker->firstName,
+            'phone_number' => $this->faker->phoneNumber, // добавлен номер телефона
             'is_verified' => false, // по умолчанию пользователи не подтверждены
         ];
     }
