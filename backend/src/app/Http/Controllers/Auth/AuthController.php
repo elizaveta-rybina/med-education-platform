@@ -34,12 +34,19 @@ class AuthController extends Controller
             return response()->json(['error' => 'Не удалось создать токен'], 500);
         }
 
-        return response()->json([
-            //'user' => auth()->user(),
-            'token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60
-        ]);
+        JWTAuth::factory()->setTTL(10080); // 7 дней для refresh
+        $refreshToken = JWTAuth::claims(['refresh' => true])->fromUser(auth()->user());
+
+        // Восстанавливаем TTL для обычных токенов, если нужно
+        JWTAuth::factory()->setTTL(config('jwt.ttl'));
+
+        return response()
+            ->json([
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60
+            ])
+            ->cookie('refresh_token', $refreshToken, 10080, null, null, true, true, false, 'Strict'); // httpOnly secure cookie
     }
     public function logout()
     {
@@ -48,6 +55,37 @@ class AuthController extends Controller
             return response()->json(['message' => 'Успешный выход из системы']);
         } catch (JWTException $e) {
             return response()->json(['error' => 'Не удалось выйти из системы'], 500);
+        }
+    }
+
+    public function refresh(Request $request)
+    {
+        $refreshToken = $request->cookie('refresh_token');
+
+        if (!$refreshToken) {
+            return response()->json(['error' => 'Refresh token not found'], 401);
+        }
+
+        try {
+            JWTAuth::setToken($refreshToken);
+            $payload = JWTAuth::getPayload();
+
+            // Проверим, что это действительно refresh токен
+            if (!$payload->get('refresh')) {
+                return response()->json(['error' => 'Invalid refresh token'], 401);
+            }
+
+            $user = JWTAuth::toUser($refreshToken);
+
+            $newAccessToken = JWTAuth::fromUser($user);
+
+            return response()->json([
+                'token' => $newAccessToken,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60
+            ]);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Refresh failed'], 401);
         }
     }
 

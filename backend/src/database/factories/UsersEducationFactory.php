@@ -14,7 +14,7 @@ class UsersEducationFactory extends Factory
     public function definition()
     {
         return [
-            'university_id' => 1, // Привязываем к университета
+            'university_id' => 1, // Привязываем к университету
             'faculty' => $this->faker->word,
             'department' => $this->faker->word,
             'specialization' => $this->faker->word,
