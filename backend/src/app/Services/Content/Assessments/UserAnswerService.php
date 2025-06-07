@@ -36,40 +36,56 @@ class UserAnswerService
     {
         DB::transaction(function () use ($userId, $answers) {
             foreach ($answers as $answerData) {
-                // Обязательные поля
                 $questionId = $answerData['question_id'];
-                $questionType = $answerData['question_type'] ?? null;
+                $questionType = $answerData['question_type'];
 
-                // Ищем уже существующий ответ (если match_key есть — ищем по нему, иначе по вопросу)
-                $query = UserAnswer::where('user_id', $userId)
-                    ->where('question_id', $questionId)
-                    ->where('question_type', $questionType);
-
-                if (!empty($answerData['match_key'])) {
-                    $query->where('match_key', $answerData['match_key']);
-                } else {
-                    $query->whereNull('match_key');
+                // Обработка table_answers для схем
+                if (in_array($questionType, ['open_schema', 'matching_schema'])) {
+                foreach ($answerData['table_answers'] ?? [] as $matchKey => $answerText) {
+                    $this->saveSingleAnswer($userId, [
+                        'question_id' => $questionId,
+                        'question_type' => $questionType,
+                        'match_key' => $matchKey,
+                        'answer_text' => $answerText,
+                    ]);
                 }
+                continue;
+            }
 
-                $userAnswer = $query->first();
-
-                $dataToSave = [
-                    'user_id' => $userId,
-                    'question_id' => $questionId,
-                    'question_type' => $questionType,
-                    'match_key' => $answerData['match_key'] ?? null,
-                    'answer_text' => $answerData['answer_text'] ?? null,
-                    'answer_ids' => isset($answerData['answer_ids']) ? json_encode($answerData['answer_ids']) : null,
-                    'score' => $answerData['score'] ?? $this->evaluateAnswer($answerData),
-                ];
-
-                if ($userAnswer) {
-                    $userAnswer->update($dataToSave);
-                } else {
-                    UserAnswer::create($dataToSave);
-                }
+                $this->saveSingleAnswer($userId, $answerData);
             }
         });
+    }
+
+    protected function saveSingleAnswer(int $userId, array $answerData): void
+    {
+        $query = UserAnswer::where('user_id', $userId)
+            ->where('question_id', $answerData['question_id'])
+            ->where('question_type', $answerData['question_type']);
+
+        if (!empty($answerData['match_key'])) {
+            $query->where('match_key', $answerData['match_key']);
+        } else {
+            $query->whereNull('match_key');
+        }
+
+        $userAnswer = $query->first();
+
+        $dataToSave = [
+            'user_id' => $userId,
+            'question_id' => $answerData['question_id'],
+            'question_type' => $answerData['question_type'],
+            'match_key' => $answerData['match_key'] ?? null,
+            'answer_text' => $answerData['answer_text'] ?? null,
+            'answer_ids' => isset($answerData['answer_ids']) ? json_encode($answerData['answer_ids']) : null,
+            'score' => $answerData['score'] ?? $this->evaluateAnswer($answerData),
+        ];
+
+        if ($userAnswer) {
+            $userAnswer->update($dataToSave);
+        } else {
+            UserAnswer::create($dataToSave);
+        }
     }
     public function calculateAndSaveResult(int $userId, int $quizId, int $attemptNumber): UserQuizResult
     {

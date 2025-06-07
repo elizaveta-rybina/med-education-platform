@@ -18,6 +18,7 @@ class AdminUserSeeder extends Seeder
             'password' => Hash::make('password'), // Пароль (не забудь хешировать)
             'is_verified' => true, // Статус подтверждения
             'birth_date' => '1990-01-01', // Дата рождения (пример)
+            'phone_number' => '01234567890123',
             'last_name' => 'AdminLastName',
             'first_name' => 'AdminFirstName',
             'middle_name' => 'AdminMiddleName',
