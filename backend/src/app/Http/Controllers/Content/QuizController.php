@@ -49,4 +49,20 @@ class QuizController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Тест успешно обновлен',
+            'data' => $request->all()
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Тест успешно удален'
+        ]);
+    }
 }

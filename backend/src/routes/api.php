@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\RegistrationController;
 use App\Http\Controllers\Auth\StaffManagementController;
 use App\Http\Controllers\Auth\StudentVerificationController;
+use App\Http\Controllers\Content\AssignmentController;
 use App\Http\Controllers\Content\CourseController;
 use App\Http\Controllers\Content\LectureController;
 use App\Http\Controllers\Content\ModuleController;
@@ -13,14 +14,15 @@ use App\Http\Controllers\Content\TopicController;
 use App\Http\Controllers\Content\UserAnswerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UniversityController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserRolesController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
-Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [RegistrationController::class, 'register']);
-    Route::post('refresh-token', [AuthController::class, 'refresh']);
-});
+Route::post('login', [AuthController::class, 'login']);
+Route::post('register', [RegistrationController::class, 'register']);
+Route::post('refresh-token', [AuthController::class, 'refresh']);
+Route::post('/refresh', [AuthController::class, 'refresh']);
 Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
 
 // Authenticated user routes
@@ -38,12 +40,18 @@ Route::middleware('auth:api')->group(function () {
 
         // Подтверждение конкретного студента
         Route::post('students/{student}/verification', [StudentVerificationController::class, 'verifyStudent']);
+
+        Route::get('/teachers', [UserRolesController::class, 'getTeachers']);
+        Route::get('/students', [UserRolesController::class, 'getStudents']);
     });
 
     // Admin-specific routes
     Route::middleware('role:admin')->prefix('admin')->group(function () {
+        Route::get('/admins', [UserRolesController::class, 'getAdmins']);
+
         // Регистрация сотрудника (преподавателя/админа)
-        Route::post('staff/register', [StaffManagementController::class, 'register']);
+        Route::post('/staff/register', [StaffManagementController::class, 'registerStaff']);
+        Route::post('/students/register', [StaffManagementController::class, 'registerVerifiedStudent']);
 
         // --- Курсы ---
         Route::post('courses', [CourseController::class, 'store']);
@@ -72,6 +80,23 @@ Route::middleware('auth:api')->group(function () {
 
         Route::post('/quizzes', [QuizController::class, 'create']);
 
+        // --- Лекции ---
+        Route::post('lectures', [LectureController::class, 'store']);
+        Route::put('lectures/{lecture}', [LectureController::class, 'update']);
+        Route::delete('lectures/{lecture}', [LectureController::class, 'destroy']);
+
+        // --- Задания ---
+        Route::post('assignments', [AssignmentController::class, 'store']);
+        Route::put('assignments/{assignment}', [AssignmentController::class, 'update']);
+        Route::delete('assignments/{assignment}', [AssignmentController::class, 'destroy']);
+
+        // --- Тесты ---
+        Route::put('quizzes/{quiz}', [QuizController::class, 'update']);
+        Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy']);
+
+        // --- Пользователи ---
+        Route::put('users/{user}', [UserController::class, 'update']);
+        Route::delete('users/{user}', [UserController::class, 'destroy']);
     });
 });
 Route::post('/lectures/upload-doc', [LectureController::class, 'upload']);

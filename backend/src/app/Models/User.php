@@ -23,6 +23,7 @@ class User extends Authenticatable implements JWTSubject
         'birth_date',
         'last_name',
         'first_name',
+        'phone',
         'middle_name',
         'is_verified',
     ];
@@ -114,4 +115,10 @@ class User extends Authenticatable implements JWTSubject
             'roles' => $this->roles->pluck('name'),
         ];
     }
+
+    public function courses()
+    {
+        return $this->belongsToMany(\App\Models\Content\Course::class, 'course_user')->withTimestamps();
+    }
+
 }
