@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('email', 100)->unique();
             $table->string('password', 255);
             $table->date('birth_date')->nullable();
+            $table->string('phone_number', 20)->nullable();
             $table->string('last_name', 50);
             $table->string('first_name', 50);
             $table->string('middle_name', 50)->nullable();

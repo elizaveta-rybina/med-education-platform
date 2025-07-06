@@ -19,10 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (AuthenticationException $e, $request) {
-            return new JsonResponse([
-                'message' => 'Unauthenticated.'
-            ], 401);
+        $exceptions->render(function (UnauthorizedHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'false',
+                    'message' => 'Unauthorized access. Please check your token.'
+                ], 401);
+            }
         });
     })
     ->create();

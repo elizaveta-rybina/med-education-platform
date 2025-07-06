@@ -34,4 +34,20 @@ class LectureController extends Controller
             ], 500);
         }
     }
+    public function update(Request $request, $id)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Лекция успешно обновлена',
+            'data' => $request->all()
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Лекция успешно удалена'
+        ]);
+    }
 }
