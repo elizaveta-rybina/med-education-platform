@@ -17,8 +17,10 @@ class CourseService
         $details = $course->getCourseDetails();
 
         return [
-            'course_title' => $details->title,
-            'course_description' => $details->description,
+            'title' => $details->title,
+            'description' => $details->description,
+            'skills' => $details->skills,
+            'description_modules' => $details->description_modules,
             'modules' => $details->modules->map(function ($module) {
                 // Сначала собираем темы
                 $topics = $module->topics->map(function ($topic) {
