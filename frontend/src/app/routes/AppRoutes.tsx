@@ -1,10 +1,25 @@
-import { CoursePage, HomePage, NotFoundPage, Physiology, RegistrationPage } from 'pages'
+import { ScrollToTop } from '@/components/common/ScrollToTop'
+import AdminLayout from '@/layout/AdminLayout'
+import AppLayout from '@/layout/AppLayout'
+import { CoursePage, HomePage, NotFound } from '@/pages'
+import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
+import StudentUsers from '@/pages/Admin/StudentUsers'
+import TeacherUsers from '@/pages/Admin/TeacherUsers'
+import SignIn from '@/pages/AuthPages/SignIn'
+import SignUp from '@/pages/AuthPages/SignUp'
+import CourseInnerPage from '@/pages/Courses/Physiology'
+import HomeAdmin from '@/pages/Dashboard/Home'
+import GDevelopEditor from '@/pages/GDevelop/GDevelopEditor'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
-const router = createBrowserRouter(
-[
+const router = createBrowserRouter([
   {
-    path: '/',
+    element: (
+      <>
+        <ScrollToTop />
+        <AppLayout />
+      </>
+    ),
     children: [
       {
         path: '/',
@@ -16,20 +31,56 @@ const router = createBrowserRouter(
       },
       {
         path: '/course/physiology',
-        element: <Physiology />
-      },
-      {
-        path: '/registration',
-        element: <RegistrationPage />
-      },
-      {
-        path: '*',
-        element: <NotFoundPage />,
+        element: <CourseInnerPage />
       },
     ]
+  },
+  {
+    element: (
+      <>
+        <ScrollToTop />
+        <AdminLayout />
+      </>
+    ),
+    children: [
+      {
+        path: '/admin/dashboard',
+        element: <HomeAdmin />,
+      },
+      {
+        path: '/admin/teachers',
+        element: <TeacherUsers />,
+      },
+      {
+        path: '/admin/students',
+        element: <StudentUsers />,
+      },
+      {
+        path: '/admin/courses/new',
+        element: <CourseCreatePage />
+      }
+      
+    ]
+  },
+  {
+    path: '/signin',
+    element: <SignIn />
+  },
+  {
+    path: '/games',
+    element: <GDevelopEditor />
+  },
+  {
+    path: '/signup',
+    element: <SignUp />
+  },
+  // Fallback route
+  {
+    path: '*',
+    element: <NotFound />,
   },
 ]);
 
 export const AppRouter = () => {
-	return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }

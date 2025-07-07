@@ -1,81 +1,73 @@
-import { ContentBlock, ContentBlockData } from 'data/content'
-import React from 'react'
-import { TextContent, MediaContent, QuizQuestion } from 'data/content';
+import { Block } from '@/data/types'
+import { DragDropTableComponent } from './DragDropTableComponent'
+import FreeInputBlock from './FreeInputBlock'
+import { GameBlock } from './GameBlock'
+import { TestBlock } from './TestBlock'
+import { TheoryBlock } from './TheoryBlock'
 
 interface ContentRendererProps {
-  block: ContentBlock;
+  block: Block;
+  moduleId: string;
+  chapterId: string;
+  questionIndex?: number;
+  totalQuestions?: number;
+  onNext?: () => void;
+  onPrev?: () => void;
+  onComplete?: (isCorrect: boolean) => void;
 }
 
-const ContentRenderer: React.FC<ContentRendererProps> = ({ block }) => {
-  const renderContent = (data: ContentBlockData) => {
-    if (!data) return null;
-
-    switch (block.type) {
-      case 'text':
-        const textData = data as TextContent;
-        return (
-          <div className="text-block">
-            <p>{textData.text}</p>
-            {textData.subblocks?.map((subblock, index) => (
-              <div key={index}>
-                {subblock.type === 'list' && (
-                  <ul>
-                    {subblock.items?.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                )}
-                {subblock.type === 'quote' && (
-                  <blockquote>
-                    <p>{subblock.content}</p>
-                    {subblock.author && <cite>- {subblock.author}</cite>}
-                  </blockquote>
-                )}
-              </div>
-            ))}
-          </div>
-        );
-
-      case 'image':
-        const imageData = data as MediaContent;
-        return (
-          <figure>
-            <img src={imageData.url} alt={imageData.alt} />
-            {imageData.caption && <figcaption>{imageData.caption}</figcaption>}
-          </figure>
-        );
-
-      case 'video':
-        const videoData = data as MediaContent;
-        return (
-          <div className="video-container">
-            <video controls src={videoData.url} />
-            {videoData.caption && <p>{videoData.caption}</p>}
-          </div>
-        );
-
-      case 'quiz':
-        const quizData = data as QuizQuestion;
-        return (
-          <div className="quiz-block">
-            <h3>{quizData.question}</h3>
-            <ul>
-              {quizData.options.map((option, index) => (
-                <li key={index}>{option}</li>
-              ))}
-            </ul>
-          </div>
-        );
-
-      case 'divider':
-        return <hr />;
-
-      default:
-        return null;
-    }
-  };
-
-  return <div className="content-block">{renderContent(block.data)}</div>;
+export const ContentRenderer = ({ 
+  block, 
+  moduleId, 
+  chapterId,
+  questionIndex = 0,
+  totalQuestions = 0,
+  onNext = () => {},
+  onPrev = () => {},
+  onComplete = () => {}
+}: ContentRendererProps) => {
+  switch (block.type) {
+    case 'question':
+      return (
+        <TestBlock 
+          block={block}
+          moduleId={moduleId}
+          chapterId={chapterId}
+          questionIndex={questionIndex}
+          totalQuestions={totalQuestions}
+          onNext={onNext}
+          onPrev={onPrev}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'drag-drop-table':
+      return (
+        <DragDropTableComponent 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'free-input':
+      return (
+        <FreeInputBlock 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'game':
+      return (
+        <GameBlock 
+          block={block}
+          onComplete={onComplete}
+        />
+      );
+    
+    case 'image':
+    case 'text':
+    default:
+      return <TheoryBlock block={block} />;
+  }
 };
-
-export default ContentRenderer;

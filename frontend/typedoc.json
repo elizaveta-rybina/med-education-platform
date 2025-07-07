@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["./src"],
+  "out": "../docs/frontend-docs",
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+	"entryPointStrategy": "expand"
+}

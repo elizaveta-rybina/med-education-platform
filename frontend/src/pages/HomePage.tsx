@@ -1,4 +1,5 @@
-import HeroSection from 'components/shared/title'
+
+import HeroSection from '@/components/shared/title'
 
 const HomePage = () => {
   return (
