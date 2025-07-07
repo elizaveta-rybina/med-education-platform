@@ -1,33 +1,42 @@
 import { useState } from 'react'
-import { Dropdown } from '../ui/dropdown/Dropdown'
-import { DropdownItem } from '../ui/dropdown/DropdownItem'
 
-const tabs = ['Overview', 'Notification', 'Projects', 'Invoice', 'Account']
+const tabs = [
+	'Профиль',
+	'Мое обучение',
+	'Мои покупки',
+	'Достижения',
+	'Настройки'
+]
 
-export const TabsSwitcher = () => {
-	const [selectedTab, setSelectedTab] = useState('Overview')
+type TabsSwitcherProps = {
+	onTabChange: (tab: string) => void
+}
+
+export const TabsSwitcher = ({ onTabChange }: TabsSwitcherProps) => {
+	const [selectedTab, setSelectedTab] = useState('Профиль')
 	const [isOpen, setIsOpen] = useState(false)
 
 	const handleSelect = (tab: string) => {
 		setSelectedTab(tab)
 		setIsOpen(false)
+		onTabChange(tab)
 	}
 
 	return (
-		<>
-			{/* Мобильный/планшетный dropdown */}
-			<div className='relative inline-block text-left lg:hidden'>
+		<div className='border-b border-gray-200'>
+			{/* Мобильный dropdown */}
+			<div className='relative lg:hidden'>
 				<button
 					onClick={() => setIsOpen(prev => !prev)}
-					className='dropdown-toggle inline-flex justify-between items-center w-48 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none'
+					className='flex items-center justify-between w-full py-4 text-gray-800 text-base font-medium'
 				>
-					{selectedTab}
+					<span>{selectedTab}</span>
 					<svg
-						className='ml-2 h-4 w-4'
-						xmlns='http://www.w3.org/2000/svg'
+						className={`ml-3 h-5 w-5 text-gray-400 transition-transform duration-200 ${
+							isOpen ? 'rotate-180' : ''
+						}`}
 						viewBox='0 0 20 20'
 						fill='currentColor'
-						aria-hidden='true'
 					>
 						<path
 							fillRule='evenodd'
@@ -37,35 +46,48 @@ export const TabsSwitcher = () => {
 					</svg>
 				</button>
 
-				<Dropdown
-					isOpen={isOpen}
-					onClose={() => setIsOpen(false)}
-					className='w-48'
-				>
-					{tabs.map(tab => (
-						<DropdownItem key={tab} onItemClick={() => handleSelect(tab)}>
-							{tab}
-						</DropdownItem>
-					))}
-				</Dropdown>
+				{isOpen && (
+					<div className='absolute left-0 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden'>
+						{tabs.map(tab => (
+							<button
+								key={tab}
+								onClick={() => handleSelect(tab)}
+								className={`w-full px-4 py-3 text-left text-base transition-colors duration-150 ${
+									selectedTab === tab
+										? 'bg-blue-50 text-blue-600 font-medium'
+										: 'text-gray-600 hover:bg-gray-50'
+								}`}
+							>
+								{tab}
+							</button>
+						))}
+					</div>
+				)}
 			</div>
 
-			{/* Десктопная навигация */}
-			<div className='hidden lg:flex gap-4'>
+			{/* Десктопные табы */}
+			<div className='hidden lg:flex'>
 				{tabs.map(tab => (
 					<button
 						key={tab}
-						onClick={() => setSelectedTab(tab)}
-						className={`text-sm px-4 py-2 rounded-md ${
+						onClick={() => handleSelect(tab)}
+						className={`relative px-1 mx-3 py-4 text-base font-medium transition-all duration-200 ${
 							selectedTab === tab
-								? 'bg-gray-200 text-gray-900 font-semibold'
-								: 'text-gray-600 hover:bg-gray-100'
+								? 'text-gray-900'
+								: 'text-gray-500 hover:text-gray-700'
 						}`}
 					>
 						{tab}
+						<span
+							className={`absolute bottom-[-1px] left-0 right-0 h-0.5 transition-all duration-300 ${
+								selectedTab === tab
+									? 'bg-gray-900 scale-100'
+									: 'bg-transparent scale-0'
+							}`}
+						></span>
 					</button>
 				))}
 			</div>
-		</>
+		</div>
 	)
 }

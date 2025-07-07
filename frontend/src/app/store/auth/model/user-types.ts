@@ -43,6 +43,4 @@ export interface User {
 	roles: UserRole[]
 }
 
-export interface AuthMeResponse {
-	user: User
-}
+export type AuthMeResponse = User

@@ -29,6 +29,20 @@ export const login = createAsyncThunk(
 	}
 )
 
-// export const logout = createAsyncThunk('auth/logout', async () => {
-// 	await authApi.logout()
-// })
+export const fetchUser = createAsyncThunk(
+	'auth/fetchUser',
+	async (_, { rejectWithValue }) => {
+		try {
+			const token = localStorage.getItem('token')
+			if (!token) return rejectWithValue('No token found')
+
+			const userData = await authApi.getMe()
+			return userData
+		} catch (error) {
+			const err = error as ApiError
+			return rejectWithValue(
+				err.response?.data?.message || err.message || 'Error fetching user'
+			)
+		}
+	}
+)
