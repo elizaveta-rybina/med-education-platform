@@ -101,6 +101,8 @@ Route::middleware('auth.api')->group(function () {
                 Route::get('{module}', [ModuleController::class, 'show']);
                 Route::put('{module}', [ModuleController::class, 'update']);
                 Route::delete('{module}', [ModuleController::class, 'destroy']);
+                Route::get('{module}/topics', [TopicController::class, 'indexByModule']);
+
 
             });
 
