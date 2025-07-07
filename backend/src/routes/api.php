@@ -18,87 +18,126 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRolesController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
-Route::post('login', [AuthController::class, 'login']);
-Route::post('register', [RegistrationController::class, 'register']);
-Route::post('refresh-token', [AuthController::class, 'refresh']);
-Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [RegistrationController::class, 'register']);
+    Route::post('refresh-token', [AuthController::class, 'refresh']);
+});
 
-// Authenticated user routes
+// Public content routes
+Route::prefix('content')->group(function () {
+    Route::get('courses/{course}', [CourseController::class, 'show']);
+    Route::get('universities', [UniversityController::class, 'index']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth.api')->group(function () {
-    Route::post('quizzes/{quiz}/submit', [UserAnswerController::class, 'store']);
+    // Auth related
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [ProfileController::class, 'me']);
     });
 
-    // Shared teacher and admin routes
-    Route::middleware('role:teacher,admin')->prefix('teacher')->group(function () {
-        // Список неподтвержденных студентов
-        Route::get('students/pending-approval', [StudentVerificationController::class, 'pending']);
+    // Quiz submissions
+    Route::post('quizzes/{quiz}/submit', [UserAnswerController::class, 'store']);
 
-        // Подтверждение конкретного студента
-        Route::post('students/{student}/verification', [StudentVerificationController::class, 'verifyStudent']);
+    /*
+    |--------------------------------------------------------------------------
+    | Teacher & Admin Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:teacher,admin')->prefix('management')->group(function () {
+        // Student management
+        Route::prefix('students')->group(function () {
+            Route::get('pending-approval', [StudentVerificationController::class, 'pending']);
+            Route::post('{student}/verify', [StudentVerificationController::class, 'verifyStudent']);
+            Route::get('/', [UserRolesController::class, 'getStudents']);
+        });
 
-        Route::get('/teachers', [UserRolesController::class, 'getTeachers']);
-        Route::get('/students', [UserRolesController::class, 'getStudents']);
+        // Teacher management
+        Route::get('teachers', [UserRolesController::class, 'getTeachers']);
     });
 
-    // Admin-specific routes
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Only Routes
+    |--------------------------------------------------------------------------
+    */
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::get('/admins', [UserRolesController::class, 'getAdmins']);
+        // User management
+        Route::prefix('users')->group(function () {
+            Route::get('admins', [UserRolesController::class, 'getAdmins']);
+            Route::post('staff', [StaffManagementController::class, 'registerStaff']);
+            Route::post('students', [StaffManagementController::class, 'registerVerifiedStudent']);
+            Route::put('{user}', [UserController::class, 'update']);
+            Route::delete('{user}', [UserController::class, 'destroy']);
+        });
 
-        // Регистрация сотрудника (преподавателя/админа)
-        Route::post('/staff/register', [StaffManagementController::class, 'registerStaff']);
-        Route::post('/students/register', [StaffManagementController::class, 'registerVerifiedStudent']);
+        // Content management
+        Route::prefix('content')->group(function () {
+            // Courses
+            Route::prefix('courses')->group(function () {
+                Route::get('/', [CourseController::class, 'index']);
+                Route::post('/', [CourseController::class, 'store']);
+                Route::get('{course}', [CourseController::class, 'show']);
+                Route::put('{course}', [CourseController::class, 'update']);
+                Route::delete('{course}', [CourseController::class, 'destroy']);
+            });
 
-        // --- Курсы ---
-        Route::post('courses', [CourseController::class, 'store']);
-        Route::get('courses', [CourseController::class, 'index']);          // при желании получить список
-        Route::put('courses/{course}', [CourseController::class, 'update']);
-        Route::delete('courses/{course}', [CourseController::class, 'destroy']);
-        Route::get('courses/{course}', [CourseController::class, 'show']);  // новый маршрут
+            // Modules
+            Route::prefix('modules')->group(function () {
+                Route::post('bulk', [ModuleController::class, 'storeBulk']);
+                Route::get('{module}', [ModuleController::class, 'show']);
+                Route::put('{module}', [ModuleController::class, 'update']);
+                Route::delete('{module}', [ModuleController::class, 'destroy']);
+            });
 
-        // --- Модули ---
-        Route::post('modules/bulk', [ModuleController::class, 'storeBulk']);
-        Route::get('modules/{module}', [ModuleController::class, 'show']);
-        Route::put('modules/{module}', [ModuleController::class, 'update']);
-        Route::delete('modules/{module}', [ModuleController::class, 'destroy']);
+            // Topics
+            Route::prefix('topics')->group(function () {
+                Route::post('bulk', [TopicController::class, 'storeBulk']);
+                Route::get('{topic}', [TopicController::class, 'show']);
+                Route::put('{topic}', [TopicController::class, 'update']);
+                Route::delete('{topic}', [TopicController::class, 'destroy']);
 
-        // --- Темы ---
-        Route::post('topics/bulk', [TopicController::class, 'storeBulk']);
-        Route::get('topics/{topic}', [TopicController::class, 'show']);
-        Route::put('topics/{topic}', [TopicController::class, 'update']);
-        Route::delete('topics/{topic}', [TopicController::class, 'destroy']);
+                // Topic contents
+                Route::prefix('{topic}/contents')->group(function () {
+                    Route::get('/', [TopicContentController::class, 'index']);
+                    Route::post('/', [TopicContentController::class, 'store']);
+                    Route::put('{item}', [TopicContentController::class, 'update']);
+                    Route::delete('{item}', [TopicContentController::class, 'destroy']);
+                });
+            });
 
-        // --- Контент тем (лекции и тесты) ---
-        Route::post('topics/{topic}/contents', [TopicContentController::class, 'store']);
-        Route::get('topics/{topic}/contents', [TopicContentController::class, 'index']); // список элементов по порядку
-        Route::put('topics/{topic}/contents/{item}', [TopicContentController::class, 'update']);
-        Route::delete('topics/{topic}/contents/{item}', [TopicContentController::class, 'destroy']);
+            // Lectures
+            Route::prefix('lectures')->group(function () {
+                Route::post('/', [LectureController::class, 'store']);
+                Route::post('upload-doc', [LectureController::class, 'upload']);
+                Route::put('{lecture}', [LectureController::class, 'update']);
+                Route::delete('{lecture}', [LectureController::class, 'destroy']);
+            });
 
-        Route::post('/quizzes', [QuizController::class, 'create']);
+            // Assignments
+            Route::prefix('assignments')->group(function () {
+                Route::post('/', [AssignmentController::class, 'store']);
+                Route::put('{assignment}', [AssignmentController::class, 'update']);
+                Route::delete('{assignment}', [AssignmentController::class, 'destroy']);
+            });
 
-        // --- Лекции ---
-        Route::post('lectures', [LectureController::class, 'store']);
-        Route::put('lectures/{lecture}', [LectureController::class, 'update']);
-        Route::delete('lectures/{lecture}', [LectureController::class, 'destroy']);
-
-        // --- Задания ---
-        Route::post('assignments', [AssignmentController::class, 'store']);
-        Route::put('assignments/{assignment}', [AssignmentController::class, 'update']);
-        Route::delete('assignments/{assignment}', [AssignmentController::class, 'destroy']);
-
-        // --- Тесты ---
-        Route::put('quizzes/{quiz}', [QuizController::class, 'update']);
-        Route::delete('quizzes/{quiz}', [QuizController::class, 'destroy']);
-
-        // --- Пользователи ---
-        Route::put('users/{user}', [UserController::class, 'update']);
-        Route::delete('users/{user}', [UserController::class, 'destroy']);
+            // Quizzes
+            Route::prefix('quizzes')->group(function () {
+                Route::post('/', [QuizController::class, 'create']);
+                Route::put('{quiz}', [QuizController::class, 'update']);
+                Route::delete('{quiz}', [QuizController::class, 'destroy']);
+            });
+        });
     });
 });
-Route::post('/lectures/upload-doc', [LectureController::class, 'upload']);
-
-// Public university list
-Route::get('universities', [UniversityController::class, 'index']);

@@ -15,18 +15,16 @@ class LectureController extends Controller
     public function upload(Request $request)
     {
         $validated = $request->validate([
-            'topic_id' => 'required|exists:topics,id',
-            'title' => 'required|string|max:255',
-            'order_number' => 'required|integer',
+            'lecture_id' => 'required|exists:lectures,id',
             'doc_file' => 'required|file|mimes:doc,docx',
         ]);
 
         try {
             $lecture = $this->uploadService->processDocFile($validated);
             return response()->json([
-                'message' => 'Лекция успешно загружена',
+                'message' => 'Текст успешно добавлен к лекции',
                 'lecture' => $lecture,
-            ], 201);
+            ], 200);
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'Ошибка при обработке файла',
