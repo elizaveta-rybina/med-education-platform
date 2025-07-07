@@ -16,7 +16,7 @@ class Lecture extends Model
 
     public function quizzes()
     {
-        return $this->morphOne(Quiz::class, 'quizable');
+        return $this->morphMany(Quiz::class, 'quizable')->where('quiz_type', 'embedded');
     }
 
     public function topic()
