@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('topic_id')->constrained('topics')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->integer('order_number')->default(0);
             $table->timestampsTz();
         });
     }

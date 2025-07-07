@@ -125,7 +125,8 @@ Route::middleware('auth.api')->group(function () {
             // Lectures
             Route::prefix('lectures')->group(function () {
                 Route::post('/', [LectureController::class, 'store']);
-                Route::post('upload-doc', [LectureController::class, 'upload']);
+                Route::get('{lecture}', [LectureController::class, 'show']);
+                Route::post('{lecture}/upload-doc', [LectureController::class, 'upload']);
                 Route::put('{lecture}', [LectureController::class, 'update']);
                 Route::delete('{lecture}', [LectureController::class, 'destroy']);
             });
