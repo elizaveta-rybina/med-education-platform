@@ -91,6 +91,8 @@ Route::middleware('auth.api')->group(function () {
                 Route::get('{course}', [CourseController::class, 'show']);
                 Route::put('{course}', [CourseController::class, 'update']);
                 Route::delete('{course}', [CourseController::class, 'destroy']);
+                Route::get('{course}/modules', [ModuleController::class, 'getByCourse']);
+
             });
 
             // Modules
@@ -99,6 +101,7 @@ Route::middleware('auth.api')->group(function () {
                 Route::get('{module}', [ModuleController::class, 'show']);
                 Route::put('{module}', [ModuleController::class, 'update']);
                 Route::delete('{module}', [ModuleController::class, 'destroy']);
+
             });
 
             // Topics
