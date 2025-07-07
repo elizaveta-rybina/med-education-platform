@@ -2,6 +2,7 @@
 
 namespace App\Services\Content;
 
+use App\Models\Content\Lecture;
 use App\Models\Content\LectureAttachment;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpWord\IOFactory;
@@ -11,13 +12,11 @@ use ZipArchive;
 
 class LectureUploadService
 {
-    public function __construct(
-        protected LectureService $lectureService,
-    ) {}
-
     public function processDocFile(array $data)
     {
         $file = $data['doc_file'];
+        $lecture = Lecture::findOrFail($data['lecture_id']);
+
         $phpWord = IOFactory::load($file->getRealPath(), 'Word2007');
 
         // Сохраняем как HTML во временный файл
@@ -27,17 +26,17 @@ class LectureUploadService
         $html = file_get_contents($htmlPath);
         unlink($htmlPath);
 
-        // Создаем лекцию с HTML-контентом
-        $lecture = $this->lectureService->create([
-            'topic_id' => $data['topic_id'],
-            'title' => $data['title'],
-            'content' => $html, // Сохраняем чистый HTML
+        // Добавляем новый контент к существующему
+        $newContent = $lecture->content . $html;
+
+        // Обновляем лекцию с новым HTML-контентом
+        $lecture->update([
+            'content' => $newContent,
             'content_type' => 'html',
-            'order_number' => $data['order_number'],
         ]);
 
         // Сохраняем вложения и обновляем ссылки в HTML
-        $htmlWithUpdatedImages = $this->extractAndStoreImages($file, $lecture->id, $html);
+        $htmlWithUpdatedImages = $this->extractAndStoreImages($file, $lecture->id, $newContent);
 
         // Обновляем лекцию с новым HTML, где ссылки на изображения заменены
         $lecture->update([
@@ -80,5 +79,4 @@ class LectureUploadService
 
         return $html;
     }
-
 }

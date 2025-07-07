@@ -13,7 +13,7 @@ return new class extends Migration {
 
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('quiz_type', ['topic_final', 'additional', 'embedded', 'module_final'])->default('topic_final'); // <-- новое
+            $table->enum('quiz_type', ['topic_final', 'additional', 'embedded', 'module_final'])->default('additional');
             $table->integer('max_attempts')->default(1);
             $table->integer('passing_score')->default(80);
             $table->integer('questions_count')->nullable(); // если null — значит все вопросы

@@ -15,6 +15,14 @@ class CourseController extends Controller
         $this->courseService = $courseService;
     }
 
+    // GET /admin/content/courses
+    public function index()
+    {
+        $courses = $this->courseService->getAllCourses();
+        return response()->json($courses);
+    }
+
+    // POST /admin/content/courses
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -25,14 +33,45 @@ class CourseController extends Controller
             'description_modules' => 'nullable|string',
         ]);
 
-        $this->courseService->createCourse($validated);
+        $course = $this->courseService->createCourse($validated);
 
-        return response()->json(['message' => 'Курс создан успешно'], 201);
+        return response()->json([
+            'message' => 'Курс создан успешно',
+            'course' => $course,
+        ], 201);
     }
 
+    // GET /admin/content/courses/{id}
     public function show($id)
     {
-        $details = $this->courseService->getCourseDetails($id);
+        $details = $this->courseService->getCourseDetails((int) $id);
         return response()->json($details);
+    }
+
+    // PUT /admin/content/courses/{id}
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'skills' => 'nullable|array',
+            'skills.*' => 'string',
+            'description_modules' => 'nullable|string',
+        ]);
+
+        $course = $this->courseService->updateCourse($id, $validated);
+
+        return response()->json([
+            'message' => 'Курс обновлён успешно',
+            'course' => $course,
+        ]);
+    }
+
+    // DELETE /admin/content/courses/{id}
+    public function destroy($id)
+    {
+        $this->courseService->deleteCourse($id);
+
+        return response()->json(['message' => 'Курс удалён успешно']);
     }
 }
