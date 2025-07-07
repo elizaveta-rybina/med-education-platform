@@ -1,0 +1,34 @@
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { authApi } from './api'
+import { LoginData } from './model'
+
+type ApiError = {
+	response?: {
+		data?: {
+			message?: string
+		}
+	}
+	message?: string
+}
+
+export const login = createAsyncThunk(
+	'auth/login',
+	async (credentials: LoginData, { rejectWithValue }) => {
+		try {
+			const loginData = await authApi.login(credentials)
+			localStorage.setItem('token', loginData.token)
+
+			const userData = await authApi.getMe()
+			return { loginData, userData }
+		} catch (error) {
+			const err = error as ApiError
+			return rejectWithValue(
+				err.response?.data?.message || err.message || 'Login failed'
+			)
+		}
+	}
+)
+
+// export const logout = createAsyncThunk('auth/logout', async () => {
+// 	await authApi.logout()
+// })
