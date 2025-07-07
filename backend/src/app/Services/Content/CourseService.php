@@ -3,48 +3,91 @@
 namespace App\Services\Content;
 
 use App\Models\Content\Course;
+use Illuminate\Support\Facades\DB;
 
 class CourseService
 {
-    public function createCourse(array $data): Course
+    /**
+     * Получить список всех курсов
+     */
+    public function getAllCourses()
     {
-        return Course::create($data);
+        return Course::all();
     }
 
+    /**
+     * Создать новый курс
+     */
+    public function createCourse(array $data)
+    {
+        return Course::create([
+            'title' => $data['title'],
+            'description' => $data['description'] ?? null,
+            'description_modules' => $data['description_modules'] ?? null,
+            'skills' => $data['skills'] ?? [],
+        ]);
+    }
+
+    /**
+     * Получить подробности курса
+     */
     public function getCourseDetails(int $id): array
     {
-        $course = Course::findOrFail($id);
-        $details = $course->getCourseDetails();
+        try {
+            $course = Course::with(['modules.topics', 'modules.quizzes'])->findOrFail($id);
+            return $this->formatCourseForMainPage($course);
+        } catch (\Exception $e) {
+            \Log::error('Failed to get course details', ['error' => $e->getMessage()]);
+            throw $e; // или вернуть пустую структуру
+        }
+    }
 
+    protected function formatCourseForMainPage($course): array
+    {
         return [
-            'title' => $details->title,
-            'description' => $details->description,
-            'skills' => $details->skills,
-            'description_modules' => $details->description_modules,
-            'modules' => $details->modules->map(function ($module) {
-                // Сначала собираем темы
-                $topics = $module->topics->map(function ($topic) {
-                    return [
-                        'title' => $topic->title
-                    ];
-                })->values();
+            'course_title' => $course->title,
+            'course_description' => $course->description,
+            'modules' => $course->modules->map(function ($module) {
+                $topics = $module->topics->map(fn($topic) => [
+                    'title' => $topic->title
+                ])->values();
 
-                // Ищем итоговый тест
-                $finalQuiz = collect($module->quizzes)->firstWhere('type', 'topic_final');
-
-                if ($finalQuiz) {
-                    $topics->push([
-                        'title' => 'Итоговый тест по модулю'
-                    ]);
+                if (optional($module->quizzes)->firstWhere('quiz_type', 'module_final')) {
+                    $topics->push(['title' => 'Итоговый тест по модулю']);
                 }
 
                 return [
                     'module_title' => $module->title,
                     'module_description' => $module->description,
                     'topics_count' => $module->topics->count(),
-                    'topics' => $topics
+                    'topics' => $topics,
                 ];
-            })
+            }),
         ];
+    }
+
+    /**
+     * Обновить курс
+     */
+    public function updateCourse($id, array $data)
+    {
+        $course = Course::findOrFail($id);
+
+        $course->update([
+            'title' => $data['title'] ?? $course->title,
+            'description' => $data['description'] ?? $course->description,
+            'description_modules' => $data['description_modules'] ?? $course->description_modules,
+            'skills' => $data['skills'] ?? $course->skills,
+        ]);
+
+        return $course;
+    }
+
+    /**
+     * Удалить курс
+     */
+    public function deleteCourse($id)
+    {
+        Course::findOrFail($id)->delete();
     }
 }
