@@ -1,16 +1,16 @@
-import { CourseButton, CourseTitle, NavigationPanel, SkillsGrid } from 'components/courses'
-import AccordionModule from 'components/courses/AccordionModule'
-import { Subtitle } from 'components/shared'
-import CardList from 'components/shared/cardList'
-import { modulesData } from 'data/accordion'
-import { navItems } from 'data/navItems'
-import { courses } from 'data/recommend'
-import { skills } from 'data/skills'
+import { CourseButton, CourseTitle, NavigationPanel, SkillsGrid } from '@/components/courses'
+import AccordionModule from '@/components/courses/AccordionModule'
+import { Subtitle } from '@/components/shared'
+import CardList from '@/components/shared/cardList'
+import { modulesData } from '@/data/accordion'
+import { navItems } from '@/data/navItems'
+import { courses } from '@/data/recommend'
+import { skills } from '@/data/skills'
 import { useState } from 'react'
 
 const CoursePage = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(true);
-  const [isRegistered, setIsRegistered] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(true);
 
   return (
     <div className='my-8 container mx-auto px-4'>

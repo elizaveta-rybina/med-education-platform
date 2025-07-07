@@ -1,24 +1,29 @@
-import { useState } from 'react'
+import { useCourse } from '@/hooks/useCourse'
+import { useEffect, useState } from 'react'
 import { FaBars, FaCheckCircle, FaRegCircle, FaTimes } from 'react-icons/fa'
 
-interface Chapter {
-  id: number;
-  title: string;
-  completed: boolean;
-  hash: string;
-}
-
-interface SideBarProps {
-  chapters: Chapter[];
-  moduleName: string;
-}
-
-const SideBar = ({ chapters, moduleName }: SideBarProps) => {
+const SideBarCourse = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [currentHash, setCurrentHash] = useState('');
+  const { course } = useCourse();
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  // Следим за изменением хэша
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash.substring(1));
+    };
+
+    // Инициализация при монтировании
+    handleHashChange();
+    
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Собираем все главы из всех модулей
+  const allChapters = course.modules.flatMap(module => module.chapters);
 
   if (isCollapsed) {
     return (
@@ -32,9 +37,9 @@ const SideBar = ({ chapters, moduleName }: SideBarProps) => {
   }
 
   return (
-    <div className="w-72 bg-white border-r border-gray-200 flex flex-col h-full">
+    <div className="w-72 bg-white h-max border-r border-gray-200 flex flex-col h-full border-t-1">
       <div className="flex justify-between items-center p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-800">{moduleName}</h2>
+        <h2 className="text-lg font-semibold text-gray-800">{course.title}</h2>
         <button 
           onClick={toggleSidebar}
           className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -47,20 +52,28 @@ const SideBar = ({ chapters, moduleName }: SideBarProps) => {
       <div className="flex-1 overflow-y-auto">
         <nav>
           <ul className="divide-y divide-gray-200">
-            {chapters.map((chapter) => (
+            {allChapters.map((chapter) => (
               <li key={chapter.id}>
                 <a
                   href={`#${chapter.hash}`}
-                  className="w-full flex items-start p-4 hover:bg-gray-50 text-left"
+                  className={`w-full flex items-start p-4 hover:bg-gray-50 text-left transition-colors ${
+                    chapter.isRead ? 'bg-green-50' : ''
+                  } ${
+                    currentHash === chapter.hash ? 'bg-gray-100' : ''
+                  }`}
                 >
                   <span className="mt-0.5 mr-3 flex-shrink-0">
-                    {chapter.completed ? (
-                      <FaCheckCircle className="text-purple-500 w-5 h-5" />
+                    {chapter.isRead ? (
+                      <FaCheckCircle className="text-green-500 w-5 h-5" />
                     ) : (
                       <FaRegCircle className="text-gray-300 w-5 h-5" />
                     )}
                   </span>
-                  <span className={`text-sm ${chapter.completed ? 'text-gray-500' : 'text-gray-800'}`}>
+                  <span className={`text-sm ${
+                    chapter.isRead ? 'text-gray-500' : 'text-gray-800'
+                  } ${
+                    currentHash === chapter.hash ? 'font-medium' : ''
+                  }`}>
                     {chapter.title}
                   </span>
                 </a>
@@ -73,4 +86,4 @@ const SideBar = ({ chapters, moduleName }: SideBarProps) => {
   );
 };
 
-export default SideBar;
+export default SideBarCourse;

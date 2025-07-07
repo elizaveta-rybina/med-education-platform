@@ -1,8 +1,8 @@
 import CoursePage from './CoursePage'
 import Physiology from './Courses/Physiology'
 import HomePage from './HomePage'
-import NotFoundPage from './NotFoundPage'
+import NotFound from './OtherPage/NotFound'
 import RegistrationPage from './RegistrationPage'
 
-export { CoursePage, HomePage, NotFoundPage, Physiology, RegistrationPage }
+export { CoursePage, HomePage, NotFound, Physiology, RegistrationPage }
 
