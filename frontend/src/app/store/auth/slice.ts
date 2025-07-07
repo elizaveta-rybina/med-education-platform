@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { LoginResponse, User } from './model'
-import { login } from './thunks'
+import { fetchUser, login } from './thunks'
 
 interface AuthState {
 	user: User | null
@@ -39,7 +39,7 @@ const authSlice = createSlice({
 			})
 			.addCase(login.fulfilled, (state, action) => {
 				state.status = 'succeeded'
-				state.user = action.payload.userData.user
+				state.user = action.payload.userData
 				state.authToken = action.payload.loginData
 				state.error = null
 			})
@@ -47,11 +47,21 @@ const authSlice = createSlice({
 				state.status = 'failed'
 				state.error = (action.payload as string) || 'Login failed'
 			})
-		// .addCase(logout.fulfilled, state => {
-		// 	state.user = null
-		// 	state.authToken = null
-		// 	state.status = 'idle'
-		// })
+
+			.addCase(fetchUser.pending, state => {
+				state.status = 'loading'
+				state.error = null
+			})
+			.addCase(fetchUser.fulfilled, (state, action) => {
+				state.status = 'succeeded'
+				state.user = action.payload
+				state.error = null
+			})
+			.addCase(fetchUser.rejected, (state, action) => {
+				state.status = 'failed'
+				state.error = (action.payload as string) || 'Fetch user failed'
+				state.user = null
+			})
 	}
 })
 

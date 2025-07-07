@@ -19,7 +19,7 @@ export const authApi = {
 	},
 
 	getMe: async (): Promise<AuthMeResponse> => {
-		const response = await baseApi.get<AuthMeResponse>('auth/me')
+		const response = await baseApi.get<AuthMeResponse>('/auth/me')
 		return response.data
 	}
 }
