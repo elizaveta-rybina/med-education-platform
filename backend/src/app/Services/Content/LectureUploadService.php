@@ -12,11 +12,11 @@ use ZipArchive;
 
 class LectureUploadService
 {
-    public function processDocFile(array $data)
+    public function processDocFile(Lecture $lecture, \Illuminate\Http\UploadedFile $file)
     {
-        $file = $data['doc_file'];
-        $lecture = Lecture::findOrFail($data['lecture_id']);
-
+        if (!$file->isValid()) {
+            throw new \RuntimeException('Файл не был загружен корректно');
+        }
         $phpWord = IOFactory::load($file->getRealPath(), 'Word2007');
 
         // Сохраняем как HTML во временный файл
@@ -26,21 +26,21 @@ class LectureUploadService
         $html = file_get_contents($htmlPath);
         unlink($htmlPath);
 
-        // Добавляем новый контент к существующему
+        // Добавляем HTML к существующему контенту
         $newContent = $lecture->content . $html;
 
-        // Обновляем лекцию с новым HTML-контентом
+        // Обновляем лекцию
         $lecture->update([
             'content' => $newContent,
             'content_type' => 'html',
         ]);
 
-        // Сохраняем вложения и обновляем ссылки в HTML
+        // Обработка и сохранение изображений
         $htmlWithUpdatedImages = $this->extractAndStoreImages($file, $lecture->id, $newContent);
 
-        // Обновляем лекцию с новым HTML, где ссылки на изображения заменены
+        // Обновляем контент ещё раз, уже с новыми ссылками
         $lecture->update([
-            'content' => $htmlWithUpdatedImages
+            'content' => $htmlWithUpdatedImages,
         ]);
 
         return $lecture;
