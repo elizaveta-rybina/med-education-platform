@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            $table->integer('attempt_number')->default(1);  // Номер попытки
             $table->enum('question_type', ['single_choice', 'multiple_choice', 'open_answer', 'open_answer_reviewed', 'matching', 'ordering', 'open_schema', 'matching_schema']);
             $table->string('match_key')->nullable();     // Для ячеек таблиц (matching_schema)
             $table->text('answer_text')->nullable();     // Текстовый ответ

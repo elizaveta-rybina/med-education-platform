@@ -15,17 +15,28 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'auth.api' => \App\Http\Middleware\AuthenticateWithJWT::class,
+            'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
+
+        $middleware->group('api', [
+            //\App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
     })
+    ->withProviders([
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (UnauthorizedHttpException $e, Request $request) {
-            if ($request->is('api/*')) {
-                return response()->json([
-                    'status' => 'false',
-                    'message' => 'Unauthorized access. Please check your token.'
-                ], 401);
-            }
-        });
+//        $exceptions->render(function (UnauthorizedHttpException $e, Request $request) {
+//            if ($request->is('api/*')) {
+//                return response()->json([
+//                    'status' => 'false',
+//                    'message' => 'Unauthorized access. Please check your token.'
+//                ], 401);
+//            }
+//        });
     })
     ->create();

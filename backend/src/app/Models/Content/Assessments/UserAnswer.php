@@ -13,6 +13,7 @@ class UserAnswer extends Model
         'user_id',
         'question_id',
         'question_type',
+        'attempt_number',
         'match_key',
         'answer_text',
         'answer_ids',
