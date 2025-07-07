@@ -22,11 +22,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [RegistrationController::class, 'register']);
 Route::post('refresh-token', [AuthController::class, 'refresh']);
-Route::post('/refresh', [AuthController::class, 'refresh']);
 Route::get('courses/{course}', [CourseController::class, 'show']); // при желании получить конкретный курс
 
 // Authenticated user routes
-Route::middleware('auth:api')->group(function () {
+Route::middleware('auth.api')->group(function () {
     Route::post('quizzes/{quiz}/submit', [UserAnswerController::class, 'store']);
     Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);

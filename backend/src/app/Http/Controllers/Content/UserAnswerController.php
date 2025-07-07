@@ -54,14 +54,14 @@ class UserAnswerController extends Controller
 
             $quizId = $validated['quiz_id'];
 
-//            // Получаем номер новой попытки
-//            $attemptNumber = $this->answerService->getNextAttemptNumber($userId, $quizId);
-//
-//            // Сохраняем ответы
-//            $this->answerService->saveUserAnswers($userId, $validated['answers']);
-//
-//            // Пересчитываем и сохраняем результат
-//            $result = $this->answerService->calculateAndSaveResult($userId, $quizId, $attemptNumber);
+            // Получаем номер новой попытки
+            $attemptNumber = $this->answerService->getNextAttemptNumber($userId, $quizId);
+
+            // Сохраняем ответы
+            $this->answerService->saveUserAnswers($userId, $validated['answers'], $attemptNumber);
+
+            // Пересчитываем и сохраняем результат
+            $result = $this->answerService->calculateAndSaveResult($userId, $quizId, $attemptNumber);
 
             return response()->json([
                 'message' => 'Ответы успешно сохранены'
