@@ -59,7 +59,7 @@ class UserFactory extends Factory
                 'is_verified' => false, // неподтвержденный студент
             ];
         })->afterCreating(function (User $user) {
-            $user->roles()->attach(Role::where('name', 'unverified_student')->first()); // Привязка роли
+            $user->roles()->attach(Role::where('name', 'student')->first()); // Привязка роли
             $user->education()->create(UsersEducation::factory()->student()->make()->toArray()); // Создание записи об образовании
         });
     }
