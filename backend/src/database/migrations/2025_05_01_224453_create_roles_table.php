@@ -18,7 +18,6 @@ return new class extends Migration {
             ['name' => 'admin', 'description' => 'Администратор системы'],
             ['name' => 'teacher', 'description' => 'Преподаватель'],
             ['name' => 'student', 'description' => 'Студент'],
-            ['name' => 'unverified_student', 'description' => 'Неподтвержденный студент'],
             ['name' => 'user', 'description' => 'Обычный пользователь'],
         ]);
     }

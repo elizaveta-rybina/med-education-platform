@@ -2,22 +2,26 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\RedisTokenService;
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthenticateWithJWT
 {
-    public function handle(Request $request, Closure $next): Response
+    protected RedisTokenService $redisTokenService;
+
+    public function __construct(RedisTokenService $redisTokenService)
     {
-        try {
-            $user = JWTAuth::parseToken()->authenticate();
-            if (!$user) {
-                return response()->json(['error' => 'Unauthorized'], 401);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        $this->redisTokenService = $redisTokenService;
+    }
+
+    public function handle(Request $request, Closure $next)
+    {
+        $token = JWTAuth::getToken();
+
+        if (!$token || !$this->redisTokenService->hasToken($token->get())) {
+            return response()->json(['error' => 'Unauthorized or token revoked'], 401);
         }
 
         return $next($request);
