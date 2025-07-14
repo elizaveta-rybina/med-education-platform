@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\Content\Assessments;
+namespace App\Models\Content\Assessments\Schema;
 
+use App\Models\Content\Assessments\Question;
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionSchemaRow extends Model
+class QuestionSchemaColumn extends Model
 {
     protected $fillable = ['question_id', 'label', 'order'];
 
@@ -15,6 +16,6 @@ class QuestionSchemaRow extends Model
 
     public function cells()
     {
-        return $this->hasMany(QuestionSchemaCell::class, 'row_id');
+        return $this->hasMany(QuestionSchemaCell::class, 'column_id');
     }
 }

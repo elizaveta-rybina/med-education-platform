@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\Content\Assessments;
+namespace App\Models\Content\Assessments\Schema;
 
+use App\Models\Content\Assessments\Question;
 use Illuminate\Database\Eloquent\Model;
 
 class QuestionSchemaCell extends Model
