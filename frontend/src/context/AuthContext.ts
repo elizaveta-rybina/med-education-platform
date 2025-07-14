@@ -1,28 +1,34 @@
-import type { LoginType } from '@/app/store/auth/slice'
+import { LoginData, LoginResponse, User } from '@/app/store/auth/model'
 import { createContext, useContext } from 'react'
 
+/**
+ * Interface for AuthContext values
+ */
 interface AuthContextType {
-	user: string | null
-	token: string
+	user: User | null
+	authToken: LoginResponse | null
 	rememberedEmail: string | null
-	status: 'idle' | 'loading' | 'succeeded' | 'failed' // Добавляем статус
-	error: string | null // Добавляем ошибку
-	login(data: LoginType): Promise<void>
-	logout(): Promise<void>
-	setRememberedEmail(email: string): void
-	clearError(): void // Добавляем очистку ошибки
+	status: 'idle' | 'loading' | 'succeeded' | 'failed'
+	error: string | null
+	login: (data: LoginData) => Promise<void>
+	logout: () => Promise<void>
+	setRememberedEmail: (email: string) => void
+	clearError: () => void
 }
 
-export const AuthContext = createContext<AuthContextType>({
-	user: null,
-	token: '',
-	rememberedEmail: null,
-	status: 'idle', // Дефолтное значение
-	error: null, // Дефолтное значение
-	login: async () => {},
-	logout: async () => {},
-	setRememberedEmail: () => {},
-	clearError: () => {} // Добавляем функцию
-})
+/**
+ * Auth context with default undefined value
+ */
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const useAuth = () => useContext(AuthContext)
+/**
+ * Hook to access auth context
+ * @throws Error if used outside AuthProvider
+ */
+export const useAuth = () => {
+	const context = useContext(AuthContext)
+	if (!context) {
+		throw new Error('useAuth must be used within an AuthProvider')
+	}
+	return context
+}

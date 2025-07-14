@@ -1,48 +1,69 @@
+import { clearAuthToken, setAuthToken } from '@/app/api/client'
+import { ApiError } from '@/app/api/errorHandler'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { authApi } from './api'
 import { LoginData } from './model'
 
-type ApiError = {
-	response?: {
-		data?: {
-			message?: string
-		}
-	}
-	message?: string
-}
-
+/**
+ * Logs in a user and fetches user data
+ * @param credentials - Login credentials
+ * @returns Object containing login data and user data
+ */
 export const login = createAsyncThunk(
 	'auth/login',
 	async (credentials: LoginData, { rejectWithValue }) => {
 		try {
 			const loginData = await authApi.login(credentials)
-			localStorage.setItem('token', loginData.token)
-
+			setAuthToken(loginData.token)
 			const userData = await authApi.getMe()
 			return { loginData, userData }
 		} catch (error) {
-			const err = error as ApiError
-			return rejectWithValue(
-				err.response?.data?.message || err.message || 'Login failed'
-			)
+			if (error instanceof ApiError) {
+				return rejectWithValue(error.message)
+			}
+			return rejectWithValue('Login failed')
 		}
 	}
 )
 
+/**
+ * Fetches authenticated user data
+ * @returns User data
+ */
 export const fetchUser = createAsyncThunk(
 	'auth/fetchUser',
 	async (_, { rejectWithValue }) => {
 		try {
 			const token = localStorage.getItem('token')
-			if (!token) return rejectWithValue('No token found')
-
+			if (!token) {
+				throw new ApiError('No token found', 401, 'Unauthorized')
+			}
 			const userData = await authApi.getMe()
 			return userData
 		} catch (error) {
-			const err = error as ApiError
-			return rejectWithValue(
-				err.response?.data?.message || err.message || 'Error fetching user'
-			)
+			if (error instanceof ApiError) {
+				return rejectWithValue(error.message)
+			}
+			return rejectWithValue('Error fetching user')
+		}
+	}
+)
+
+/**
+ * Logs out the user
+ * @returns Void
+ */
+export const logout = createAsyncThunk(
+	'auth/logout',
+	async (_, { rejectWithValue }) => {
+		try {
+			await authApi.logout()
+			clearAuthToken()
+		} catch (error) {
+			if (error instanceof ApiError) {
+				return rejectWithValue(error.message)
+			}
+			return rejectWithValue('Logout failed')
 		}
 	}
 )
