@@ -2,6 +2,9 @@
 
 namespace App\Models\Content\Assessments;
 
+use App\Models\Content\Assessments\Schema\QuestionSchemaCell;
+use App\Models\Content\Assessments\Schema\QuestionSchemaColumn;
+use App\Models\Content\Assessments\Schema\QuestionSchemaRow;
 use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
