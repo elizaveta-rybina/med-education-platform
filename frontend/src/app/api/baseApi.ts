@@ -1,18 +1,49 @@
-// src/shared/api/baseApi.ts
-import axios from 'axios'
+import { handleApiError } from '@/app/api/errorHandler'
+import axios, {
+	AxiosError,
+	AxiosInstance,
+	AxiosResponse,
+	InternalAxiosRequestConfig
+} from 'axios'
 
-export const baseApi = axios.create({
-	baseURL: 'http://localhost:8000/api',
-	withCredentials: true,
-	headers: {
-		'Content-Type': 'application/json'
-	}
-})
+// Base URL from environment variable or fallback
+const BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
 
-baseApi.interceptors.request.use(config => {
-	const token = localStorage.getItem('token')
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`
-	}
-	return config
-})
+/**
+ * Creates an Axios instance with default configuration and interceptors
+ * @returns Configured Axios instance
+ */
+export const createBaseApi = (): AxiosInstance => {
+	const instance = axios.create({
+		baseURL: BASE_URL,
+		withCredentials: true,
+		timeout: 10000,
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		}
+	})
+
+	// Request interceptor to add auth token
+	instance.interceptors.request.use(
+		(config: InternalAxiosRequestConfig) => {
+			const token = localStorage.getItem('token')
+			if (token && config.headers) {
+				config.headers.Authorization = `Bearer ${token}`
+			}
+			return config
+		},
+		(error: AxiosError) => Promise.reject(error)
+	)
+
+	// Response interceptor for error handling
+	instance.interceptors.response.use(
+		(response: AxiosResponse) => response,
+		(error: AxiosError) => handleApiError(error)
+	)
+
+	return instance
+}
+
+export const baseApi = createBaseApi()

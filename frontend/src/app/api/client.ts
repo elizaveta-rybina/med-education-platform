@@ -1,62 +1,108 @@
-// api/client.ts
+import { handleApiError } from '@/app/api/errorHandler'
 import axios, {
 	AxiosError,
 	AxiosInstance,
-	AxiosRequestHeaders,
 	AxiosResponse,
 	InternalAxiosRequestConfig
 } from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// Тип для данных ошибки API
+// Interface for API error data
 interface ApiErrorData {
-  error?: string;
-  message?: string;
-  statusCode?: number;
+	error?: string
+	message?: string
+	statusCode?: number
 }
 
-let authToken: string | null = null;
+// Interface for API client configuration
+interface ApiClientConfig {
+	baseURL: string
+	timeout?: number
+	maxRetries?: number
+}
 
-const createApiClient = (baseURL: string): AxiosInstance => {
-  const instance = axios.create({
-    baseURL,
-    timeout: 10000,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    } as AxiosRequestHeaders,
-  });
+/**
+ * Creates an Axios instance with advanced configuration and interceptors
+ * @param config - Configuration for the Axios instance
+ * @returns Configured Axios instance
+ */
+const createApiClient = ({
+	baseURL,
+	timeout = 10000,
+	maxRetries = 2
+}: ApiClientConfig): AxiosInstance => {
+	const instance = axios.create({
+		baseURL,
+		timeout,
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		}
+	})
 
-  // Интерцептор запросов
-  instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const newConfig = { ...config };
-    if (authToken && newConfig.headers) {
-      newConfig.headers.Authorization = `Bearer ${authToken}`;
-    }
-    return newConfig;
-  });
+	// Request interceptor to add auth token
+	instance.interceptors.request.use(
+		(config: InternalAxiosRequestConfig) => {
+			const token = localStorage.getItem('token')
+			if (token && config.headers) {
+				config.headers.Authorization = `Bearer ${token}`
+			}
+			return config
+		},
+		(error: AxiosError) => Promise.reject(error)
+	)
 
-  // Интерцептор ответов
-  instance.interceptors.response.use(
-    (response: AxiosResponse) => response,
-    (error: AxiosError<ApiErrorData>) => {
-      if (error.response?.status === 401) {
-        console.error('Auth error:', error.response.data);
-      }
-      return Promise.reject(error);
-    }
-  );
+	// Response interceptor with retry logic
+	instance.interceptors.response.use(
+		(response: AxiosResponse) => response,
+		async (error: AxiosError<ApiErrorData>) => {
+			const config = error.config as InternalAxiosRequestConfig & {
+				retryCount?: number
+			}
+			if (!config) return handleApiError(error)
 
-  return instance;
-};
+			// Retry logic for 429 (Too Many Requests) or 503 (Service Unavailable)
+			const shouldRetry = [429, 503].includes(error.response?.status || 0)
+			const retryCount = config.retryCount || 0
 
-export const apiClient = createApiClient(API_BASE_URL);
+			if (shouldRetry && retryCount < maxRetries) {
+				config.retryCount = retryCount + 1
+				const delay = Math.pow(2, retryCount) * 1000 // Exponential backoff
+				await new Promise(resolve => setTimeout(resolve, delay))
+				return instance(config)
+			}
 
+			// Handle 401 Unauthorized
+			if (error.response?.status === 401) {
+				localStorage.removeItem('token')
+				// Optionally redirect to login page
+				if (typeof window !== 'undefined') {
+					window.location.href = '/login'
+				}
+			}
+
+			return handleApiError(error)
+		}
+	)
+
+	return instance
+}
+
+// Initialize API client with environment variable
+const API_BASE_URL =
+	import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
+export const apiClient = createApiClient({ baseURL: API_BASE_URL })
+
+/**
+ * Sets the auth token in localStorage
+ * @param token - Authentication token
+ */
 export const setAuthToken = (token: string) => {
-  authToken = token;
-};
+	localStorage.setItem('token', token)
+}
 
+/**
+ * Clears the auth token from localStorage
+ */
 export const clearAuthToken = () => {
-  authToken = null;
-};
+	localStorage.removeItem('token')
+}
