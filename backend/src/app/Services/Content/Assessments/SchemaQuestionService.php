@@ -3,9 +3,9 @@
 namespace App\Services\Content\Assessments;
 
 use App\Models\Content\Assessments\Question;
-use App\Models\Content\Assessments\QuestionSchemaRow;
-use App\Models\Content\Assessments\QuestionSchemaColumn;
-use App\Models\Content\Assessments\QuestionSchemaCell;
+use App\Models\Content\Assessments\Schema\QuestionSchemaCell;
+use App\Models\Content\Assessments\Schema\QuestionSchemaColumn;
+use App\Models\Content\Assessments\Schema\QuestionSchemaRow;
 
 class SchemaQuestionService
 {

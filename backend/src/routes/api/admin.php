@@ -2,15 +2,14 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\StudentVerificationController;
-use App\Http\Controllers\Content\{
-    AssignmentController,
+use App\Http\Controllers\Content\{AssignmentController,
     CourseController,
     LectureController,
     ModuleController,
+    QuestionController,
     QuizController,
     TopicContentController,
-    TopicController
-};
+    TopicController};
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRolesController;
 use Illuminate\Support\Facades\Route;
@@ -35,7 +34,6 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::put('{course}', [CourseController::class, 'update']);
             Route::delete('{course}', [CourseController::class, 'destroy']);
             Route::get('{course}/modules', [ModuleController::class, 'getByCourse']);
-
         });
 
         // Modules
@@ -45,8 +43,6 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::put('{module}', [ModuleController::class, 'update']);
             Route::delete('{module}', [ModuleController::class, 'destroy']);
             Route::get('{module}/topics', [TopicController::class, 'indexByModule']);
-
-
         });
 
         // Topics
@@ -83,9 +79,15 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
 
         // Quizzes
         Route::prefix('quizzes')->group(function () {
-            Route::post('/', [QuizController::class, 'create']);
-            Route::put('{quiz}', [QuizController::class, 'update']);
-            Route::delete('{quiz}', [QuizController::class, 'destroy']);
+            Route::post('/', [QuizController::class, 'store']);
+            Route::put('{id}', [QuizController::class, 'update']);
+            Route::delete('{id}', [QuizController::class, 'destroy']);
+
+            Route::prefix('{quizId}/questions')->group(function () {
+                Route::post('/', [QuestionController::class, 'store']);
+                Route::put('{id}', [QuestionController::class, 'update']);
+                Route::delete('{id}', [QuestionController::class, 'destroy']);
+            });
         });
     });
 });
