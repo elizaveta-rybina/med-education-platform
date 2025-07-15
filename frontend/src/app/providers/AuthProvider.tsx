@@ -11,7 +11,7 @@ import { fetchUser, login, logout } from '@/app/store/auth/thunks'
 import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { AuthContext } from '@/context/AuthContext'
 import { ReactNode, useCallback, useEffect, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 /**
  * Interface for AuthContext value
@@ -41,6 +41,7 @@ interface AuthProviderProps {
 const AuthProvider = ({ children }: AuthProviderProps) => {
 	const dispatch = useAppDispatch()
 	const navigate = useNavigate()
+	const location = useLocation()
 	const { user, authToken, rememberedEmail, status, error } =
 		useAppSelector(selectAuth)
 
@@ -58,6 +59,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 				} catch (err) {
 					console.error('Failed to initialize auth:', err)
 					clearAuthToken()
+					if (!['/signin', '/signup'].includes(location.pathname)) {
+						navigate('/signin')
+					}
 				}
 			}
 
@@ -67,7 +71,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 		}
 
 		initializeAuth()
-	}, [dispatch, user, rememberedEmail])
+	}, [dispatch, user, rememberedEmail, navigate, location.pathname])
 
 	/**
 	 * Handle user login
@@ -100,7 +104,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			await dispatch(logout()).unwrap()
 			dispatch(resetAuthState())
 			clearAuthToken()
-			navigate('/login')
+			navigate('/signin')
 		} catch (err) {
 			const errorMessage =
 				err instanceof ApiError ? err.message : 'Failed to logout'

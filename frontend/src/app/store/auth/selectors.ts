@@ -55,3 +55,11 @@ export const selectRememberedEmail = createSelector(
 	[selectAuth],
 	(auth): string | null => auth.rememberedEmail
 )
+
+/**
+ * Selects the registered courses
+ */
+export const selectRegisteredCourses = createSelector(
+	[selectUser],
+	(user): number[] | null => user?.registeredCourses || null
+)

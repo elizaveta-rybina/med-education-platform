@@ -80,7 +80,7 @@ export default function SignInForm() {
 						</p>
 					</div>
 					<div>
-						<div className='grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5'>
+						{/* <div className='grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5'>
 							<button
 								type='button'
 								className='inline-flex items-center justify-center gap-3 py-2 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-5 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10'
@@ -124,8 +124,8 @@ export default function SignInForm() {
 								</svg>
 								Войти через VK ID
 							</button>
-						</div>
-						<div className='relative py-3 sm:py-5'>
+						</div> */}
+						{/* <div className='relative py-3 sm:py-5'>
 							<div className='absolute inset-0 flex items-center'>
 								<div className='w-full border-t border-gray-200 dark:border-gray-800'></div>
 							</div>
@@ -134,7 +134,7 @@ export default function SignInForm() {
 									Или
 								</span>
 							</div>
-						</div>
+						</div> */}
 						<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
 							<div>
 								<Label>
