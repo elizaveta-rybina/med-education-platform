@@ -18,11 +18,12 @@ export const selectCourses = createSelector(
 )
 
 /**
- * Выбирает выбранный курс
+ * Выбирает курс по ID
  */
-export const selectSelectedCourse = createSelector(
-	[selectCoursesState],
-	(coursesState): Course | null => coursesState.selectedCourse
+export const selectCourseById = createSelector(
+	[selectCoursesState, (_: RootState, courseId: number) => courseId],
+	(coursesState, courseId): Course | null =>
+		coursesState.courses.find(course => course.id === courseId) || null
 )
 
 /**

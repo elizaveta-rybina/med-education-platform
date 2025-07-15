@@ -1,11 +1,13 @@
-import { ReactNode } from 'react'
+import { store } from '@/app/store/mainStore'
+import { ThemeProvider } from '@/context/ThemeContext'
 import { Provider } from 'react-redux'
-import { store } from '../store/mainStore'
 
-type Props = {
-	children: ReactNode
-}
-
-export const MainProviders = ({ children }: Props) => {
-	return <Provider store={store}>{children}</Provider>
+export const MainProviders: React.FC<{ children: React.ReactNode }> = ({
+	children
+}) => {
+	return (
+		<Provider store={store}>
+			<ThemeProvider>{children}</ThemeProvider>
+		</Provider>
+	)
 }

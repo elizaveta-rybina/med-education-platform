@@ -3,8 +3,7 @@ import { handleApiError } from '@/app/api/errorHandler'
 import {
 	Course,
 	CourseRequest,
-	CourseResponse,
-	DeleteCourseResponse
+	CourseResponse
 } from '@/app/store/courses/model/course-types'
 
 /**
@@ -12,24 +11,7 @@ import {
  */
 export const coursesApi = {
 	/**
-	 * Создает новый курс
-	 * @param data - Данные курса
-	 * @returns Ответ с созданным курсом
-	 */
-	createCourse: async (data: CourseRequest): Promise<CourseResponse> => {
-		try {
-			const response = await baseApi.post<CourseResponse>(
-				'/admin/content/courses',
-				data
-			)
-			return response.data
-		} catch (error) {
-			return handleApiError(error)
-		}
-	},
-
-	/**
-	 * Получает список всех курсов
+	 * Получает все курсы
 	 * @returns Список курсов
 	 */
 	getCourses: async (): Promise<Course[]> => {
@@ -56,10 +38,27 @@ export const coursesApi = {
 	},
 
 	/**
-	 * Обновляет данные курса
+	 * Создает новый курс
+	 * @param data - Данные для создания курса
+	 * @returns Созданный курс
+	 */
+	createCourse: async (data: CourseRequest): Promise<CourseResponse> => {
+		try {
+			const response = await baseApi.post<CourseResponse>(
+				'/admin/content/courses',
+				data
+			)
+			return response.data
+		} catch (error) {
+			return handleApiError(error)
+		}
+	},
+
+	/**
+	 * Обновляет курс
 	 * @param id - ID курса
-	 * @param data - Обновленные данные курса
-	 * @returns Ответ с обновленным курсом
+	 * @param data - Данные для обновления
+	 * @returns Обновленный курс
 	 */
 	updateCourse: async (
 		id: number,
@@ -79,12 +78,25 @@ export const coursesApi = {
 	/**
 	 * Удаляет курс
 	 * @param id - ID курса
-	 * @returns Ответ об успешном удалении
+	 * @returns Void
 	 */
-	deleteCourse: async (id: number): Promise<DeleteCourseResponse> => {
+	deleteCourse: async (id: number): Promise<void> => {
 		try {
-			const response = await baseApi.delete<DeleteCourseResponse>(
-				`/admin/content/courses/${id}`
+			await baseApi.delete(`/admin/content/courses/${id}`)
+		} catch (error) {
+			return handleApiError(error)
+		}
+	},
+
+	/**
+	 * Регистрирует пользователя на курс
+	 * @param id - ID курса
+	 * @returns Ответ о регистрации
+	 */
+	registerForCourse: async (id: number): Promise<{ message: string }> => {
+		try {
+			const response = await baseApi.post<{ message: string }>(
+				`/admin/content/courses/${id}/register`
 			)
 			return response.data
 		} catch (error) {

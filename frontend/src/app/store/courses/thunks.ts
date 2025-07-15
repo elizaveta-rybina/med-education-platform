@@ -102,3 +102,23 @@ export const deleteCourse = createAsyncThunk(
 		}
 	}
 )
+
+/**
+ * Регистрирует пользователя на курс
+ * @param courseId - ID курса
+ * @returns Ответ о регистрации
+ */
+export const registerForCourse = createAsyncThunk(
+	'courses/registerForCourse',
+	async (courseId: number, { rejectWithValue }) => {
+		try {
+			const response = await coursesApi.registerForCourse(courseId)
+			return response
+		} catch (error) {
+			if (error instanceof ApiError) {
+				return rejectWithValue(error.message)
+			}
+			return rejectWithValue('Не удалось зарегистрироваться на курс')
+		}
+	}
+)
