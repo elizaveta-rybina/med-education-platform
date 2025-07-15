@@ -76,13 +76,14 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::put('{assignment}', [AssignmentController::class, 'update']);
             Route::delete('{assignment}', [AssignmentController::class, 'destroy']);
         });
-
+        Route::put('user-answers/{userAnswerId}/score', [\App\Http\Controllers\Content\AdminUserAnswerController::class, 'updateScore'])->middleware('auth:api', 'admin');
         // Quizzes
         Route::prefix('quizzes')->group(function () {
             Route::post('/', [QuizController::class, 'store']);
             Route::put('{id}', [QuizController::class, 'update']);
             Route::delete('{id}', [QuizController::class, 'destroy']);
-
+            Route::post('{quizId}/attempts', [\App\Http\Controllers\Content\QuizAttemptController::class, 'start'])->middleware('auth:api');
+            Route::post('attempts/{quizAttemptId}/answers', [\App\Http\Controllers\Content\UserAnswerController::class, 'submit']);
             Route::prefix('{quizId}/questions')->group(function () {
                 Route::post('/', [QuestionController::class, 'store']);
                 Route::put('{id}', [QuestionController::class, 'update']);

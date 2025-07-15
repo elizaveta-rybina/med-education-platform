@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Content\Question;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class StoreQuestionRequest extends FormRequest
 {
@@ -21,5 +23,16 @@ class StoreQuestionRequest extends FormRequest
             'explanation' => 'nullable|string',
             'answers' => 'nullable|array',
         ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        Log::error('StoreQuestionRequest: Validation failed', [
+            'errors' => $validator->errors()->toArray(),
+            'request' => $this->all(),
+        ]);
+        throw new ValidationException($validator, response()->json([
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

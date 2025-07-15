@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Content;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Content\Answer\StoreUserAnswerRequest;
-use App\Http\Resources\UserAnswerResource;
-use App\Models\Content\Assessments\QuizAttempt;
+use App\Http\Requests\Content\UserAnswer\UserAnswerRequest;
 use App\Services\Content\Assessments\UserAnswerService;
+use Illuminate\Support\Facades\Log;
 
 class UserAnswerController extends Controller
 {
@@ -17,11 +16,15 @@ class UserAnswerController extends Controller
         $this->userAnswerService = $userAnswerService;
     }
 
-    public function store(StoreUserAnswerRequest $request, int $quizAttemptId, int $questionId)
+    public function submit(UserAnswerRequest $request)
     {
-        QuizAttempt::findOrFail($quizAttemptId);
-        $data = $request->validated();
-        $userAnswers = $this->userAnswerService->create($data['answers'], $quizAttemptId, $questionId, $data['question_type']);
-        return UserAnswerResource::collection($userAnswers);
+        try {
+            $data = $request->validated();
+            $this->userAnswerService->submitAnswers($data['quiz_attempt_id'], $data['answers']);
+            return response()->json(['message' => 'Answers submitted successfully']);
+        } catch (\Exception $e) {
+            Log::error('UserAnswerController: Error in submit method', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Server error'], 500);
+        }
     }
 }

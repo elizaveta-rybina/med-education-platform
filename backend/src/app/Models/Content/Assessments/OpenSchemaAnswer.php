@@ -4,7 +4,7 @@ namespace App\Models\Content\Assessments;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MatchingAnswer extends Model
+class OpenSchemaAnswer extends Model
 {
-    protected $fillable = ['match_key', 'match_value'];
+    protected $fillable = ['schema_data', 'description'];
 }
