@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -30,13 +31,13 @@ return Application::configure(basePath: dirname(__DIR__))
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
     ])
     ->withExceptions(function (Exceptions $exceptions) {
-//        $exceptions->render(function (UnauthorizedHttpException $e, Request $request) {
-//            if ($request->is('api/*')) {
-//                return response()->json([
-//                    'status' => 'false',
-//                    'message' => 'Unauthorized access. Please check your token.'
-//                ], 401);
-//            }
-//        });
+        $exceptions->render(function (ModelNotFoundException $e, $request) {
+            \Illuminate\Support\Facades\Log::error('ModelNotFoundException in QuestionController', [
+                'model' => $e->getModel(),
+                'ids' => $e->getIds(),
+                'message' => $e->getMessage(),
+            ]);
+            return response()->json(['error' => 'Quiz not found'], 404);
+        });
     })
     ->create();

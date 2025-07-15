@@ -4,7 +4,7 @@ namespace App\Models\Content\Assessments;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MatchingAnswer extends Model
+class OrderingAnswer extends Model
 {
-    protected $fillable = ['match_key', 'match_value'];
+    protected $fillable = ['answer_text', 'correct_order'];
 }
