@@ -16,7 +16,6 @@ interface TeacherEditModalProps {
 export const TeacherEditModal = ({
   isOpen,
   onClose,
-  user,
   formData,
   onChange,
   onSave

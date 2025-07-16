@@ -1,4 +1,4 @@
-import ChartTab from '@/components/common/ChartTab'
+//import ChartTab from '@/components/common/ChartTab'
 import { ApexOptions } from "apexcharts"
 import Chart from "react-apexcharts"
 
@@ -115,7 +115,7 @@ export default function LearningActivityChart() {
             Динамика новых студентов и активных курсов
           </p>
         </div>
-        <div className="flex items-start w-full gap-3 sm:justify-end">
+        {/* <div className="flex items-start w-full gap-3 sm:justify-end">
           <ChartTab 
             options={[
               { label: "За год", value: "year" },
@@ -123,7 +123,7 @@ export default function LearningActivityChart() {
               { label: "За месяц", value: "month" }
             ]}
           />
-        </div>
+        </div> */}
       </div>
 
       <div className="max-w-full overflow-x-auto custom-scrollbar">

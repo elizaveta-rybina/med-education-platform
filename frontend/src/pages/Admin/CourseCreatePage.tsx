@@ -13,7 +13,6 @@ const CourseCreatePage = () => {
     register, 
     handleSubmit, 
     formState: { errors }, 
-    control, 
     setValue,
     watch
   } = useForm<CourseFormData>();

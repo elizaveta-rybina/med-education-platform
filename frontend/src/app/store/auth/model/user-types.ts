@@ -45,29 +45,3 @@ export interface User {
 }
 
 export type AuthMeResponse = User
-
-export interface LoginData {
-	email: string
-	password: string
-}
-
-export interface LoginResponse {
-	token: string
-	token_type?: string
-	expires_at?: string
-}
-
-export interface RegisterData {
-	email: string
-	password: string
-	first_name: string
-	last_name: string
-	middle_name?: string
-	birth_date: string
-	phone_number?: string
-}
-
-export interface AuthResponse {
-	message: string
-	token: string
-}

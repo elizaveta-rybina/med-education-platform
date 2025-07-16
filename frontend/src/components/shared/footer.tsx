@@ -1,7 +1,7 @@
 import { FaTelegram, FaYoutube } from "react-icons/fa"
 import { FaVk } from "react-icons/fa6"
 
-const Footer = ({ className = '' }: { className?: string }) => {
+const Footer = () => {
   return (
     <footer className="bg-gray-800 text-white py-8 w-full">
       <div className="container mx-auto px-4">
