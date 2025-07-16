@@ -17,6 +17,6 @@ export interface AuthResponse {
 
 export interface LoginResponse {
 	token: string
-	token_type: 'bearer' | 'basic'
-	expires_in: number
+	token_type?: 'bearer' | 'basic'
+	expires_in?: number
 }

@@ -1,5 +1,5 @@
+import { RootState } from '@/app/store'
 import { Course } from '@/app/store/courses/model/course-types'
-import { RootState } from '@/app/store/mainStore'
 import { createSelector } from '@reduxjs/toolkit'
 import { CoursesState } from './slice'
 

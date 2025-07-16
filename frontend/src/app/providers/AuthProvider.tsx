@@ -1,142 +1,21 @@
-import { clearAuthToken, setAuthToken } from '@/app/api/client'
-import { ApiError } from '@/app/api/errorHandler'
-import { LoginData, LoginResponse, User } from '@/app/store/auth/model'
+import { useMemo } from 'react'
+import { useAppSelector } from '@/app/store/hooks'
 import { selectAuth } from '@/app/store/auth/selectors'
 import {
-	clearError,
-	resetAuthState,
-	setRememberedEmail
-} from '@/app/store/auth/slice'
-import { fetchUser, login, logout } from '@/app/store/auth/thunks'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { AuthContext } from '@/context/AuthContext'
-import { ReactNode, useCallback, useEffect, useMemo } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+	AuthContext,
+	AuthContextValue,
+	AuthProviderProps
+} from '@/context/AuthContext'
+import { useAuthInitializer } from '@/hooks/auth/useAuthInitializer'
+import { useAuthActions } from '@/hooks/auth/useAuthActions'
 
-/**
- * Interface for AuthContext value
- */
-interface AuthContextValue {
-	user: User | null
-	authToken: LoginResponse | null
-	rememberedEmail: string | null
-	status: 'idle' | 'loading' | 'succeeded' | 'failed'
-	error: string | null
-	login: (data: LoginData) => Promise<void>
-	logout: () => Promise<void>
-	setRememberedEmail: (email: string) => void
-	clearError: () => void
-}
-
-/**
- * Props for AuthProvider component
- */
-interface AuthProviderProps {
-	children: ReactNode
-}
-
-/**
- * AuthProvider component to manage authentication context
- */
 const AuthProvider = ({ children }: AuthProviderProps) => {
-	const dispatch = useAppDispatch()
-	const navigate = useNavigate()
-	const location = useLocation()
 	const { user, authToken, rememberedEmail, status, error } =
 		useAppSelector(selectAuth)
+	const { login, logout, setRememberedEmail, clearError } = useAuthActions()
 
-	/**
-	 * Initialize auth state from localStorage
-	 */
-	useEffect(() => {
-		const initializeAuth = async () => {
-			const storedToken = localStorage.getItem('token')
-			const storedEmail = localStorage.getItem('rememberedEmail')
+	useAuthInitializer()
 
-			if (storedToken && !user) {
-				try {
-					await dispatch(fetchUser()).unwrap()
-				} catch (err) {
-					console.error('Failed to initialize auth:', err)
-					clearAuthToken()
-					if (!['/signin', '/signup'].includes(location.pathname)) {
-						navigate('/signin')
-					}
-				}
-			}
-
-			if (storedEmail && !rememberedEmail) {
-				dispatch(setRememberedEmail(storedEmail))
-			}
-		}
-
-		initializeAuth()
-	}, [dispatch, user, rememberedEmail, navigate, location.pathname])
-
-	/**
-	 * Handle user login
-	 * @param data - Login credentials
-	 */
-	const handleLogin = useCallback(
-		async (data: LoginData) => {
-			try {
-				const result = await dispatch(login(data)).unwrap()
-				setAuthToken(result.loginData.token)
-				navigate('/')
-			} catch (err) {
-				const errorMessage =
-					err instanceof ApiError ? err.message : 'Failed to login'
-				throw new ApiError(
-					errorMessage,
-					err instanceof ApiError ? err.statusCode : 500,
-					'LoginError'
-				)
-			}
-		},
-		[dispatch, navigate]
-	)
-
-	/**
-	 * Handle user logout
-	 */
-	const handleLogout = useCallback(async () => {
-		try {
-			await dispatch(logout()).unwrap()
-			dispatch(resetAuthState())
-			clearAuthToken()
-			navigate('/signin')
-		} catch (err) {
-			const errorMessage =
-				err instanceof ApiError ? err.message : 'Failed to logout'
-			throw new ApiError(
-				errorMessage,
-				err instanceof ApiError ? err.statusCode : 500,
-				'LogoutError'
-			)
-		}
-	}, [dispatch, navigate])
-
-	/**
-	 * Set remembered email
-	 * @param email - Email to remember
-	 */
-	const handleSetRememberedEmail = useCallback(
-		(email: string) => {
-			dispatch(setRememberedEmail(email))
-		},
-		[dispatch]
-	)
-
-	/**
-	 * Clear authentication error
-	 */
-	const handleClearError = useCallback(() => {
-		dispatch(clearError())
-	}, [dispatch])
-
-	/**
-	 * Memoized context value
-	 */
 	const contextValue = useMemo<AuthContextValue>(
 		() => ({
 			user,
@@ -144,10 +23,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			rememberedEmail,
 			status,
 			error,
-			login: handleLogin,
-			logout: handleLogout,
-			setRememberedEmail: handleSetRememberedEmail,
-			clearError: handleClearError
+			login,
+			logout,
+			setRememberedEmail,
+			clearError
 		}),
 		[
 			user,
@@ -155,10 +34,10 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 			rememberedEmail,
 			status,
 			error,
-			handleLogin,
-			handleLogout,
-			handleSetRememberedEmail,
-			handleClearError
+			login,
+			logout,
+			setRememberedEmail,
+			clearError
 		]
 	)
 

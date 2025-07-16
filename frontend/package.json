@@ -40,6 +40,7 @@
     "react-jvectormap": "^0.0.16",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.4.0",
+    "redux-persist": "^6.0.0",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.15",

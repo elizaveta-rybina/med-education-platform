@@ -1,6 +1,4 @@
 import { selectUser } from '@/app/store/auth/selectors'
-import { fetchUser } from '@/app/store/auth/thunks'
-import { useAppDispatch } from '@/app/store/hooks'
 import {
 	Achievements,
 	MyFinances,
@@ -9,20 +7,12 @@ import {
 	TabsSwitcher
 } from '@/components/profile'
 import MyLearningTabs from '@/components/profile/MyLearningTabs'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 
 const PersonalAccountStudent = () => {
 	const [activeTab, setActiveTab] = useState('Профиль')
-	const dispatch = useAppDispatch()
 	const userData = useSelector(selectUser)
-
-	useEffect(() => {
-		const token = localStorage.getItem('token')
-		if (token && !userData) {
-			dispatch(fetchUser())
-		}
-	}, [dispatch, userData])
 
 	console.log('userData', userData)
 
