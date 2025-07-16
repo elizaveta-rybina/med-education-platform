@@ -1,4 +1,4 @@
-import { Course } from 'data/recommend'
+import { Course } from '@/data/recommend'
 import React from 'react'
 import Card from './card'
 

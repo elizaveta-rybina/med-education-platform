@@ -39,10 +39,10 @@ export const FreeInputBlock: React.FC<FreeInputBlockProps> = ({
       <h2 className="text-2xl font-bold mb-4 text-gray-800">{block.title}</h2>
       
       {/* Описание кейса с HTML-форматированием */}
-      <div 
+      {/* <div 
         className="mb-6 prose max-w-none"
         dangerouslySetInnerHTML={{ __html: block.caseDescription }}
-      />
+      /> */}
       
       {/* Таймер и статус */}
       <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">

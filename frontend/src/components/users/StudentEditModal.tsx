@@ -18,7 +18,6 @@ interface StudentEditModalProps {
 export const StudentEditModal = ({
   isOpen,
   onClose,
-  user,
   formData,
   onChange,
   onSave

@@ -1,4 +1,4 @@
-import { apiClient, setAuthToken } from 'app/api/client'
+import { apiClient, setAuthToken } from '@/app/api/client'
 import axios from 'axios'; // Добавлен импорт axios
 import { useState } from 'react'
 

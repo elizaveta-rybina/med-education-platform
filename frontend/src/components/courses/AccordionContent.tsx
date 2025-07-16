@@ -22,7 +22,6 @@ const AccordionContent: React.FC<AccordionContentProps> = ({
   hasFinalTest,
   totalTopics,
   completedTopics,
-  moduleNumber,
   isUserRegistered,
 }) => {
   return (

@@ -1,11 +1,11 @@
 import { AxiosError } from 'axios'
 
 // Define interface for API error response
-interface ApiErrorResponse {
-	error?: string
-	message?: string
-	statusCode?: number
-}
+// interface ApiErrorResponse {
+// 	error?: string
+// 	message?: string
+// 	statusCode?: number
+// }
 
 // Custom error class for API errors
 export class ApiError extends Error {
