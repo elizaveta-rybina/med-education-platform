@@ -6,30 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserAnswer extends Model
+class AnswerKey extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'quiz_attempt_id',
         'question_id',
-        'answer_data',
-        'points_earned',
-        'is_correct',
-        'teacher_feedback',
+        'correct_answer',
+        'is_case_sensitive',
     ];
 
     protected $casts = [
-        'answer_data' => 'array',
-        'is_correct' => 'boolean',
+        'is_case_sensitive' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    public function quizAttempt(): BelongsTo
-    {
-        return $this->belongsTo(QuizAttempt::class);
-    }
 
     public function question(): BelongsTo
     {
