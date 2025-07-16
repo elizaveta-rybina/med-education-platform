@@ -2,8 +2,8 @@
 
 namespace App\Services\Content\Assessments;
 
-use App\Repositories\QuizRepository;
 use App\Models\Content\Assessments\Quiz;
+use App\Repositories\QuizRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -11,71 +11,71 @@ use Illuminate\Support\Facades\Log;
 class QuizService
 {
     protected $quizRepository;
+    protected $questionService;
 
-    public function __construct(QuizRepository $quizRepository)
+    public function __construct(QuizRepository $quizRepository, QuestionService $questionService)
     {
-        Log::debug('QuizService: Конструктор вызван');
         $this->quizRepository = $quizRepository;
-        Log::debug('QuizService: QuizRepository инжектирован');
+        $this->questionService = $questionService;
     }
 
-    public function create(array $data, Model $parentModel)
+    public function create(array $data, Model $parentModel): Quiz
     {
-        Log::debug('QuizService: Метод create вызван', ['data' => $data, 'parent_type' => get_class($parentModel)]);
         DB::beginTransaction();
 
         try {
             $quiz = $this->quizRepository->create($data, $parentModel);
-            Log::debug('QuizService: Тест создан', ['quiz_id' => $quiz->id]);
+            Log::info('QuizService: Quiz created', ['quiz_id' => $quiz->id]);
+
+            if (!empty($data['questions'])) {
+                foreach ($data['questions'] as $questionData) {
+                    $this->questionService->create($questionData, $quiz->id);
+                }
+                Log::info('QuizService: Questions created for quiz', ['quiz_id' => $quiz->id, 'question_count' => count($data['questions'])]);
+            }
 
             DB::commit();
-            Log::debug('QuizService: Транзакция зафиксирована');
             return $quiz;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('QuizService: Ошибка в методе create', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('QuizService: Error in create method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-    public function update(Quiz $quiz, array $data)
+    public function update(Quiz $quiz, array $data): Quiz
     {
-        Log::debug('QuizService: Метод update вызван', ['quiz_id' => $quiz->id]);
         DB::beginTransaction();
 
         try {
             $quiz = $this->quizRepository->update($quiz, $data);
-            Log::debug('QuizService: Тест обновлен');
-
+            Log::info('QuizService: Quiz updated', ['quiz_id' => $quiz->id]);
             DB::commit();
-            Log::debug('QuizService: Транзакция зафиксирована');
             return $quiz;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('QuizService: Ошибка в методе update', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('QuizService: Error in update method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-    public function delete(Quiz $quiz)
+    public function delete(Quiz $quiz): void
     {
-        Log::debug('QuizService: Метод delete вызван', ['quiz_id' => $quiz->id]);
         DB::beginTransaction();
 
         try {
             $this->quizRepository->delete($quiz);
+            Log::info('QuizService: Quiz deleted', ['quiz_id' => $quiz->id]);
             DB::commit();
-            Log::debug('QuizService: Тест удален');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('QuizService: Ошибка в методе delete', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('QuizService: Error in delete method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
     public function findOrFail(int $id): Quiz
     {
-        Log::debug('QuizService: Метод findOrFail вызван', ['id' => $id]);
         return $this->quizRepository->findOrFail($id);
     }
 }

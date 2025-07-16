@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\StudentVerificationController;
-use App\Http\Controllers\Content\{AssignmentController,
+use App\Http\Controllers\Content\{Assessments\QuestionController,
+    Assessments\QuestionOptionController,
+    Assessments\QuizController,
+    AssignmentController,
     CourseController,
     LectureController,
     ModuleController,
-    QuestionController,
-    QuizController,
+    QuizAttemptController,
     TopicContentController,
     TopicController};
 use App\Http\Controllers\UserController;
@@ -76,17 +78,33 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::put('{assignment}', [AssignmentController::class, 'update']);
             Route::delete('{assignment}', [AssignmentController::class, 'destroy']);
         });
-
+        Route::put('user-answers/{userAnswerId}/score', [\App\Http\Controllers\Content\AdminUserAnswerController::class, 'updateScore'])->middleware('auth:api', 'admin');
         // Quizzes
+
+        Route::prefix('quizzes/{quiz}')->middleware('auth')->group(function () {
+            Route::post('attempts', [QuizAttemptController::class, 'start']);
+            Route::post('attempts/{attempt}/questions/{question}/answer', [QuizAttemptController::class, 'saveAnswer']);
+            Route::post('attempts/{attempt}/complete', [QuizAttemptController::class, 'complete']);
+        });
+
         Route::prefix('quizzes')->group(function () {
             Route::post('/', [QuizController::class, 'store']);
-            Route::put('{id}', [QuizController::class, 'update']);
-            Route::delete('{id}', [QuizController::class, 'destroy']);
+            Route::get('{quiz}', [QuizController::class, 'show']);
+            Route::put('{quiz}', [QuizController::class, 'update']);
+            Route::delete('{quiz}', [QuizController::class, 'destroy']);
 
-            Route::prefix('{quizId}/questions')->group(function () {
+            Route::prefix('{quiz}/questions')->group(function () {
                 Route::post('/', [QuestionController::class, 'store']);
-                Route::put('{id}', [QuestionController::class, 'update']);
-                Route::delete('{id}', [QuestionController::class, 'destroy']);
+                Route::get('{question}', [QuestionController::class, 'show']);
+                Route::put('{question}', [QuestionController::class, 'update']);
+                Route::delete('{question}', [QuestionController::class, 'destroy']);
+
+                Route::prefix('{question}/options')->group(function () {
+                    Route::post('/', [QuestionOptionController::class, 'store']);
+                    Route::get('{option}', [QuestionOptionController::class, 'show']);
+                    Route::put('{option}', [QuestionOptionController::class, 'update']);
+                    Route::delete('{option}', [QuestionOptionController::class, 'destroy']);
+                });
             });
         });
     });

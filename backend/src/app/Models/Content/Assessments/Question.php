@@ -2,41 +2,50 @@
 
 namespace App\Models\Content\Assessments;
 
-use App\Models\Content\Assessments\Schema\QuestionSchemaCell;
-use App\Models\Content\Assessments\Schema\QuestionSchemaColumn;
-use App\Models\Content\Assessments\Schema\QuestionSchemaRow;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Question extends Model
 {
-    //use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
-        'quiz_id', 'question_text', 'question_type',
-        'points', 'order_number', 'explanation'
+        'quiz_id',
+        'text',
+        'question_type',
+        'metadata',
+        'is_auto_graded',
+        'points',
+        'order',
     ];
 
-    public function quiz()
+    protected $casts = [
+        'question_type' => 'string',
+        'metadata' => 'array',
+        'is_auto_graded' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
+    public function quiz(): BelongsTo
     {
         return $this->belongsTo(Quiz::class);
     }
-    public function answers()
+
+    public function options(): HasMany
     {
-        return $this->hasMany(Answer::class);
-    }
-    public function schemaRows()
-    {
-        return $this->hasMany(QuestionSchemaRow::class);
+        return $this->hasMany(QuestionOption::class);
     }
 
-    public function schemaColumns()
+    public function answerKeys(): HasMany
     {
-        return $this->hasMany(QuestionSchemaColumn::class);
+        return $this->hasMany(AnswerKey::class);
     }
 
-    public function schemaCells()
+    public function userAnswers(): HasMany
     {
-        return $this->hasMany(QuestionSchemaCell::class);
+        return $this->hasMany(UserAnswer::class);
     }
-
 }
