@@ -74,12 +74,8 @@ const authSlice = createSlice({
 			})
 			.addCase(
 				login.fulfilled,
-				(
-					state,
-					action: PayloadAction<{ loginData: LoginResponse; userData: User }>
-				) => {
+				(state, action: PayloadAction<{ loginData: LoginResponse }>) => {
 					state.status = 'succeeded'
-					state.user = action.payload.userData
 					state.authToken = action.payload.loginData
 					state.error = null
 				}
@@ -97,6 +93,10 @@ const authSlice = createSlice({
 				state.status = 'succeeded'
 				state.user = action.payload
 				state.error = null
+				const storedToken = localStorage.getItem('token')
+				if (storedToken && !state.authToken) {
+					state.authToken = { token: storedToken } // Синхронизируем authToken
+				}
 			})
 			.addCase(fetchUser.rejected, (state, action) => {
 				state.status = 'failed'

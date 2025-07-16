@@ -1,4 +1,4 @@
-import { RootState } from '@/app/store/mainStore'
+import { RootState } from '@/app/store'
 import { Topic } from '@/app/store/topics/model/topic-types'
 import { createSelector } from '@reduxjs/toolkit'
 import { TopicsState } from './slice'

@@ -1,3 +1,4 @@
+import { setAuthToken } from '@/app/api/client'
 import { ApiError } from '@/app/api/errorHandler'
 import { authApi } from '@/app/store/auth/api/auth.api'
 import { LoginData } from '@/app/store/auth/model'
@@ -11,9 +12,9 @@ export const login = createAsyncThunk(
 	async (data: LoginData, { rejectWithValue }) => {
 		try {
 			const response = await authApi.login(data)
-			const userResponse = await authApi.getMe()
-			return { loginData: response, userData: userResponse }
+			return { loginData: response }
 		} catch (error) {
+			console.error('Login thunk error:', error)
 			if (error instanceof ApiError) {
 				return rejectWithValue(error.message)
 			}
@@ -32,8 +33,16 @@ export const fetchUser = createAsyncThunk(
 			const response = await authApi.getMe()
 			return response
 		} catch (error) {
-			if (error instanceof ApiError) {
-				return rejectWithValue(error.message)
+			if (error instanceof ApiError && error.statusCode === 401) {
+				try {
+					const refreshResponse = await authApi.refreshToken()
+					setAuthToken(refreshResponse.token)
+					const retryResponse = await authApi.getMe()
+					return retryResponse
+				} catch (refreshError) {
+					localStorage.removeItem('token') // Очищаем токен при неудачном обновлении
+					return rejectWithValue('Fetch user failed after token refresh')
+				}
 			}
 			return rejectWithValue('Fetch user failed')
 		}

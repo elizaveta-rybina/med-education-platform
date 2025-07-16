@@ -1,4 +1,5 @@
 import { handleApiError } from '@/app/api/errorHandler'
+import { authApi } from '@/app/store/auth/api/auth.api' // Импортируем authApi для вызова refreshToken
 import axios, {
 	AxiosError,
 	AxiosInstance,
@@ -33,6 +34,7 @@ const createApiClient = ({
 	const instance = axios.create({
 		baseURL,
 		timeout,
+		withCredentials: true, // Включаем отправку куки (для refresh_token)
 		headers: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json'
@@ -51,12 +53,13 @@ const createApiClient = ({
 		(error: AxiosError) => Promise.reject(error)
 	)
 
-	// Response interceptor with retry logic
+	// Response interceptor with retry logic and token refresh
 	instance.interceptors.response.use(
 		(response: AxiosResponse) => response,
 		async (error: AxiosError<ApiErrorData>) => {
 			const config = error.config as InternalAxiosRequestConfig & {
 				retryCount?: number
+				_isRetry?: boolean // Флаг для предотвращения бесконечных попыток обновления
 			}
 			if (!config) return handleApiError(error)
 
@@ -71,12 +74,23 @@ const createApiClient = ({
 				return instance(config)
 			}
 
-			// Handle 401 Unauthorized
-			if (error.response?.status === 401) {
-				localStorage.removeItem('token')
-				// Optionally redirect to login page
-				if (typeof window !== 'undefined') {
-					window.location.href = '/login'
+			// Handle 401 Unauthorized with token refresh
+			if (error.response?.status === 401 && !config._isRetry) {
+				config._isRetry = true // Устанавливаем флаг, чтобы избежать повторных попыток
+				try {
+					// Пытаемся обновить токен
+					const refreshResponse = await authApi.refreshToken()
+					const newToken = refreshResponse.token
+					localStorage.setItem('token', newToken) // Сохраняем новый токен
+					config.headers.Authorization = `Bearer ${newToken}` // Обновляем заголовок
+					return instance(config) // Повторяем исходный запрос
+				} catch (refreshError) {
+					// Если обновление токена не удалось, очищаем токен и перенаправляем
+					localStorage.removeItem('token')
+					if (typeof window !== 'undefined') {
+						window.location.href = '/login'
+					}
+					return handleApiError(refreshError)
 				}
 			}
 

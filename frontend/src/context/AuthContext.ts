@@ -1,10 +1,8 @@
+// src/context/AuthContext.ts
 import { LoginData, LoginResponse, User } from '@/app/store/auth/model'
-import { createContext, useContext } from 'react'
+import { createContext, ReactNode, useContext } from 'react'
 
-/**
- * Interface for AuthContext values
- */
-interface AuthContextType {
+export interface AuthContextValue {
 	user: User | null
 	authToken: LoginResponse | null
 	rememberedEmail: string | null
@@ -16,15 +14,14 @@ interface AuthContextType {
 	clearError: () => void
 }
 
-/**
- * Auth context with default undefined value
- */
-export const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export interface AuthProviderProps {
+	children: ReactNode
+}
 
-/**
- * Hook to access auth context
- * @throws Error if used outside AuthProvider
- */
+export const AuthContext = createContext<AuthContextValue | undefined>(
+	undefined
+)
+
 export const useAuth = () => {
 	const context = useContext(AuthContext)
 	if (!context) {

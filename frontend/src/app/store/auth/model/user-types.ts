@@ -53,7 +53,8 @@ export interface LoginData {
 
 export interface LoginResponse {
 	token: string
-	expires_at: string
+	token_type?: string
+	expires_at?: string
 }
 
 export interface RegisterData {

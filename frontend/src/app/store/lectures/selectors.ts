@@ -1,5 +1,5 @@
+import { RootState } from '@/app/store'
 import { Lecture } from '@/app/store/lectures/model/lecture-types'
-import { RootState } from '@/app/store/mainStore'
 import { createSelector } from '@reduxjs/toolkit'
 import { LecturesState } from './slice'
 

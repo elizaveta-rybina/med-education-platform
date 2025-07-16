@@ -1,6 +1,4 @@
 import AuthProvider from '@/app/providers/AuthProvider'
-import { selectUser } from '@/app/store/auth/selectors'
-import { useAppSelector } from '@/app/store/hooks'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { ScrollToTop } from '@/components/common/ScrollToTop'
 import AdminLayout from '@/layout/AdminLayout'
@@ -15,38 +13,25 @@ import SignUp from '@/pages/AuthPages/SignUp'
 import CourseInnerPage from '@/pages/Courses/Physiology'
 import HomeAdmin from '@/pages/Dashboard/Home'
 import GDevelopEditor from '@/pages/GDevelop/GDevelopEditor'
-import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
-
-// Компонент для защиты маршрутов
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-	const user = useAppSelector(selectUser)
-	return user ? <>{children}</> : <Navigate to='/signin' replace />
-}
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
 	{
 		element: (
 			<ErrorBoundary>
-				<AuthProvider>
-					<ScrollToTop />
-					<AppLayout />
-				</AuthProvider>
+				<ScrollToTop />
+				<AppLayout />
 			</ErrorBoundary>
 		),
 		children: [
-			{
-				path: '/',
-				element: <HomePage />
-			},
-			{
-				path: '/course/:id',
-				element: <CoursePage /> // No ProtectedRoute, accessible to all
-			},
+			{ path: '/', element: <HomePage /> },
+			{ path: '/course/:id', element: <CoursePage /> },
 			{
 				path: '/course/physiology',
 				element: (
 					<ProtectedRoute>
-						<CourseInnerPage /> // Protect inner content
+						<CourseInnerPage />
 					</ProtectedRoute>
 				)
 			},
@@ -63,10 +48,8 @@ const router = createBrowserRouter([
 	{
 		element: (
 			<ErrorBoundary>
-				<AuthProvider>
-					<ScrollToTop />
-					<AdminLayout />
-				</AuthProvider>
+				<ScrollToTop />
+				<AdminLayout />
 			</ErrorBoundary>
 		),
 		children: [
@@ -104,41 +87,18 @@ const router = createBrowserRouter([
 			}
 		]
 	},
-	{
-		path: '/signin',
-		element: (
-			<AuthProvider>
-				<SignIn />
-			</AuthProvider>
-		)
-	},
-	{
-		path: '/games',
-		element: (
-			<AuthProvider>
-				<GDevelopEditor />
-			</AuthProvider>
-		)
-	},
-	{
-		path: '/signup',
-		element: (
-			<AuthProvider>
-				<SignUp />
-			</AuthProvider>
-		)
-	},
-	// Fallback route
-	{
-		path: '*',
-		element: (
-			<AuthProvider>
-				<NotFound />
-			</AuthProvider>
-		)
-	}
+	{ path: '/signin', element: <SignIn /> },
+	{ path: '/games', element: <GDevelopEditor /> },
+	{ path: '/signup', element: <SignUp /> },
+	{ path: '*', element: <NotFound /> }
 ])
 
 export const AppRouter = () => {
-	return <RouterProvider router={router} />
+	return (
+		<ErrorBoundary>
+			<AuthProvider>
+				<RouterProvider router={router} />
+			</AuthProvider>
+		</ErrorBoundary>
+	)
 }

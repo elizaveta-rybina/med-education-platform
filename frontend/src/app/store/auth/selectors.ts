@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { RootState } from '../mainStore'
+import { RootState } from '..'
 import { LoginResponse, User } from './model'
 import { AuthState } from './slice'
 

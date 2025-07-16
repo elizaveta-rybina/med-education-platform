@@ -21,19 +21,14 @@ export class ApiError extends Error {
 }
 
 // Function to handle and normalize API errors
-export const handleApiError = (error: unknown): never => {
+export const handleApiError = (error: any) => {
 	if (error instanceof AxiosError) {
-		const response = error.response?.data as ApiErrorResponse | undefined
-		const statusCode = error.response?.status || 500
 		const message =
-			response?.message ||
-			response?.error ||
+			error.response?.data?.message ||
 			error.message ||
 			'An unexpected error occurred'
-		const errorType = response?.error || 'Unknown Error'
-
-		throw new ApiError(message, statusCode, errorType)
+		console.error('API error details:', error.response?.data)
+		throw new ApiError(message, error.response?.status || 500, 'ApiError')
 	}
-
-	throw new ApiError('An unexpected error occurred', 500, 'Unknown Error')
+	throw new ApiError('An unexpected error occurred', 500, 'ApiError')
 }

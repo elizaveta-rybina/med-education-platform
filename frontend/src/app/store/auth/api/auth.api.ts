@@ -13,6 +13,19 @@ import {
  */
 export const authApi = {
 	/**
+	 * Refreshes the access token using the refresh token
+	 * @returns New access token
+	 */
+	refreshToken: async (): Promise<LoginResponse> => {
+		try {
+			const response = await baseApi.post<LoginResponse>('/auth/refresh-token')
+			return response.data
+		} catch (error) {
+			return handleApiError(error)
+		}
+	},
+
+	/**
 	 * Logs in a user with provided credentials
 	 * @param data - Login credentials
 	 * @returns Login response with token and metadata
@@ -22,6 +35,7 @@ export const authApi = {
 			const response = await baseApi.post<LoginResponse>('/auth/login', data)
 			return response.data
 		} catch (error) {
+			console.error('Login error:', error)
 			return handleApiError(error)
 		}
 	},
