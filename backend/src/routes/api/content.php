@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\Content\{
-    AssignmentController,
-    QuizController,
-    UserAnswerController
-};
+use App\Http\Controllers\Content\{Assessments\UserAnswerController};
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth.api')->group(function () {
