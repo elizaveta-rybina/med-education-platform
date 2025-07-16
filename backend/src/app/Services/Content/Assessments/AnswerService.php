@@ -2,64 +2,52 @@
 
 namespace App\Services\Content\Assessments;
 
-use App\Models\Content\Assessments\Answer;
-use App\Models\Content\Assessments\ChoiceAnswer;
-use App\Models\Content\Assessments\MatchingAnswer;
+use App\Repositories\AnswerRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AnswerService
 {
-    public function create(array $answersData, int $questionId, string $questionType): array
+    protected $answerRepository;
+
+    public function __construct(AnswerRepository $answerRepository)
     {
-        $answers = [];
+        $this->answerRepository = $answerRepository;
+    }
+
+    public function create(array $answers, int $questionId, string $questionType): void
+    {
         DB::beginTransaction();
 
         try {
-            foreach ($answersData as $data) {
-                $answerable = $this->createAnswerable($data, $questionType);
-                $answer = Answer::create([
-                    'question_id' => $questionId,
-                    'answerable_type' => get_class($answerable),
-                    'answerable_id' => $answerable->id,
-                    'order' => $data['order'] ?? null,
-                ]);
-                $answers[] = $answer;
+            foreach ($answers as $answerData) {
+                $this->answerRepository->create($answerData, $questionId, $questionType);
             }
-
+            Log::info('AnswerService: Answers created', ['question_id' => $questionId, 'question_type' => $questionType]);
             DB::commit();
-            return $answers;
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('AnswerService: Error in create method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
 
-    protected function createAnswerable(array $data, string $questionType)
-    {
-        return match ($questionType) {
-            'single_choice', 'multiple_choice' => ChoiceAnswer::create([
-                'answer_text' => $data['answer_text'],
-                'is_correct' => $data['is_correct'] ?? false,
-            ]),
-            'matching', 'matching_schema' => MatchingAnswer::create([
-                'match_key' => $data['match_key'],
-                'match_value' => $data['match_value'],
-            ]),
-            default => throw new \InvalidArgumentException("Unsupported question type: $questionType"),
-        };
-    }
-
-    public function update(array $answersData, int $questionId, string $questionType): array
+    public function update(array $answers, int $questionId, string $questionType): void
     {
         DB::beginTransaction();
 
         try {
-            Answer::where('question_id', $questionId)->delete();
-            $answers = $this->create($answersData, $questionId, $questionType);
+            // Удаляем старые ответы
+            $this->answerRepository->deleteByQuestionId($questionId);
+            // Создаем новые
+            foreach ($answers as $answerData) {
+                $this->answerRepository->create($answerData, $questionId, $questionType);
+            }
+            Log::info('AnswerService: Answers updated', ['question_id' => $questionId, 'question_type' => $questionType]);
             DB::commit();
-            return $answers;
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('AnswerService: Error in update method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
@@ -69,10 +57,12 @@ class AnswerService
         DB::beginTransaction();
 
         try {
-            Answer::where('question_id', $questionId)->delete();
+            $this->answerRepository->deleteByQuestionId($questionId);
+            Log::info('AnswerService: Answers deleted', ['question_id' => $questionId]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('AnswerService: Error in delete method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }

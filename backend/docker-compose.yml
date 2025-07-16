@@ -10,7 +10,6 @@ services:
     depends_on:
       - postgres
       - php
-      - redis
 
   php:
     build:
@@ -45,11 +44,6 @@ services:
     volumes:
       - './src:/var/www/html'
     entrypoint: [ "php", "/var/www/html/artisan" ]
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - '6379:6379'
 
 volumes:
   postgres_data:

@@ -10,7 +10,6 @@ class QuizRepository
 {
     public function create(array $data, Model $parentModel): Quiz
     {
-        Log::debug('QuizRepository: Метод create вызван', ['data' => $data]);
         try {
             $quiz = Quiz::create([
                 'title' => $data['title'],
@@ -23,10 +22,10 @@ class QuizRepository
                 'quizable_type' => get_class($parentModel),
                 'quizable_id' => $parentModel->id,
             ]);
-            Log::debug('QuizRepository: Тест создан', ['quiz_id' => $quiz->id]);
+            Log::info('QuizRepository: Quiz created', ['quiz_id' => $quiz->id]);
             return $quiz;
         } catch (\Exception $e) {
-            Log::error('QuizRepository: Ошибка в методе create', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            Log::error('QuizRepository: Error in create method', ['error' => $e->getMessage()]);
             throw $e;
         }
     }
