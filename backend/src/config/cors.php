@@ -19,10 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'http://localhost:5173', //Доступ с веба для Лизы
-        'https://*.ngrok.io', // Все поддомены ngrok
-    ],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
