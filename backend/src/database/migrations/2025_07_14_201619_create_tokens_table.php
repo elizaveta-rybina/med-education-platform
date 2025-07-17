@@ -10,7 +10,7 @@ class CreateTokensTable extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->id();
-            $table->text('token')->unique();
+            $table->string('token', 512)->unique();
             $table->enum('type', ['access', 'refresh']);
             $table->unsignedBigInteger('user_id');
             $table->timestamp('expires_at');
