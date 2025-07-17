@@ -18,12 +18,25 @@ class AuthenticateWithJWT
 
     public function handle(Request $request, Closure $next)
     {
-        $token = JWTAuth::getToken();
+        try {
+            $token = JWTAuth::getToken();
 
-        if (!$token || !$this->tokenService->hasToken($token->get())) {
-            return response()->json(['error' => 'Unauthorized or token revoked'], 401);
+            if (!$token || !$this->tokenService->hasToken($token->get())) {
+                return response()->json(['error' => 'Unauthorized or token revoked'], 401);
+            }
+
+            // Аутентифицируем пользователя
+            $user = JWTAuth::setToken($token)->authenticate();
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 401);
+            }
+
+            // Устанавливаем пользователя в контекст аутентификации
+            auth()->setUser($user);
+
+            return $next($request);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid token'], 401);
         }
-
-        return $next($request);
     }
 }
