@@ -1,17 +1,16 @@
-// src/hooks/auth/useAuthInitializer.ts
-import { clearAuthToken, setAuthToken } from '@/app/api/client'
-import { authApi } from '@/app/store/auth'
+import { useEffect } from 'react'
+import {
+	useLocation,
+	useNavigate,
+	NavigateFunction,
+	Location
+} from 'react-router-dom'
+import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
 import { selectAuth } from '@/app/store/auth/selectors'
 import { resetAuthState } from '@/app/store/auth/slice'
 import { fetchUser } from '@/app/store/auth/thunks'
-import { useAppDispatch, useAppSelector } from '@/app/store/hooks'
-import { useEffect } from 'react'
-import {
-	Location,
-	NavigateFunction,
-	useLocation,
-	useNavigate
-} from 'react-router-dom'
+import { clearAuthToken, setAuthToken } from '@/app/api/client'
+import { authApi } from '@/app/store/auth'
 
 export const useAuthInitializer = () => {
 	const dispatch = useAppDispatch()
@@ -23,7 +22,7 @@ export const useAuthInitializer = () => {
 		location = useLocation()
 	} catch (err) {
 		console.warn(
-			'useNavigate/useLocation not available in useAuthInitializer. Ensure AuthProvider is used within RouterProvider.',
+			'useNavigate/useLocation not available in useAuthInitializer. Ensure this hook is used within RouterProvider.',
 			err
 		)
 		return

@@ -1,6 +1,6 @@
-import AuthProvider from '@/app/providers/AuthProvider'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { ScrollToTop } from '@/components/common/ScrollToTop'
+import { useAuthInitializer } from '@/hooks/auth/useAuthInitializer'
 import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
 import { CoursePage, HomePage, NotFound } from '@/pages'
@@ -96,9 +96,7 @@ const router = createBrowserRouter([
 export const AppRouter = () => {
 	return (
 		<ErrorBoundary>
-			<AuthProvider>
-				<RouterProvider router={router} />
-			</AuthProvider>
+			<RouterProvider router={router} />
 		</ErrorBoundary>
 	)
 }

@@ -14,7 +14,7 @@ const PersonalAccountStudent = () => {
 	const [activeTab, setActiveTab] = useState('Профиль')
 	const userData = useSelector(selectUser)
 
-	console.log('userData', userData)
+	//console.log('userData', userData)
 
 	const renderContent = () => {
 		switch (activeTab) {

@@ -1,7 +1,7 @@
 import { LoginData } from '@/app/store/auth/model'
 import { selectAuthError, selectAuthStatus } from '@/app/store/auth/selectors'
 import { useAppSelector } from '@/app/store/hooks'
-import { useAuth } from '@/context/AuthContext'
+import { useAuthActions } from '@/hooks/auth/useAuthActions'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
@@ -14,7 +14,7 @@ import { ErrorAlert } from './ErrorAlert'
 export default function SignInForm() {
 	const status = useAppSelector(selectAuthStatus)
 	const error = useAppSelector(selectAuthError)
-	const { login } = useAuth()
+	const { login } = useAuthActions()
 	const [showPassword, setShowPassword] = useState(false)
 
 	const {
@@ -32,7 +32,7 @@ export default function SignInForm() {
 
 	const onSubmit = async (data: LoginData) => {
 		try {
-			await login(data) // Редирект обрабатывается в AuthProvider
+			await login(data)
 			reset()
 		} catch (err) {
 			console.error('Login error:', err)
