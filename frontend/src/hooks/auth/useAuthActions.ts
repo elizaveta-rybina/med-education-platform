@@ -1,4 +1,3 @@
-// src/hooks/auth/useAuthActions.ts
 import { clearAuthToken, setAuthToken } from '@/app/api/client'
 import { ApiError } from '@/app/api/errorHandler'
 import { LoginData } from '@/app/store/auth/model'
@@ -11,10 +10,10 @@ import { fetchUser, login, logout } from '@/app/store/auth/thunks'
 import { useAppDispatch } from '@/app/store/hooks'
 import { useCallback } from 'react'
 import {
-	Location,
-	NavigateFunction,
 	useLocation,
-	useNavigate
+	useNavigate,
+	NavigateFunction,
+	Location
 } from 'react-router-dom'
 
 export const useAuthActions = () => {
@@ -27,7 +26,7 @@ export const useAuthActions = () => {
 		location = useLocation()
 	} catch (err) {
 		console.warn(
-			'useNavigate/useLocation not available in useAuthActions. Ensure AuthProvider is used within RouterProvider.',
+			'useNavigate/useLocation not available in useAuthActions. Ensure this hook is used within RouterProvider.',
 			err
 		)
 	}
