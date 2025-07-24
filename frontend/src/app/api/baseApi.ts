@@ -8,8 +8,7 @@ import axios, {
 
 // Base URL from environment variable or fallback
 const BASE_URL =
-	import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1'
-
+	import.meta.env.VITE_API_BASE_URL
 /**
  * Creates an Axios instance with default configuration and interceptors
  * @returns Configured Axios instance
@@ -21,7 +20,9 @@ export const createBaseApi = (): AxiosInstance => {
 		timeout: 10000,
 		headers: {
 			'Content-Type': 'application/json',
-			Accept: 'application/json'
+			Accept: 'application/json',
+			'Access-Control-Allow-Origin':
+				import.meta.env.VITE_APP_URL || window.location.origin
 		}
 	})
 

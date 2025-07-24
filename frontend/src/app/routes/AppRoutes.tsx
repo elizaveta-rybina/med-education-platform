@@ -1,6 +1,5 @@
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { ScrollToTop } from '@/components/common/ScrollToTop'
-import { useAuthInitializer } from '@/hooks/auth/useAuthInitializer'
 import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
 import { CoursePage, HomePage, NotFound } from '@/pages'
