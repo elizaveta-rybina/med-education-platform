@@ -10,10 +10,10 @@ import { fetchUser, login, logout } from '@/app/store/auth/thunks'
 import { useAppDispatch } from '@/app/store/hooks'
 import { useCallback } from 'react'
 import {
-	useLocation,
-	useNavigate,
+	Location,
 	NavigateFunction,
-	Location
+	useLocation,
+	useNavigate
 } from 'react-router-dom'
 
 export const useAuthActions = () => {
@@ -63,22 +63,20 @@ export const useAuthActions = () => {
 
 	const handleLogout = useCallback(async () => {
 		try {
+			console.log('Token before logout:', localStorage.getItem('token'))
 			await dispatch(logout()).unwrap()
+		} catch (err) {
+			console.warn('Logout API call failed:', err)
+			// Log the error but proceed with client-side cleanup
+		} finally {
 			dispatch(resetAuthState())
 			clearAuthToken()
+			console.log('Token after logout:', localStorage.getItem('token'))
 			if (navigate) {
 				navigate('/signin')
 			} else {
 				console.warn('Navigation skipped: navigate not available')
 			}
-		} catch (err) {
-			const errorMessage =
-				err instanceof ApiError ? err.message : 'Failed to logout'
-			throw new ApiError(
-				errorMessage,
-				err instanceof ApiError ? err.statusCode : 500,
-				'LogoutError'
-			)
 		}
 	}, [dispatch, navigate])
 
