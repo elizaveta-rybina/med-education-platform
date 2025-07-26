@@ -1,7 +1,6 @@
 import { selectUser } from '@/app/store/auth/selectors'
 import {
 	Achievements,
-	MyFinances,
 	ProfileContent,
 	Settings,
 	TabsSwitcher
@@ -14,16 +13,13 @@ const PersonalAccountStudent = () => {
 	const [activeTab, setActiveTab] = useState('Профиль')
 	const userData = useSelector(selectUser)
 
-	//console.log('userData', userData)
-
+	// Map tab names to content
 	const renderContent = () => {
 		switch (activeTab) {
 			case 'Профиль':
 				return <ProfileContent userData={userData} />
-			case 'Мое обучение':
+			case 'Мои курсы':
 				return <MyLearningTabs />
-			case 'Мои покупки':
-				return <MyFinances />
 			case 'Достижения':
 				return <Achievements />
 			case 'Настройки':
