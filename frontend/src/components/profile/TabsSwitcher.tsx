@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
 const tabs = [
-	'Профиль',
-	'Мое обучение',
-	'Мои покупки',
-	'Достижения',
-	'Настройки'
+	{ name: 'Профиль', hash: '#profile' },
+	{ name: 'Мои курсы', hash: '#courses' },
+	{ name: 'Достижения', hash: '#achievements' },
+	{ name: 'Настройки', hash: '#settings' }
 ]
 
 type TabsSwitcherProps = {
@@ -13,13 +13,30 @@ type TabsSwitcherProps = {
 }
 
 export const TabsSwitcher = ({ onTabChange }: TabsSwitcherProps) => {
-	const [selectedTab, setSelectedTab] = useState('Профиль')
+	const location = useLocation()
+	const [selectedTab, setSelectedTab] = useState(tabs[0].name)
 	const [isOpen, setIsOpen] = useState(false)
 
-	const handleSelect = (tab: string) => {
-		setSelectedTab(tab)
+	// Sync selectedTab with current URL hash
+	useEffect(() => {
+		const currentHash = location.hash || tabs[0].hash
+		const currentTab = tabs.find(tab => tab.hash === currentHash)
+		if (currentTab) {
+			setSelectedTab(currentTab.name)
+			onTabChange(currentTab.name)
+		} else {
+			// Default to first tab if no valid hash
+			setSelectedTab(tabs[0].name)
+			window.history.replaceState(null, '', tabs[0].hash)
+			onTabChange(tabs[0].name)
+		}
+	}, [location.hash, onTabChange])
+
+	const handleSelect = (tab: { name: string; hash: string }) => {
+		setSelectedTab(tab.name)
 		setIsOpen(false)
-		onTabChange(tab)
+		window.history.pushState(null, '', tab.hash)
+		onTabChange(tab.name)
 	}
 
 	return (
@@ -50,15 +67,15 @@ export const TabsSwitcher = ({ onTabChange }: TabsSwitcherProps) => {
 					<div className='absolute left-0 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 overflow-hidden'>
 						{tabs.map(tab => (
 							<button
-								key={tab}
+								key={tab.name}
 								onClick={() => handleSelect(tab)}
 								className={`w-full px-4 py-3 text-left text-base transition-colors duration-150 ${
-									selectedTab === tab
+									selectedTab === tab.name
 										? 'bg-blue-50 text-blue-600 font-medium'
 										: 'text-gray-600 hover:bg-gray-50'
 								}`}
 							>
-								{tab}
+								{tab.name}
 							</button>
 						))}
 					</div>
@@ -69,18 +86,18 @@ export const TabsSwitcher = ({ onTabChange }: TabsSwitcherProps) => {
 			<div className='hidden lg:flex'>
 				{tabs.map(tab => (
 					<button
-						key={tab}
+						key={tab.name}
 						onClick={() => handleSelect(tab)}
 						className={`relative px-1 mx-3 py-4 text-base font-medium transition-all duration-200 ${
-							selectedTab === tab
+							selectedTab === tab.name
 								? 'text-gray-900'
 								: 'text-gray-500 hover:text-gray-700'
 						}`}
 					>
-						{tab}
+						{tab.name}
 						<span
 							className={`absolute bottom-[-1px] left-0 right-0 h-0.5 transition-all duration-300 ${
-								selectedTab === tab
+								selectedTab === tab.name
 									? 'bg-gray-900 scale-100'
 									: 'bg-transparent scale-0'
 							}`}
