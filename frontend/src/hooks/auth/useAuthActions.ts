@@ -1,61 +1,43 @@
 import { clearAuthToken, setAuthToken } from '@/app/api/client'
 import { ApiError } from '@/app/api/errorHandler'
-import { LoginData } from '@/app/store/auth/model'
+import { AppDispatch } from '@/app/store'
+import { LoginData, User } from '@/app/store/auth/model'
 import {
 	clearError,
 	resetAuthState,
 	setRememberedEmail
 } from '@/app/store/auth/slice'
 import { fetchUser, login, logout } from '@/app/store/auth/thunks'
-import { useAppDispatch } from '@/app/store/hooks'
-import { useCallback } from 'react'
-import {
-	Location,
-	NavigateFunction,
-	useLocation,
-	useNavigate
-} from 'react-router-dom'
+import { useCallback, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 export const useAuthActions = () => {
-	const dispatch = useAppDispatch()
-	let navigate: NavigateFunction | undefined
-	let location: Location | undefined
-
-	try {
-		navigate = useNavigate()
-		location = useLocation()
-	} catch (err) {
-		console.warn(
-			'useNavigate/useLocation not available in useAuthActions. Ensure this hook is used within RouterProvider.',
-			err
-		)
-	}
+	const dispatch = useDispatch<AppDispatch>()
+	const navigate = useNavigate()
+	const location = useLocation()
+	const [localError, setLocalError] = useState<string | null>(null)
 
 	const handleLogin = useCallback(
 		async (data: LoginData) => {
+			setLocalError(null)
 			try {
-				const result = await dispatch(login(data)).unwrap()
-				setAuthToken(result.loginData.token)
-				await dispatch(fetchUser()).unwrap()
-				if (navigate && location) {
-					const query = new URLSearchParams(location.search)
-					const redirectTo =
-						query.get('redirectTo') ||
-						(data.email.toLowerCase() === 'admin@example.com'
-							? '/admin/dashboard'
-							: '/profile')
-					navigate(redirectTo)
-				} else {
-					console.warn('Navigation skipped: navigate or location not available')
-				}
+				const loginResult = await dispatch(login(data)).unwrap()
+				setAuthToken(loginResult.loginData.token)
+				console.log('Token set after login:', localStorage.getItem('token'))
+
+				const userResult = (await dispatch(fetchUser()).unwrap()) as User
+
+				const redirectTo =
+					new URLSearchParams(location.search).get('redirectTo') ||
+					(userResult.roles.includes('admin') ? '/admin/dashboard' : '/profile')
+				navigate(redirectTo)
+				return userResult
 			} catch (err) {
-				const errorMessage =
-					err instanceof ApiError ? err.message : 'Failed to login'
-				throw new ApiError(
-					errorMessage,
-					err instanceof ApiError ? err.statusCode : 500,
-					'LoginError'
-				)
+				const error = err as ApiError
+				const errorMessage = error.message || 'Не удалось войти'
+				setLocalError(errorMessage)
+				throw new ApiError(errorMessage, error.statusCode || 500, 'LoginError')
 			}
 		},
 		[dispatch, navigate, location]
@@ -63,20 +45,13 @@ export const useAuthActions = () => {
 
 	const handleLogout = useCallback(async () => {
 		try {
-			console.log('Token before logout:', localStorage.getItem('token'))
 			await dispatch(logout()).unwrap()
 		} catch (err) {
 			console.warn('Logout API call failed:', err)
-			// Log the error but proceed with client-side cleanup
 		} finally {
 			dispatch(resetAuthState())
 			clearAuthToken()
-			console.log('Token after logout:', localStorage.getItem('token'))
-			if (navigate) {
-				navigate('/signin')
-			} else {
-				console.warn('Navigation skipped: navigate not available')
-			}
+			navigate('/signin')
 		}
 	}, [dispatch, navigate])
 
@@ -89,12 +64,14 @@ export const useAuthActions = () => {
 
 	const handleClearError = useCallback(() => {
 		dispatch(clearError())
+		setLocalError(null)
 	}, [dispatch])
 
 	return {
 		login: handleLogin,
 		logout: handleLogout,
 		setRememberedEmail: handleSetRememberedEmail,
-		clearError: handleClearError
+		clearError: handleClearError,
+		error: localError
 	}
 }

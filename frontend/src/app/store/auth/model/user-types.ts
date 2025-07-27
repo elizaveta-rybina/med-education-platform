@@ -40,7 +40,7 @@ export interface User {
 	created_at: string
 	updated_at: string
 	education: EducationInfo
-	roles: UserRole[]
+	roles: string[]
 	registeredCourses: number[]
 }
 
