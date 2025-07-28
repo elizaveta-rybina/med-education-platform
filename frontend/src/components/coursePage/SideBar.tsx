@@ -1,84 +1,102 @@
 import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
-import { FaBars, FaCheckCircle, FaRegCircle, FaTimes } from 'react-icons/fa'
+import {
+	FaArrowLeft,
+	FaArrowRight,
+	FaCheckCircle,
+	FaRegCircle
+} from 'react-icons/fa'
 
 const SideBarCourse = () => {
 	const [isCollapsed, setIsCollapsed] = useState(false)
 	const [currentHash, setCurrentHash] = useState('')
 	const { course } = useCourse()
 
+	// Toggle sidebar collapse state
 	const toggleSidebar = () => setIsCollapsed(!isCollapsed)
 
-	// Следим за изменением хэша
+	// Handle hash changes for navigation
 	useEffect(() => {
 		const handleHashChange = () => {
 			setCurrentHash(window.location.hash.substring(1))
 		}
 
-		// Инициализация при монтировании
 		handleHashChange()
-
 		window.addEventListener('hashchange', handleHashChange)
 		return () => window.removeEventListener('hashchange', handleHashChange)
 	}, [])
 
-	// Собираем все главы из всех модулей
+	// Flatten chapters from all modules
 	const allChapters = course.modules.flatMap(module => module.chapters)
 
-	if (isCollapsed) {
-		return (
-			<button
-				onClick={toggleSidebar}
-				className='relative left-0 z-30 bg-white p-3 border border-r-0 border-gray-200 h-full flex items-center justify-center shadow-md hover:bg-gray-50 transition-all'
-			>
-				<FaBars className='w-5 h-5 text-gray-600' />
-			</button>
-		)
-	}
-
 	return (
-		<div className='w-72 bg-white h-max border-r border-gray-200 flex flex-col h-full border-t-1'>
-			<div className='flex justify-between items-center p-4 border-b border-gray-200'>
-				<h2 className='text-lg font-semibold text-gray-800'>{course.title}</h2>
+		<div className='flex h-max border-t-1'>
+			{/* Collapsed state: vertical button spanning content height */}
+			{isCollapsed && (
 				<button
 					onClick={toggleSidebar}
-					className='text-gray-400 hover:text-gray-600 transition-colors'
-					aria-label='Скрыть меню'
+					className='flex items-center justify-center w-12 bg-white border-r border-gray-200 hover:bg-gray-100 transition-all duration-300 h-full border-t-1'
+					aria-label='Развернуть меню'
 				>
-					<FaTimes className='w-5 h-5' />
+					<FaArrowRight className='w-5 h-10 text-gray-600' />
 				</button>
-			</div>
+			)}
 
-			<div className='flex-1 overflow-y-auto'>
-				<nav>
-					<ul className='divide-y divide-gray-200'>
-						{allChapters.map(chapter => (
-							<li key={chapter.id}>
-								<a
-									href={`#${chapter.hash}`}
-									className={`w-full flex items-start p-4 hover:bg-gray-50 text-left transition-colors ${
-										chapter.isRead ? 'bg-green-50' : ''
-									} ${currentHash === chapter.hash ? 'bg-gray-100' : ''}`}
-								>
-									<span className='mt-0.5 mr-3 flex-shrink-0'>
-										{chapter.isRead ? (
-											<FaCheckCircle className='text-green-500 w-5 h-5' />
-										) : (
-											<FaRegCircle className='text-gray-300 w-5 h-5' />
-										)}
-									</span>
-									<span
-										className={`text-sm ${
-											chapter.isRead ? 'text-gray-500' : 'text-gray-800'
-										} ${currentHash === chapter.hash ? 'font-medium' : ''}`}
+			{/* Sidebar */}
+			<div
+				className={`bg-white h-full border-r border-gray-200 transition-all duration-300 ease-in-out
+          ${isCollapsed ? 'w-0 overflow-hidden' : 'w-80'}`}
+			>
+				{/* Header */}
+				<div className='flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50'>
+					<h2 className='text-lg font-bold text-gray-800 truncate'>
+						{course.title}
+					</h2>
+					<button
+						onClick={toggleSidebar}
+						className='text-gray-500 hover:text-gray-700 transition-colors'
+						aria-label='Свернуть меню'
+					>
+						<FaArrowLeft className='w-5 h-5' />
+					</button>
+				</div>
+
+				{/* Chapters list */}
+				<div className='p-2'>
+					<nav>
+						<ul className='space-y-1'>
+							{allChapters.map(chapter => (
+								<li key={chapter.id}>
+									<a
+										href={`#${chapter.hash}`}
+										className={`flex items-center p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200
+                      ${chapter.isRead ? 'bg-green-50' : ''} 
+                      ${
+												currentHash === chapter.hash
+													? 'bg-gray-200 font-medium'
+													: ''
+											}`}
 									>
-										{chapter.title}
-									</span>
-								</a>
-							</li>
-						))}
-					</ul>
-				</nav>
+										<span className='mr-3 flex-shrink-0'>
+											{chapter.isRead ? (
+												<FaCheckCircle className='text-green-500 w-5 h-5' />
+											) : (
+												<FaRegCircle className='text-gray-400 w-5 h-5' />
+											)}
+										</span>
+										<span
+											className={`text-sm leading-tight ${
+												chapter.isRead ? 'text-gray-600' : 'text-gray-800'
+											} ${currentHash === chapter.hash ? 'font-medium' : ''}`}
+										>
+											{chapter.title}
+										</span>
+									</a>
+								</li>
+							))}
+						</ul>
+					</nav>
+				</div>
 			</div>
 		</div>
 	)
