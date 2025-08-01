@@ -215,8 +215,6 @@ const Content = () => {
 													questionIndex={currentQuestionIndex}
 													totalQuestions={testBlocks.length}
 													onNext={handleNextQuestion}
-													onPrev={handlePrevQuestion}
-													onComplete={handleQuestionComplete}
 												/>
 											</div>
 										)}
@@ -230,23 +228,7 @@ const Content = () => {
 											</div>
 										)}
 
-										{testResults.length === testBlocks.length && (
-											<div className='mt-4 p-4 bg-white rounded-lg shadow-sm border border-gray-200'>
-												<h3 className='text-lg font-medium text-gray-800 mb-2'>
-													Итоговый результат:
-												</h3>
-												<p className='text-gray-600'>
-													Правильных ответов:{' '}
-													{testResults.filter(r => r).length} из{' '}
-													{testBlocks.length}
-												</p>
-												<p className='mt-2 text-sm text-gray-500'>
-													{testResults.filter(r => r).length >= 3
-														? 'Тест пройден успешно!'
-														: 'Тест не пройден, нужно минимум 3 правильных ответа'}
-												</p>
-											</div>
-										)}
+										
 									</div>
 								</div>
 							)}

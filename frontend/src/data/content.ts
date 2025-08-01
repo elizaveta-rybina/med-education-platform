@@ -1274,7 +1274,7 @@ export const courseData: Course = {
 							type: 'game',
 							title: 'Симуляция гипоксии',
 							gameUrl:
-								'https://gd.games/instant-builds/f99487df-14bd-4615-b307-6256ba083fec',
+								'https://gd.games/instant-builds/caf4bee6-10bf-4cfc-bab1-bf442be15eb7',
 							width: '100%',
 							height: 'auto'
 						}

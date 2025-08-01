@@ -1,17 +1,14 @@
-// components/TestBlock.tsx
-import { QuestionBlock } from '@/data/types'
-import { useCourse } from '@/hooks/useCourse'
+import { DragDropTableBlock, QuestionBlock } from '@/data/types'
+import { useTest } from '@/hooks/tests/useTest'
 import { useEffect, useState } from 'react'
 
 interface TestBlockProps {
-	block: QuestionBlock
+	block: QuestionBlock | DragDropTableBlock
 	moduleId: string
 	chapterId: string
 	questionIndex: number
 	totalQuestions: number
 	onNext: () => void
-	onPrev: () => void
-	onComplete: (isCorrect: boolean) => void
 }
 
 export const TestBlock = ({
@@ -20,25 +17,21 @@ export const TestBlock = ({
 	chapterId,
 	questionIndex,
 	totalQuestions,
-	onNext,
-	onPrev,
-	onComplete
+	onNext
 }: TestBlockProps) => {
-	const { answerQuestion } = useCourse()
+	const { testResults, testError, submitTest, resetTestForChapter } =
+		useTest(chapterId)
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([])
-	const [isAnswered, setIsAnswered] = useState(false)
-	const [isCorrect, setIsCorrect] = useState(false)
+	const [isTestCompleted, setIsTestCompleted] = useState(!!testResults)
+	const [localAnswers, setLocalAnswers] = useState<
+		{ questionId: string; selectedOptionIds: string[] }[]
+	>([])
 
-	// Сброс состояния при смене вопроса
 	useEffect(() => {
 		setSelectedOptions([])
-		setIsAnswered(false)
-		setIsCorrect(false)
-	}, [block.id])
+	}, [moduleId, chapterId, questionIndex])
 
 	const handleOptionChange = (optionId: string) => {
-		if (isAnswered) return
-
 		setSelectedOptions(prev =>
 			prev.includes(optionId)
 				? prev.filter(id => id !== optionId)
@@ -46,141 +39,208 @@ export const TestBlock = ({
 		)
 	}
 
-	const checkAnswers = () => {
-		// Все правильные ответы
-		const correctAnswers = block.options
-			.filter(opt => opt.isCorrect)
-			.map(opt => opt.id)
-
-		// Все выбранные ответы
-		const userAnswers = selectedOptions
-
-		// Проверяем, что выбраны все правильные и только они
-		const correct =
-			userAnswers.length === correctAnswers.length &&
-			userAnswers.every(answer => correctAnswers.includes(answer))
-
-		return correct
+	const handleDragDropChange = (rowId: string, answerId: string) => {
+		const optionId = `${rowId}:${answerId}`
+		setSelectedOptions(prev =>
+			prev.includes(optionId)
+				? prev.filter(id => id !== optionId)
+				: [...prev, optionId]
+		)
 	}
 
-	const handleAnswer = () => {
-		if (selectedOptions.length === 0) return
-
-		const correct = checkAnswers()
-		setIsCorrect(correct)
-
-		// Отправляем все выбранные ответы
-		selectedOptions.forEach(optionId => {
-			answerQuestion(moduleId, chapterId, block.id, optionId)
-		})
-
-		setIsAnswered(true)
-		onComplete(correct)
-	}
-
-	const handleNext = () => {
-		if (!isAnswered) {
-			const correct = checkAnswers()
-			setIsCorrect(correct)
-			setIsAnswered(true)
-			onComplete(correct)
+	const handleNext = async () => {
+		if (selectedOptions.length > 0) {
+			setLocalAnswers(prev => {
+				const existingAnswerIndex = prev.findIndex(
+					answer => answer.questionId === block.id
+				)
+				const newAnswer = {
+					questionId: block.id,
+					selectedOptionIds: selectedOptions
+				}
+				if (existingAnswerIndex >= 0) {
+					const updatedAnswers = [...prev]
+					updatedAnswers[existingAnswerIndex] = newAnswer
+					return updatedAnswers
+				}
+				return [...prev, newAnswer]
+			})
 		}
-		onNext()
+
+		if (questionIndex === totalQuestions - 1) {
+			setIsTestCompleted(true)
+			submitTest(localAnswers)
+		} else {
+			onNext()
+		}
 	}
 
-	return (
-		<div className='my-6 p-4 bg-gray-50 rounded-lg'>
-			<div className='flex justify-between items-center mb-4'>
-				<h3 className='font-medium text-lg'>
-					Вопрос {questionIndex + 1} из {totalQuestions}
-				</h3>
-				{isAnswered && (
-					<span
-						className={`px-3 py-1 rounded-full text-sm ${
-							isCorrect
-								? 'bg-green-100 text-green-800'
-								: 'bg-red-100 text-red-800'
-						}`}
-					>
-						{isCorrect ? 'Правильно' : 'Неправильно'}
-					</span>
-				)}
-			</div>
+	const handleReset = () => {
+		setIsTestCompleted(false)
+		setLocalAnswers([])
+		setSelectedOptions([])
+		resetTestForChapter()
+	}
 
-			<h4 className='font-medium mb-3'>{block.question}</h4>
-			<ul className='space-y-2 mb-6'>
-				{block.options.map(option => (
-					<li key={option.id}>
-						<label className='flex items-center'>
-							<input
-								type='checkbox'
-								name={`question-${block.id}`}
-								className='mr-2'
-								checked={selectedOptions.includes(option.id)}
-								onChange={() => handleOptionChange(option.id)}
-								disabled={isAnswered}
-							/>
-							<span
-								className={
-									isAnswered
-										? option.isCorrect
-											? 'text-green-600 font-medium'
-											: selectedOptions.includes(option.id) && !option.isCorrect
-											? 'text-red-600'
-											: ''
-										: ''
-								}
-							>
-								{option.text}
-							</span>
-						</label>
-					</li>
-				))}
-			</ul>
-
-			{!isAnswered ? (
-				<div className='flex justify-between'>
-					{/* <button
-            onClick={onPrev}
-            disabled={questionIndex === 0}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition disabled:opacity-50"
-          >
-            Назад
-          </button> */}
-					<button
-						onClick={handleAnswer}
-						disabled={selectedOptions.length === 0}
-						className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition disabled:bg-gray-300'
-					>
-						Проверить ответ
-					</button>
-				</div>
-			) : (
-				<div className='space-y-4'>
-					{block.explanation && (
-						<div className='p-3 rounded bg-blue-50 text-blue-800'>
-							<p className='text-sm'>{block.explanation}</p>
-						</div>
-					)}
-					<div className='flex justify-between'>
+	if (isTestCompleted || testResults) {
+		if (testError) {
+			return (
+				<div className='my-6 p-4 bg-gray-50 rounded-lg'>
+					<h3 className='font-medium text-lg mb-4'>Ошибка</h3>
+					<p className='text-sm mb-4'>Произошла ошибка: {testError}</p>
+					<div className='flex justify-end'>
 						<button
-							onClick={onPrev}
-							disabled={questionIndex === 0}
-							className='px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition disabled:opacity-50'
-						>
-							Назад
-						</button>
-						<button
-							onClick={handleNext}
+							onClick={handleReset}
 							className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
 						>
-							{questionIndex < totalQuestions - 1
-								? 'Следующий вопрос'
-								: 'Завершить тест'}
+							Попробовать снова
 						</button>
 					</div>
 				</div>
-			)}
-		</div>
-	)
+			)
+		}
+
+		if (testResults) {
+			const passed = testResults.totalCorrect >= 3
+			const bgColor = passed ? 'bg-green-100' : 'bg-red-100'
+			const statusText = passed ? 'Тест зачтён' : 'Тест не зачтён'
+
+			return (
+				<div className={`my-6 p-4 rounded-lg ${bgColor}`}>
+					<h3 className='font-medium text-lg mb-4'>Результаты тестирования</h3>
+					<p className='text-sm mb-2'>
+						Вы ответили правильно на {testResults.totalCorrect} из{' '}
+						{testResults.totalQuestions} вопросов.
+					</p>
+					<p className='text-sm font-semibold'>{statusText}</p>
+					{/* <div className='flex justify-end'>
+				<button
+					onClick={handleReset}
+					className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
+				>
+					Пройти тест заново
+				</button>
+			</div> */}
+				</div>
+			)
+		}
+
+		return (
+			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
+				<h3 className='font-medium text-lg mb-4'>Отправка результатов...</h3>
+				<div className='flex justify-center'>
+					<div className='animate-spin h-5 w-5 border-2 border-purple-500 rounded-full border-t-transparent'></div>
+				</div>
+			</div>
+		)
+	}
+
+	if (block.type === 'question') {
+		return (
+			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
+				<div className='flex justify-between items-center mb-4'>
+					<h3 className='font-medium text-lg'>
+						Вопрос {questionIndex + 1} из {totalQuestions}
+					</h3>
+				</div>
+
+				<h4 className='font-medium mb-3'>{block.question}</h4>
+				<ul className='space-y-2 mb-6'>
+					{block.options.map(option => (
+						<li key={option.id}>
+							<label className='flex items-center'>
+								<input
+									type='checkbox'
+									name={`question-${block.id}`}
+									className='mr-2'
+									checked={selectedOptions.includes(option.id)}
+									onChange={() => handleOptionChange(option.id)}
+								/>
+								<span>{option.text}</span>
+							</label>
+						</li>
+					))}
+				</ul>
+
+				<div className='flex justify-end'>
+					<button
+						onClick={handleNext}
+						className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
+					>
+						{questionIndex < totalQuestions - 1
+							? 'Следующий вопрос'
+							: 'Завершить тестирование'}
+					</button>
+				</div>
+			</div>
+		)
+	}
+
+	if (block.type === 'drag-drop-table') {
+		return (
+			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
+				<div className='flex justify-between items-center mb-4'>
+					<h3 className='font-medium text-lg'>
+						Вопрос {questionIndex + 1} из {totalQuestions}
+					</h3>
+				</div>
+
+				<h4 className='font-medium mb-3'>{block.title}</h4>
+				<p className='text-sm mb-4'>{block.tableTitle}</p>
+				<table className='w-full mb-6 border-collapse'>
+					<thead>
+						<tr>
+							{block.columns.map(column => (
+								<th
+									key={column.id}
+									style={{ width: column.width }}
+									className='border p-2'
+								>
+									{column.title}
+								</th>
+							))}
+						</tr>
+					</thead>
+					<tbody>
+						{block.rows.map(row => (
+							<tr key={row.id}>
+								<td className='border p-2'>{row.column1}</td>
+								<td className='border p-2'>{row.column2}</td>
+								<td className='border p-2'>
+									<div className='flex flex-wrap gap-2'>
+										{block.answers.map(answer => (
+											<button
+												key={answer.id}
+												onClick={() => handleDragDropChange(row.id, answer.id)}
+												className={`px-2 py-1 rounded ${
+													selectedOptions.includes(`${row.id}:${answer.id}`)
+														? 'bg-purple-500 text-white'
+														: 'bg-gray-200'
+												}`}
+											>
+												{answer.content}
+											</button>
+										))}
+									</div>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+
+				<div className='flex justify-end'>
+					<button
+						onClick={handleNext}
+						className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
+					>
+						{questionIndex < totalQuestions - 1
+							? 'Следующий вопрос'
+							: 'Завершить тестирование'}
+					</button>
+				</div>
+			</div>
+		)
+	}
+
+	return null
 }
