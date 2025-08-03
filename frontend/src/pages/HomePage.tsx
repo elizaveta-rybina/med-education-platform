@@ -8,7 +8,7 @@ const HomePage = () => {
 				description='Ваш путь в инновации начинается здесь. Присоединяйтесь к курсам!'
 				buttonText='Перейти к обучению'
 				buttonHref='course/1'
-				imageSrc='/src/assets/heroImage.jpg'
+				imageSrc='/src/assets/heroImage.webp'
 				imageAlt='Медицинские курсы'
 			/>
 		</div>
