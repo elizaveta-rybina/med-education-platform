@@ -12,9 +12,7 @@ interface ProfileContentProps {
 		birth_date?: string | null
 		is_verified?: boolean
 		created_at?: string
-		roles?: Array<{
-			description?: string
-		}>
+		roles?: string[]
 		education?: {
 			faculty?: string | null
 			specialization?: string | null
@@ -116,7 +114,7 @@ export const ProfileContent = ({
 					<div className='space-y-1'>
 						<label className={labelClass}>Роль</label>
 						<p className={valueClass}>
-							{userData.roles?.[0]?.description || 'Не указана'}
+							{userData.roles || 'Не указана'}
 						</p>
 					</div>
 				</div>

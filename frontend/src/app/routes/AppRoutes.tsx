@@ -4,6 +4,7 @@ import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
 import { CoursePage, HomePage, NotFound } from '@/pages'
 import PersonalAccountStudent from '@/pages/Account/PersonalAccountStudent'
+import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
 import StudentUsers from '@/pages/Admin/StudentUsers'
 import TeacherUsers from '@/pages/Admin/TeacherUsers'
@@ -73,6 +74,14 @@ const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<StudentUsers />
+					</ProtectedRoute>
+				)
+			},
+			{
+				path: '/admin/courses',
+				element: (
+					<ProtectedRoute>
+						<CourseAll />
 					</ProtectedRoute>
 				)
 			},

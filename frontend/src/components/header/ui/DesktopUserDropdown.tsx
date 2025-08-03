@@ -22,7 +22,7 @@ const DesktopUserDropdown: React.FC<DesktopUserDropdownProps> = ({
 		<Popover className='relative'>
 			{({ open }) => (
 				<>
-					<PopoverButton className='flex items-center gap-x-1 text-base font-semibold text-gray-900 hover:text-purple-500 transition-colors'>
+					<PopoverButton className='flex focus:outline-none items-center gap-x-1 text-base font-semibold text-gray-900 hover:text-purple-500 transition-colors'>
 						{user.avatar ? (
 							<img
 								src={user.avatar}
