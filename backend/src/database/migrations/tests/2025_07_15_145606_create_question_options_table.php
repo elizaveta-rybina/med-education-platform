@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->text('text'); // Текст варианта ответа
             $table->boolean('is_correct')->default(false); // Правильный ли ответ
-            $table->json('matching_data')->nullable(); // Для соотношений (например, пара ключ-значение)
+            $table->string('matching_data')->nullable(); // Для соотношений (например, пара ключ-значение)
             $table->integer('order')->default(0); // Для упорядочивания
             $table->timestampsTz();
         });

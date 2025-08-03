@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Content\{Assessments\UserAnswerController};
+use App\Http\Controllers\Content\{Assessments\QuizController, Assessments\UserAnswerController};
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth.api')->group(function () {
@@ -12,3 +12,13 @@ Route::middleware('auth.api')->group(function () {
         // Добавьте здесь общие маршруты для работы с контентом
     });
 });
+
+Route::middleware(['auth.api'])->prefix('student')->group(function () {
+    Route::prefix('content')->group(function () {
+        Route::prefix('quizzes')->group(function () {
+
+            Route::get('/{quiz}', [QuizController::class, 'showForStudent']);
+        });
+    });
+});
+

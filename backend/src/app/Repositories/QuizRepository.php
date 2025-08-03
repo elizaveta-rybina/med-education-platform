@@ -3,46 +3,92 @@
 namespace App\Repositories;
 
 use App\Models\Content\Assessments\Quiz;
-use Illuminate\Database\Eloquent\Model;
+use App\Repositories\Contracts\QuizRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class QuizRepository
+class QuizRepository implements QuizRepositoryInterface
 {
-    public function create(array $data, Model $parentModel): Quiz
+    protected Quiz $model;
+
+    public function __construct(Quiz $quiz)
     {
-        try {
-            $quiz = Quiz::create([
-                'title' => $data['title'],
-                'description' => $data['description'] ?? null,
-                'quiz_type' => $data['quiz_type'],
-                'max_attempts' => $data['max_attempts'],
-                'passing_score' => $data['passing_score'],
-                'time_limit_minutes' => $data['time_limit_minutes'] ?? null,
-                'questions_count' => $data['questions_count'] ?? null,
-                'quizable_type' => get_class($parentModel),
-                'quizable_id' => $parentModel->id,
-            ]);
-            Log::info('QuizRepository: Quiz created', ['quiz_id' => $quiz->id]);
-            return $quiz;
-        } catch (\Exception $e) {
-            Log::error('QuizRepository: Error in create method', ['error' => $e->getMessage()]);
-            throw $e;
-        }
+        $this->model = $quiz;
     }
 
-    public function update(Quiz $quiz, array $data): Quiz
+    /**
+     * Get all quizzes with relations.
+     *
+     * @param array $relations
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllWithRelations(array $relations)
     {
-        $quiz->update(array_filter($data, fn($value) => !is_null($value)));
-        return $quiz;
+        return $this->model->with($relations)->get();
     }
 
+    /**
+     * Find quiz by ID with relations.
+     *
+     * @param int $id
+     * @param array $relations
+     * @return \App\Models\Content\Assessments\Quiz
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function findWithRelations(int $id, array $relations): Quiz
+    {
+        return $this->model->with($relations)->findOrFail($id);
+    }
+
+    /**
+     * Find quiz by ID.
+     *
+     * @param int $id
+     * @return \App\Models\Content\Assessments\Quiz
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function find(int $id): Quiz
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Create a new quiz.
+     *
+     * @param array $data
+     * @return \App\Models\Content\Assessments\Quiz
+     */
+    public function create(array $data): Quiz
+    {
+        return $this->model->create($data);
+    }
+
+    /**
+     * Update an existing quiz.
+     *
+     * @param \App\Models\Content\Assessments\Quiz $quiz
+     * @param array $data
+     * @return bool
+     */
+    public function update(Quiz $quiz, array $data): bool
+    {
+        DB::enableQueryLog();
+        $result = $quiz->update($data);
+        Log::info('SQL queries for update', [
+            'quiz_id' => $quiz->id,
+            'queries' => DB::getQueryLog()
+        ]);
+        return $result;
+    }
+
+    /**
+     * Delete a quiz.
+     *
+     * @param \App\Models\Content\Assessments\Quiz $quiz
+     * @return void
+     */
     public function delete(Quiz $quiz): void
     {
         $quiz->delete();
-    }
-
-    public function findOrFail(int $id): Quiz
-    {
-        return Quiz::findOrFail($id);
     }
 }

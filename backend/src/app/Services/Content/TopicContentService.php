@@ -5,6 +5,7 @@ namespace App\Services\Content;
 use App\Models\Content\Assignment;
 use App\Models\Content\Lecture;
 use App\Models\Content\Topic;
+use App\Services\Content\TopicItemService;
 use App\Services\Content\Assessments\QuizService;
 use Illuminate\Support\Facades\DB;
 

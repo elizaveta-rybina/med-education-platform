@@ -2,92 +2,193 @@
 
 namespace App\Http\Controllers\Content\Assessments;
 
-use App\Models\Content\Assessments\Quiz;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\Content\Assessments\Question\StoreQuestionRequest;
+use App\Http\Requests\Content\Assessments\Question\UpdateQuestionRequest;
+use App\Http\Requests\Content\Assessments\Quiz\StoreQuizRequest;
+use App\Http\Requests\Content\Assessments\Quiz\UpdateQuizRequest;
+use App\Http\Requests\Content\Assessments\UserAnswer\StoreAnswerRequest;
+use App\Http\Resources\QuestionResource;
+use App\Http\Resources\QuizResource;
+use App\Http\Resources\StudentQuizResource;
+use App\Http\Resources\AnswerResource;
+use App\Models\Content\Assessments\Quiz;
+use App\Services\Contracts\QuizServiceInterface;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
+use Exception;
 
 class QuizController extends Controller
 {
-    public function index()
+    protected QuizServiceInterface $quizService;
+
+    public function __construct(QuizServiceInterface $quizService)
     {
-        $quizzes = Quiz::with('quizable')->get();
-        return response()->json($quizzes);
+        $this->quizService = $quizService;
     }
 
-    public function store(Request $request)
+    /**
+     * Display a listing of quizzes.
+     *
+     * @return JsonResponse
+     */
+    public function index(): JsonResponse
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'quiz_type' => 'required|in:topic_final,additional,embedded,module_final',
-            'max_attempts' => 'required|integer|min:1',
-            'passing_score' => 'required|integer|min:0|max:100',
-            'questions_count' => 'nullable|integer|min:1',
-            'time_limit_minutes' => 'nullable|integer|min:1',
-            'quizable_id' => 'nullable|integer',
-            'quizable_type' => 'nullable|string',
-        ]);
-
-        $quiz = Quiz::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'quiz_type' => $validated['quiz_type'],
-            'max_attempts' => $validated['max_attempts'],
-            'passing_score' => $validated['passing_score'],
-            'questions_count' => $validated['questions_count'],
-            'time_limit_minutes' => $validated['time_limit_minutes'],
-            'quizable_id' => $validated['quizable_id'],
-            'quizable_type' => $validated['quizable_type'],
-        ]);
-
-        return response()->json($quiz, 201);
-    }
-
-    public function show(Quiz $quiz)
-    {
-        return response()->json($quiz->load('quizable', 'questions'));
-    }
-
-    public function update(Request $request, Quiz $quiz)
-    {
-        Log::info('Request data:', $request->all());
-
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'quiz_type' => 'required|in:topic_final,additional,embedded,module_final',
-            'max_attempts' => 'required|integer|min:1',
-            'passing_score' => 'required|integer|min:0|max:100',
-            'questions_count' => 'nullable|integer|min:1',
-            'time_limit_minutes' => 'nullable|integer|min:1',
-            'quizable_id' => 'nullable|integer',
-            'quizable_type' => 'nullable|string',
-        ]);
-
-        Log::info('Validated data:', $validated);
-
-        DB::enableQueryLog();
-        $result = $quiz->update($validated);
-        Log::info('Update result:', ['result' => $result]);
-        Log::info('SQL queries:', DB::getQueryLog());
-
-        if (!$result) {
-            Log::error('Failed to update quiz', ['quiz_id' => $quiz->id]);
-            return response()->json(['error' => 'Failed to update quiz'], 500);
+        try {
+            $quizzes = $this->quizService->getAllQuizzes();
+            return QuizResource::collection($quizzes)->response();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve quizzes: ' . $e->getMessage()], 500);
         }
-
-        $freshQuiz = $quiz->fresh();
-        Log::info('Updated quiz:', $freshQuiz->toArray());
-
-        return response()->json($freshQuiz);
     }
 
-    public function destroy(Quiz $quiz)
+    /**
+     * Store a newly created quiz with questions and options.
+     *
+     * @param StoreQuizRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreQuizRequest $request): JsonResponse
     {
-        $quiz->delete();
-        return response()->json(null, 204);
+        try {
+            $quiz = $this->quizService->createQuiz($request->validated());
+            return (new QuizResource($quiz))->response()->setStatusCode(201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to create quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Display the specified quiz with questions and options.
+     *
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function show(Quiz $quiz): JsonResponse
+    {
+        try {
+            $quiz = $this->quizService->getQuizById($quiz->id);
+            return (new QuizResource($quiz))->response();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve quiz: ' . $e->getMessage()], $e->getCode() ?: 404);
+        }
+    }
+
+    /**
+     * Display the specified quiz for students (without answers).
+     *
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function showForStudent(Quiz $quiz): JsonResponse
+    {
+        try {
+            $quiz = $this->quizService->getQuizForStudent($quiz->id);
+            return (new StudentQuizResource($quiz))->response();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve quiz for student: ' . $e->getMessage()], $e->getCode() ?: 404);
+        }
+    }
+
+    /**
+     * Update the specified quiz and optionally its questions and options.
+     *
+     * @param UpdateQuizRequest $request
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function update(UpdateQuizRequest $request, Quiz $quiz): JsonResponse
+    {
+        try {
+            $quiz = $this->quizService->updateQuiz($quiz, $request->validated());
+            return (new QuizResource($quiz))->response();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to update quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Remove the specified quiz and its questions/options.
+     *
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function destroy(Quiz $quiz): JsonResponse
+    {
+        try {
+            $this->quizService->deleteQuiz($quiz);
+            return response()->json(null, 204);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to delete quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Add a new question to an existing quiz.
+     *
+     * @param StoreQuestionRequest $request
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function storeQuestion(StoreQuestionRequest $request, Quiz $quiz): JsonResponse
+    {
+        try {
+            $question = $this->quizService->addQuestionToQuiz($quiz, $request->validated());
+            return (new QuestionResource($question))->response()->setStatusCode(201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to add question: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Update a specific question in a quiz.
+     *
+     * @param UpdateQuestionRequest $request
+     * @param Quiz $quiz
+     * @param int $questionId
+     * @return JsonResponse
+     */
+    public function updateQuestion(UpdateQuestionRequest $request, Quiz $quiz, int $questionId): JsonResponse
+    {
+        try {
+            $question = $this->quizService->updateQuestionInQuiz($quiz, $questionId, $request->validated());
+            return (new QuestionResource($question))->response();
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to update question: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Remove a specific question from a quiz.
+     *
+     * @param Quiz $quiz
+     * @param int $questionId
+     * @return JsonResponse
+     */
+    public function destroyQuestion(Quiz $quiz, int $questionId): JsonResponse
+    {
+        try {
+            $this->quizService->deleteQuestionFromQuiz($quiz, $questionId);
+            return response()->json(null, 204);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to delete question: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
+    }
+
+    /**
+     * Store a student's answer for a quiz question.
+     *
+     * @param StoreAnswerRequest $request
+     * @param Quiz $quiz
+     * @return JsonResponse
+     */
+    public function storeAnswer(StoreAnswerRequest $request, Quiz $quiz): JsonResponse
+    {
+        try {
+            $answer = $this->quizService->storeStudentAnswer($quiz, auth()->user(), $request->validated());
+            return (new AnswerResource($answer))->response()->setStatusCode(201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to store answer: ' . $e->getMessage()], $e->getCode() ?: 500);
+        }
     }
 }

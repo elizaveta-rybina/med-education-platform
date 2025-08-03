@@ -4,7 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -34,4 +36,17 @@ class Handler extends ExceptionHandler
             return response()->json(['error' => 'Quiz not found'], 404);
         });
     }
+
+    public function render($request, Throwable $e)
+    {
+        if ($e instanceof MethodNotAllowedHttpException) {
+            return response()->json([
+                'message' => 'Метод не разрешён для этого маршрута.',
+                'error' => 'Method Not Allowed',
+            ], 405);
+        }
+
+        return parent::render($request, $e);
+    }
+
 }

@@ -2,100 +2,126 @@
 
 namespace App\Services\Content\Assessments;
 
+use App\Models\Content\Assessments\Quiz;
 use App\Models\Content\Assessments\Question;
-use App\Repositories\QuestionRepository;
+use App\Repositories\Contracts\QuestionRepositoryInterface;
+use App\Services\Contracts\QuestionOptionServiceInterface;
+use App\Services\Contracts\QuestionServiceInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
-class QuestionService
+class QuestionService implements QuestionServiceInterface
 {
-    protected $questionRepository;
-    protected $answerService;
-    // protected $schemaQuestionService;
+    protected QuestionRepositoryInterface $questionRepository;
+    protected QuestionOptionServiceInterface $questionOptionService;
 
     public function __construct(
-        QuestionRepository $questionRepository,
-        AnswerService $answerService
-        // SchemaQuestionService $schemaQuestionService // Закомментировано
+        QuestionRepositoryInterface $questionRepository,
+        QuestionOptionServiceInterface $questionOptionService
     ) {
-        Log::debug('QuestionService: Конструктор вызван');
         $this->questionRepository = $questionRepository;
-        Log::debug('QuestionService: QuestionRepository инжектирован');
-        $this->answerService = $answerService;
-        Log::debug('QuestionService: AnswerService инжектирован');
-        // $this->schemaQuestionService = $schemaQuestionService;
-        // Log::debug('QuestionService: SchemaQuestionService инжектирован');
+        $this->questionOptionService = $questionOptionService;
     }
 
-    public function create(array $data, int $quizId): Question
+    /**
+     * Create a new question for a quiz.
+     *
+     * @param Quiz $quiz
+     * @param array $data
+     * @return Question
+     * @throws Exception
+     */
+    public function createQuestion(Quiz $quiz, array $data): Question
     {
-        Log::debug('QuestionService: Метод create вызван', ['data' => $data, 'quizId' => $quizId]);
-        DB::beginTransaction();
+        return DB::transaction(function () use ($quiz, $data) {
+            try {
+                Log::info('Creating question for quiz', ['quiz_id' => $quiz->id, 'data' => $data]);
 
-        try {
-            // Временно отключаем создание вопросов типа open_schema и matching_schema
-            $question = $this->questionRepository->create($data, $quizId);
-            Log::debug('QuestionService: Вопрос создан', ['question_id' => $question->id]);
+                $options = $data['options'] ?? [];
+                unset($data['options']);
 
-            if (!empty($data['answers'])) {
-                $this->answerService->create($data['answers'], $question->id, $data['question_type']);
-                Log::debug('QuestionService: Ответы созданы', ['question_id' => $question->id]);
+                // Создаем вопрос
+                $question = $this->questionRepository->create($quiz, $data);
+
+                // Создаем опции, если они есть
+                if (!empty($options)) {
+                    $this->questionOptionService->createMultipleOptions($quiz, $question, $options);
+                }
+
+                return $question;
+            } catch (Exception $e) {
+                Log::error('Failed to create question: ' . $e->getMessage(), [
+                    'quiz_id' => $quiz->id,
+                    'data' => $data,
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw new Exception('Failed to create question', 0, $e);
             }
-
-            DB::commit();
-            Log::debug('QuestionService: Транзакция зафиксирована');
-            return $question;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('QuestionService: Ошибка в методе create', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            throw $e;
-        }
+        });
     }
 
-    public function update(Question $question, array $data): Question
+    /**
+     * Update an existing question.
+     *
+     * @param Quiz $quiz
+     * @param Question $question
+     * @param array $data
+     * @return Question
+     * @throws Exception
+     */
+    public function updateQuestion(Quiz $quiz, Question $question, array $data): Question
     {
-        Log::debug('QuestionService: Метод update вызван', ['question_id' => $question->id]);
-        DB::beginTransaction();
+        return DB::transaction(function () use ($quiz, $question, $data) {
+            try {
+                Log::info('Updating question', ['quiz_id' => $quiz->id, 'question_id' => $question->id, 'data' => $data]);
 
-        try {
-            $question = $this->questionRepository->update($question, $data);
-            Log::debug('QuestionService: Вопрос обновлен');
+                $options = $data['options'] ?? [];
+                unset($data['options']);
 
-            if (!empty($data['answers'])) {
-                $this->answerService->update($data['answers'], $question->id, $question->question_type);
-                Log::debug('QuestionService: Ответы обновлены');
+                // Обновляем вопрос
+                $this->questionRepository->update($question, $data);
+
+                // Синхронизируем опции
+                if (!empty($options)) {
+                    $this->questionOptionService->syncOptions($quiz, $question, $options);
+                } else {
+                    $question->options()->delete();
+                }
+
+                return $question->fresh(['options']);
+            } catch (Exception $e) {
+                Log::error('Failed to update question: ' . $e->getMessage(), [
+                    'quiz_id' => $quiz->id,
+                    'question_id' => $question->id,
+                    'data' => $data,
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw new Exception('Failed to update question', 0, $e);
             }
-
-            DB::commit();
-            Log::debug('QuestionService: Транзакция зафиксирована');
-            return $question;
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('QuestionService: Ошибка в методе update', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            throw $e;
-        }
+        });
     }
 
-    public function delete(Question $question): void
+    /**
+     * Delete a question.
+     *
+     * @param Quiz $quiz
+     * @param Question $question
+     * @return void
+     * @throws Exception
+     */
+    public function deleteQuestion(Quiz $quiz, Question $question): void
     {
-        Log::debug('QuestionService: Метод delete вызван', ['question_id' => $question->id]);
-        DB::beginTransaction();
-
         try {
-            $this->answerService->delete($question->id);
+            Log::info('Deleting question', ['quiz_id' => $quiz->id, 'question_id' => $question->id]);
             $this->questionRepository->delete($question);
-            DB::commit();
-            Log::debug('QuestionService: Вопрос удален');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('QuestionService: Ошибка в методе delete', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            throw $e;
+        } catch (Exception $e) {
+            Log::error('Failed to delete question: ' . $e->getMessage(), [
+                'quiz_id' => $quiz->id,
+                'question_id' => $question->id,
+                'trace' => $e->getTraceAsString()
+            ]);
+            throw new Exception('Failed to delete question', 0, $e);
         }
-    }
-
-    public function findOrFail(int $id): Question
-    {
-        Log::debug('QuestionService: Метод findOrFail вызван', ['id' => $id]);
-        return $this->questionRepository->findOrFail($id);
     }
 }
