@@ -20,7 +20,8 @@ class QuestionOption extends Model
 
     protected $casts = [
         'is_correct' => 'boolean',
-        'matching_data' => 'array',
+        'matching_data' => 'string', // Поддержка строк для matching
+        'order' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

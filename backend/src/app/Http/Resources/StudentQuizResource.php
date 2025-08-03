@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class QuizResource extends JsonResource
+class StudentQuizResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,16 +20,14 @@ class QuizResource extends JsonResource
             'description' => $this->description,
             'quiz_type' => $this->quiz_type,
             'max_attempts' => $this->max_attempts,
-            'passing_score' => $this->passing_score,
-            'questions_count' => $this->questions_count,
             'time_limit_minutes' => $this->time_limit_minutes,
-            'entity_type' => $this->quizable_type, // возвращаем как entity_type
+            'entity_type' => $this->quizable_type,
             'quizable_id' => $this->quizable_id,
             'quizable' => $this->whenLoaded('quizable', fn() => [
                 'id' => $this->quizable->id,
-                'name' => $this->quizable->name ?? $this->quizable->title, // адаптируйте под вашу модель
+                'name' => $this->quizable->name ?? $this->quizable->title,
             ]),
-            'questions' => QuestionResource::collection($this->whenLoaded('questions')),
+            'questions' => StudentQuestionResource::collection($this->whenLoaded('questions')),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),
         ];

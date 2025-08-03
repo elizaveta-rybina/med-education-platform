@@ -2,8 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\StudentVerificationController;
-use App\Http\Controllers\Content\{Assessments\QuestionController,
-    Assessments\QuestionOptionController,
+use App\Http\Controllers\Content\{
     Assessments\QuizController,
     AssignmentController,
     CourseController,
@@ -88,23 +87,17 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
         });
 
         Route::prefix('quizzes')->group(function () {
+            Route::get('/', [QuizController::class, 'index']);
             Route::post('/', [QuizController::class, 'store']);
             Route::get('{quiz}', [QuizController::class, 'show']);
             Route::put('{quiz}', [QuizController::class, 'update']);
             Route::delete('{quiz}', [QuizController::class, 'destroy']);
 
             Route::prefix('{quiz}/questions')->group(function () {
-                Route::post('/', [QuestionController::class, 'store']);
-                Route::get('{question}', [QuestionController::class, 'show']);
-                Route::put('{question}', [QuestionController::class, 'update']);
-                Route::delete('{question}', [QuestionController::class, 'destroy']);
+                Route::post('/', [QuizController::class, 'storeQuestion']);
+                Route::put('{questionId}', [QuizController::class, 'updateQuestion']);
+                Route::delete('{questionId}', [QuizController::class, 'destroyQuestion']);
 
-                Route::prefix('{question}/options')->group(function () {
-                    Route::post('/', [QuestionOptionController::class, 'store']);
-                    Route::get('{option}', [QuestionOptionController::class, 'show']);
-                    Route::put('{option}', [QuestionOptionController::class, 'update']);
-                    Route::delete('{option}', [QuestionOptionController::class, 'destroy']);
-                });
             });
         });
     });

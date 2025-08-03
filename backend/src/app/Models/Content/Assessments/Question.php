@@ -18,7 +18,6 @@ class Question extends Model
         'metadata',
         'is_auto_graded',
         'points',
-        'order',
     ];
 
     protected $casts = [
@@ -39,10 +38,6 @@ class Question extends Model
         return $this->hasMany(QuestionOption::class);
     }
 
-    public function answerKeys(): HasMany
-    {
-        return $this->hasMany(AnswerKey::class);
-    }
 
     public function userAnswers(): HasMany
     {

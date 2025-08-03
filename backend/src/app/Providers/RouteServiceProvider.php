@@ -24,6 +24,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Route::model('quiz', \App\Models\Content\Assessments\Quiz::class);
+        Route::model('question', \App\Models\Content\Assessments\Question::class);
+        Route::model('option', \App\Models\Content\Assessments\QuestionOption::class);
+
+        parent::boot();
+
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });

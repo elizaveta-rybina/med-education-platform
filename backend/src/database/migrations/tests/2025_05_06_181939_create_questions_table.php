@@ -26,7 +26,6 @@ return new class extends Migration
             $table->json('metadata')->nullable(); // Для хранения структуры таблицы или других специфичных данных
             $table->boolean('is_auto_graded')->default(true); // Автоматическая или ручная проверка
             $table->integer('points')->default(1); // Баллы за вопрос
-            $table->integer('order')->default(0); // Порядок вопроса в тесте
             $table->timestampsTz();
         });
     }
