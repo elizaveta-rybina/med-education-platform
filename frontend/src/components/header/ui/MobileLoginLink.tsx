@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 interface MobileLoginLinkProps {
@@ -6,8 +7,10 @@ interface MobileLoginLinkProps {
 }
 
 const MobileLoginLink: React.FC<MobileLoginLinkProps> = ({
-	setMobileMenuOpen
+	setMobileMenuOpen,
 }) => {
+	const { t } = useTranslation('header')
+
 	return (
 		<div className='py-6'>
 			<Link
@@ -18,7 +21,7 @@ const MobileLoginLink: React.FC<MobileLoginLinkProps> = ({
 					setMobileMenuOpen?.(false)
 				}}
 			>
-				Войти
+				{t('login')}
 			</Link>
 		</div>
 	)

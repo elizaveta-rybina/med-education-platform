@@ -1,77 +1,83 @@
-export const modulesData = [
-  {
-    title: "Введение в физиологию",
-    moduleNumber: "1",
-    timeRemaining: "32 минуты до завершения",
-    description: "Изучите основы физиологии человека: как работают наши органы и системы, как они взаимодействуют между собой, чтобы поддерживать жизнь. Этот модуль создаст прочную основу для понимания более сложных физиологических процессов.",
-    topics: [
-      { title: "Основные понятия физиологии", duration: "10 минут", completed: true },
-      { title: "Клеточная организация", duration: "12 минут", completed: true },
-      { title: "Гомеостаз организма", duration: "10 минут", completed: false },
-    ],
-    hasFinalTest: true,
-    totalTopics: 3,
-    completedTopics: 2,
-    isUserRegistered: true,
-  },
-  {
-    title: "Сердечно-сосудистая система",
-    moduleNumber: "2",
-    timeRemaining: "45 минут до завершения",
-    description: "Познакомьтесь с механизмами работы сердца и сосудов, ролью кровообращения в организме. Узнайте, как поддерживается баланс между кровяным давлением и кровотоком.",
-    topics: [
-      { title: "Анатомия сердца", duration: "15 минут", completed: true },
-      { title: "Кровообращение", duration: "15 минут", completed: false },
-      { title: "Регуляция давления", duration: "15 минут", completed: false },
-    ],
-    hasFinalTest: true,
-    totalTopics: 3,
-    completedTopics: 1,
-    isUserRegistered: true,
-  },
-  {
-    title: "Дыхательная система",
-    moduleNumber: "3",
-    timeRemaining: "38 минут до завершения",
-    description: "В этом модуле вы узнаете, как воздух попадает в легкие и как происходит газообмен между альвеолами и кровью. Рассмотрим роль дыхания в поддержании кислотно-щелочного баланса организма.",
-    topics: [
-      { title: "Строение дыхательных путей", duration: "12 минут", completed: false },
-      { title: "Механизм дыхания", duration: "13 минут", completed: false },
-      { title: "Газообмен", duration: "13 минут", completed: false },
-    ],
-    hasFinalTest: true,
-    totalTopics: 3,
-    completedTopics: 0,
-    isUserRegistered: true,
-  },
-  {
-    title: "Нервная система",
-    moduleNumber: "4",
-    timeRemaining: "52 минут до завершения",
-    description: "Изучите, как нервная система управляет всеми функциями организма, от простых рефлексов до сложных мыслительных процессов. Мы рассмотрим механизмы передачи нервных импульсов.",
-    topics: [
-      { title: "Нейроны и синапсы", duration: "15 минут", completed: false },
-      { title: "Центральная нервная система", duration: "17 минут", completed: false },
-      { title: "Периферическая нервная система", duration: "20 минут", completed: false },
-    ],
-    hasFinalTest: true,
-    totalTopics: 3,
-    completedTopics: 0,
-    isUserRegistered: true,
-  },
-  {
-    title: "Мышечная система",
-    moduleNumber: "5",
-    timeRemaining: "40 минут до завершения",
-    description: "Этот модуль охватывает анатомию и физиологию мышц, объясняет, как они сокращаются и обеспечивают движение. Узнайте о различиях между скелетной, гладкой и сердечной мышцей.",
-    topics: [
-      { title: "Типы мышечной ткани", duration: "12 минут", completed: false },
-      { title: "Механизм сокращения", duration: "14 минут", completed: false },
-      { title: "Энергетика мышц", duration: "14 минут", completed: false },
-    ],
-    hasFinalTest: true,
-    totalTopics: 3,
-    completedTopics: 0,
-    isUserRegistered: true,
-  }
-];
+import { useTranslation } from 'react-i18next'
+
+export const useModulesData = () => {
+	const { t } = useTranslation('coursePage')
+
+	return [
+		{
+			title: t('module1Title'),
+			moduleNumber: '1',
+			timeRemaining: t('module1TimeRemaining'),
+			description: t('module1Description'),
+			topics: [
+				{ title: t('module1Topic1'), duration: '10 минут', completed: true },
+				{ title: t('module1Topic2'), duration: '12 минут', completed: true },
+				{ title: t('module1Topic3'), duration: '10 минут', completed: false },
+			],
+			hasFinalTest: true,
+			totalTopics: 3,
+			completedTopics: 2,
+			isUserRegistered: true,
+		},
+		{
+			title: t('module2Title'),
+			moduleNumber: '2',
+			timeRemaining: t('module2TimeRemaining'),
+			description: t('module2Description'),
+			topics: [
+				{ title: t('module2Topic1'), duration: '15 минут', completed: true },
+				{ title: t('module2Topic2'), duration: '15 минут', completed: false },
+				{ title: t('module2Topic3'), duration: '15 минут', completed: false },
+			],
+			hasFinalTest: true,
+			totalTopics: 3,
+			completedTopics: 1,
+			isUserRegistered: true,
+		},
+		{
+			title: t('module3Title'),
+			moduleNumber: '3',
+			timeRemaining: t('module3TimeRemaining'),
+			description: t('module3Description'),
+			topics: [
+				{ title: t('module3Topic1'), duration: '12 минут', completed: false },
+				{ title: t('module3Topic2'), duration: '13 минут', completed: false },
+				{ title: t('module3Topic3'), duration: '13 минут', completed: false },
+			],
+			hasFinalTest: true,
+			totalTopics: 3,
+			completedTopics: 0,
+			isUserRegistered: true,
+		},
+		{
+			title: t('module4Title'),
+			moduleNumber: '4',
+			timeRemaining: t('module4TimeRemaining'),
+			description: t('module4Description'),
+			topics: [
+				{ title: t('module4Topic1'), duration: '15 минут', completed: false },
+				{ title: t('module4Topic2'), duration: '17 минут', completed: false },
+				{ title: t('module4Topic3'), duration: '20 минут', completed: false },
+			],
+			hasFinalTest: true,
+			totalTopics: 3,
+			completedTopics: 0,
+			isUserRegistered: true,
+		},
+		{
+			title: t('module5Title'),
+			moduleNumber: '5',
+			timeRemaining: t('module5TimeRemaining'),
+			description: t('module5Description'),
+			topics: [
+				{ title: t('module5Topic1'), duration: '12 минут', completed: false },
+				{ title: t('module5Topic2'), duration: '14 минут', completed: false },
+				{ title: t('module5Topic3'), duration: '14 минут', completed: false },
+			],
+			hasFinalTest: true,
+			totalTopics: 3,
+			completedTopics: 0,
+			isUserRegistered: true,
+		},
+	]
+}

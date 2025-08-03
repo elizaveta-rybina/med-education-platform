@@ -1,15 +1,18 @@
 import HeroSection from '@/components/shared/title'
+import { useTranslation } from 'react-i18next'
 
 const HomePage = () => {
+	const { t } = useTranslation('homePage')
+
 	return (
 		<div>
 			<HeroSection
-				title='Откройте для себя мир медицины завтрашнего дня'
-				description='Ваш путь в инновации начинается здесь. Присоединяйтесь к курсам!'
-				buttonText='Перейти к обучению'
+				title={t('title')}
+				description={t('description')}
+				buttonText={t('buttonText')}
 				buttonHref='course/1'
 				imageSrc='/src/assets/heroImage.webp'
-				imageAlt='Медицинские курсы'
+				imageAlt={t('imageAlt')}
 			/>
 		</div>
 	)

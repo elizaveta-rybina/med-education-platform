@@ -2,10 +2,11 @@ import {
 	Popover,
 	PopoverButton,
 	PopoverPanel,
-	Transition
+	Transition,
 } from '@headlessui/react'
 import { ChevronDownIcon, UserIcon } from '@heroicons/react/24/outline'
 import * as React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { User } from '../data/types'
 
@@ -16,8 +17,10 @@ interface DesktopUserDropdownProps {
 
 const DesktopUserDropdown: React.FC<DesktopUserDropdownProps> = ({
 	user,
-	handleLogout
+	handleLogout,
 }) => {
+	const { t } = useTranslation('header')
+
 	return (
 		<Popover className='relative'>
 			{({ open }) => (
@@ -35,7 +38,7 @@ const DesktopUserDropdown: React.FC<DesktopUserDropdownProps> = ({
 								aria-hidden={true}
 							/>
 						)}
-						<span>{user.name || 'Профиль'}</span>
+						<span>{user.name || t('profile')}</span>
 						<ChevronDownIcon
 							className={`h-5 w-5 flex-none transform transition-transform ${
 								open ? 'rotate-180' : ''
@@ -55,7 +58,7 @@ const DesktopUserDropdown: React.FC<DesktopUserDropdownProps> = ({
 						<PopoverPanel className='absolute right-0 top-full z-10 mt-3 w-64 rounded-2xl border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-800 dark:bg-gray-800'>
 							<div className='px-2 mb-2 border-b border-gray-200 pb-2 dark:border-gray-700'>
 								<span className='block font-medium text-gray-700 text-base dark:text-gray-300'>
-									{user.name || 'Пользователь'}
+									{user.name || t('user')}
 								</span>
 								<span className='block text-xs text-gray-500 dark:text-gray-400'>
 									{user.email || 'example@mail.com'}
@@ -65,32 +68,32 @@ const DesktopUserDropdown: React.FC<DesktopUserDropdownProps> = ({
 								to='/profile'
 								className='block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200'
 							>
-								Перейти в профиль
+								{t('goToProfile')}
 							</Link>
 							<Link
 								to='/profile#courses'
 								className='block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200'
 							>
-								Мои курсы
+								{t('myCourses')}
 							</Link>
 							<Link
 								to='/profile#achievements'
 								className='block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200'
 							>
-								Достижения
+								{t('achievements')}
 							</Link>
 							<Link
 								to='/profile#settings'
 								className='block rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200'
 							>
-								Настройки
+								{t('settings')}
 							</Link>
 							<div className='border-t border-gray-200 dark:border-gray-700 my-2' />
 							<button
 								onClick={handleLogout}
 								className='block w-full text-left rounded-lg px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200'
 							>
-								Выйти
+								{t('logout')}
 							</button>
 						</PopoverPanel>
 					</Transition>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { navLinks } from '../data/constants'
+import { useNavLinks } from '../data/constants'
 import { User } from '../data/types'
 import MobileCoursesDropdown from './MobileCoursesDropdown'
 import MobileLoginLink from './MobileLoginLink'
@@ -15,8 +15,9 @@ interface MobileNavProps {
 const MobileNav: React.FC<MobileNavProps> = ({
 	user,
 	handleLogout,
-	setMobileMenuOpen
+	setMobileMenuOpen,
 }) => {
+	const navLinks = useNavLinks()
 	return (
 		<div className='-my-6 divide-y divide-gray-500/10'>
 			<div className='space-y-2 py-6'>
