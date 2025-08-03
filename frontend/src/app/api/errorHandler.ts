@@ -1,12 +1,5 @@
 import { AxiosError } from 'axios'
 
-// Define interface for API error response
-// interface ApiErrorResponse {
-// 	error?: string
-// 	message?: string
-// 	statusCode?: number
-// }
-
 // Custom error class for API errors
 export class ApiError extends Error {
 	public statusCode: number
@@ -22,13 +15,36 @@ export class ApiError extends Error {
 
 // Function to handle and normalize API errors
 export const handleApiError = (error: any) => {
+	console.error('Full error object:', error)
+	console.error('Is AxiosError:', error instanceof AxiosError)
+	console.error('Response data:', error.response?.data)
+
 	if (error instanceof AxiosError) {
-		const message =
-			error.response?.data?.message ||
-			error.message ||
-			'An unexpected error occurred'
-		console.error('API error details:', error.response?.data)
+		let message: string
+
+		// Check common error response structures
+		if (error.response?.data) {
+			const data = error.response.data
+			if (data.message) {
+				message = data.message
+			} else if (data.error) {
+				message = data.error
+			} else if (Array.isArray(data.errors)) {
+				message = data.errors.join(', ')
+			} else if (typeof data === 'string') {
+				message = data
+			} else {
+				message = 'An unexpected error occurred'
+			}
+		} else {
+			// No response data (e.g., network error)
+			message = error.message || 'An unexpected error occurred'
+		}
+
 		throw new ApiError(message, error.response?.status || 500, 'ApiError')
 	}
-	throw new ApiError('An unexpected error occurred', 500, 'ApiError')
+
+	// Non-Axios error
+	const message = error.message || 'An unexpected error occurred'
+	throw new ApiError(message, 500, 'ApiError')
 }
