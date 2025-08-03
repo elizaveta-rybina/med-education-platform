@@ -4,6 +4,7 @@ import { useAppSelector } from '@/app/store/hooks'
 import { useAuthActions } from '@/hooks/auth/useAuthActions'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from '../../icons'
 import Label from '../form/Label'
@@ -12,6 +13,7 @@ import Button from '../ui/button/Button'
 import { ErrorAlert } from './ErrorAlert'
 
 export default function SignInForm() {
+	const { t } = useTranslation('auth')
 	const status = useAppSelector(selectAuthStatus)
 	const error = useAppSelector(selectAuthError)
 	const { login } = useAuthActions()
@@ -21,13 +23,13 @@ export default function SignInForm() {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
-		reset
+		reset,
 	} = useForm<LoginData>({
 		mode: 'onChange',
 		defaultValues: {
 			email: '',
-			password: ''
-		}
+			password: '',
+		},
 	})
 
 	const onSubmit = async (data: LoginData) => {
@@ -47,33 +49,33 @@ export default function SignInForm() {
 					className='inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
 				>
 					<ChevronLeftIcon className='size-5' />
-					На главную
+					{t('backToHome')}
 				</Link>
 			</div>
 			<div className='flex flex-col justify-center flex-1 w-full max-w-md mx-auto'>
 				<div>
 					<div className='mb-5 sm:mb-8'>
 						<h1 className='mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md'>
-							Войти в систему
+							{t('signInTitle')}
 						</h1>
 						<p className='text-sm text-gray-500 dark:text-gray-400'>
-							Введите вашу электронную почту и пароль для входа!
+							{t('signInDescription')}
 						</p>
 					</div>
 					<div>
 						<form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
 							<div>
 								<Label>
-									Электронная почта <span className='text-error-500'>*</span>
+									{t('emailLabel')} <span className='text-error-500'>*</span>
 								</Label>
 								<Input
-									placeholder='info@gmail.com'
+									placeholder={t('enterEmail')}
 									{...register('email', {
-										required: 'Email обязателен',
+										required: t('emailRequired'),
 										pattern: {
 											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-											message: 'Некорректный email'
-										}
+											message: t('emailInvalid'),
+										},
 									})}
 									error={errors.email?.message}
 								/>
@@ -81,18 +83,18 @@ export default function SignInForm() {
 
 							<div>
 								<Label>
-									Пароль <span className='text-error-500'>*</span>
+									{t('passwordLabel')} <span className='text-error-500'>*</span>
 								</Label>
 								<div className='relative'>
 									<Input
 										type={showPassword ? 'text' : 'password'}
-										placeholder='Введите пароль'
+										placeholder={t('enterPassword')}
 										{...register('password', {
-											required: 'Пароль обязателен',
+											required: t('passwordRequired'),
 											minLength: {
 												value: 6,
-												message: 'Пароль должен быть не менее 6 символов'
-											}
+												message: t('passwordMinLength'),
+											},
 										})}
 										error={errors.password?.message}
 									/>
@@ -115,7 +117,7 @@ export default function SignInForm() {
 									to='/reset-password'
 									className='text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400'
 								>
-									Забыли пароль?
+									{t('forgotPassword')}
 								</Link>
 							</div>
 
@@ -128,19 +130,19 @@ export default function SignInForm() {
 									type='submit'
 									disabled={status === 'loading' || !isValid}
 								>
-									Войти
+									{t('signInButton')}
 								</Button>
 							</div>
 						</form>
 
 						<div className='mt-5'>
 							<p className='text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start'>
-								Нет аккаунта?{' '}
+								{t('noAccount')}{' '}
 								<Link
 									to='/signup'
 									className='text-brand-500 hover:text-brand-600 dark:text-brand-400'
 								>
-									Зарегистрироваться
+									{t('signUpLink')}
 								</Link>
 							</p>
 						</div>
