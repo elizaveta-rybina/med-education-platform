@@ -1,3 +1,5 @@
+import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
+import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
 import { PopoverGroup } from '@headlessui/react'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
@@ -31,7 +33,11 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ user, handleLogout }) => {
 				{user ? (
 					<DesktopUserDropdown user={user} handleLogout={handleLogout} />
 				) : (
-					<DesktopLoginLink />
+					<div className='flex justify-between items-center gap-x-4'>
+						<ThemeToggleButton />
+						<LanguageToggleButton />
+						<DesktopLoginLink />
+					</div>
 				)}
 			</div>
 		</>
