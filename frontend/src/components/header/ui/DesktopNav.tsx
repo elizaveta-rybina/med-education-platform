@@ -1,9 +1,9 @@
-import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
+import LanguageToggleButton from '@/components/common/LanguageToggleButton'
 import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
 import { PopoverGroup } from '@headlessui/react'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { navLinks } from '../data/constants'
+import { useNavLinks } from '../data/constants'
 import { User } from '../data/types'
 import DesktopCoursesDropdown from './DesktopCoursesDropdown'
 import DesktopLoginLink from './DesktopLoginLink'
@@ -15,6 +15,8 @@ interface DesktopNavProps {
 }
 
 const DesktopNav: React.FC<DesktopNavProps> = ({ user, handleLogout }) => {
+	const navLinks = useNavLinks()
+
 	return (
 		<>
 			<PopoverGroup className='hidden lg:flex lg:gap-x-12'>
@@ -23,13 +25,13 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ user, handleLogout }) => {
 					<Link
 						key={link.name}
 						to={link.to}
-						className='text-base font-semibold text-gray-900 hover:text-purple-500 transition-colors'
+						className='text-base font-semibold text-gray-900 hover:text-purple-500 transition-colors dark:text-gray-100 dark:hover:text-purple-300'
 					>
 						{link.name}
 					</Link>
 				))}
 			</PopoverGroup>
-			<div className='hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4'>
+			<div className='hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4'>
 				{user ? (
 					<DesktopUserDropdown user={user} handleLogout={handleLogout} />
 				) : (

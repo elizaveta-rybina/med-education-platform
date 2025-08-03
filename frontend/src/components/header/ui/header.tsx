@@ -6,6 +6,7 @@ import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import logo from 'assets/logo.png'
 import * as React from 'react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import NavItems from './NavItems'
 
@@ -13,6 +14,7 @@ export const Header: React.FC = () => {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 	const user = useAppSelector(selectUser)
 	const { logout } = useAuthActions()
+	const { t } = useTranslation('header')
 
 	return (
 		<header className='bg-white z-20 container mx-auto'>
@@ -22,8 +24,8 @@ export const Header: React.FC = () => {
 			>
 				<div className='flex lg:flex-1'>
 					<Link to='/' className='-m-1.5 p-1.5'>
-						<span className='sr-only text-lg'>Med Education Platform</span>
-						<img alt='Логотип' src={logo} className='h-12 w-auto' />
+						<span className='sr-only text-lg'>{t('platformName')}</span>
+						<img alt={t('logo')} src={logo} className='h-12 w-auto' />
 					</Link>
 				</div>
 				<div className='flex lg:hidden'>
@@ -31,7 +33,7 @@ export const Header: React.FC = () => {
 						type='button'
 						onClick={() => setMobileMenuOpen(true)}
 						className='inline-flex items-center justify-center p-3 text-gray-700 hover:text-purple-500 transition-colors'
-						aria-label='Открыть меню'
+						aria-label={t('openMenu')}
 					>
 						<Bars3Icon className='h-8 w-8' aria-hidden={true} />
 					</button>
@@ -56,14 +58,14 @@ export const Header: React.FC = () => {
 					<Dialog.Panel className='fixed inset-y-0 right-0 z-20 w-full max-w-sm overflow-y-auto bg-white px-6 py-6 sm:ring-1 sm:ring-gray-900/10'>
 						<div className='flex items-center justify-between'>
 							<Link to='/' className='-m-1.5 p-1.5'>
-								<span className='sr-only text-lg'>Med Education Platform</span>
-								<img alt='Логотип' src={logo} className='h-10 w-auto' />
+								<span className='sr-only text-lg'>{t('platformName')}</span>
+								<img alt={t('logo')} src={logo} className='h-10 w-auto' />
 							</Link>
 							<button
 								type='button'
 								onClick={() => setMobileMenuOpen(false)}
 								className='rounded-md p-3 text-gray-700 hover:text-purple-500 transition-colors'
-								aria-label='Закрыть меню'
+								aria-label={t('closeMenu')}
 							>
 								<XMarkIcon className='h-8 w-8' aria-hidden={true} />
 							</button>

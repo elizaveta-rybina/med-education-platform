@@ -3,39 +3,44 @@ import {
 	ChartPieIcon,
 	CursorArrowRaysIcon,
 	FingerPrintIcon,
-	SquaresPlusIcon
+	SquaresPlusIcon,
 } from '@heroicons/react/24/outline'
+import { useTranslation } from 'react-i18next'
 import { Product } from './types'
 
-export const products: Product[] = [
-	{
-		name: 'Теория',
-		description: 'Изучайте актуальные медицинские специальности',
-		to: '/courses/theory',
-		icon: ChartPieIcon
-	},
-	{
-		name: 'Вебинары',
-		description: 'Онлайн-мероприятия с ведущими экспертами',
-		to: '/courses/webinars',
-		icon: CursorArrowRaysIcon
-	},
-	{
-		name: 'Сертификация',
-		description: 'Получите сертификаты по завершении курсов',
-		to: '/courses/certification',
-		icon: FingerPrintIcon
-	},
-	{
-		name: 'Ресурсы',
-		description: 'Доступ к учебным материалам и библиотеке',
-		to: '/resources',
-		icon: SquaresPlusIcon
-	},
-	{
-		name: 'Поддержка',
-		description: 'Помощь и консультации от наших специалистов',
-		to: '/support',
-		icon: ArrowPathIcon
-	}
-]
+export const useProducts = (): Product[] => {
+	const { t } = useTranslation('header')
+
+	return [
+		{
+			name: t('theory'),
+			description: t('theoryDescription'),
+			to: '/courses/theory',
+			icon: ChartPieIcon,
+		},
+		{
+			name: t('webinars'),
+			description: t('webinarsDescription'),
+			to: '/courses/webinars',
+			icon: CursorArrowRaysIcon,
+		},
+		{
+			name: t('certification'),
+			description: t('certificationDescription'),
+			to: '/courses/certification',
+			icon: FingerPrintIcon,
+		},
+		{
+			name: t('resources'),
+			description: t('resourcesDescription'),
+			to: '/resources',
+			icon: SquaresPlusIcon,
+		},
+		{
+			name: t('support'),
+			description: t('supportDescription'),
+			to: '/support',
+			icon: ArrowPathIcon,
+		},
+	]
+}
