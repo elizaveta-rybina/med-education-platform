@@ -1,6 +1,11 @@
-export const navItems = [
-	{ label: 'О курсе', anchor: 'about' },
-	{ label: 'Модули', anchor: 'modules' },
-	{ label: 'Рекомендации', anchor: 'recommendations' },
-	{ label: 'Отзывы', anchor: 'reviews' },
-];
+import { useTranslation } from 'react-i18next'
+
+export const useNavItems = () => {
+	const { t } = useTranslation('coursePage')
+
+	return [
+		{ label: t('navAbout'), anchor: 'about' },
+		{ label: t('navModules'), anchor: 'modules' },
+		{ label: t('navRecommendations'), anchor: 'recommendations' },
+	]
+}

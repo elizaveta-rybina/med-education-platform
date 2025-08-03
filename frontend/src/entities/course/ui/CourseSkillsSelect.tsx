@@ -2,26 +2,27 @@ import { Listbox, Transition } from '@headlessui/react'
 import {
 	CheckIcon,
 	ChevronUpDownIcon,
-	XMarkIcon
+	XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { Fragment } from 'react'
 import {
 	FieldErrors,
 	UseFormRegister,
 	UseFormSetValue,
-	UseFormWatch
+	UseFormWatch,
 } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { CourseFormData } from '../model/types'
 
 const availableSkills = [
-	'Критическое мышление',
-	'Решение проблем',
-	'Аналитическое мышление',
-	'Абстрактное мышление',
-	'Рассуждения',
-	'Логическое мышление',
-	'Креативность',
-	'Принятие решений'
+	'criticalThinking',
+	'problemSolving',
+	'analyticalThinking',
+	'abstractThinking',
+	'reasoning',
+	'logicalThinking',
+	'creativity',
+	'decisionMaking',
 ]
 
 interface CourseSkillsSelectProps {
@@ -34,14 +35,15 @@ interface CourseSkillsSelectProps {
 export const CourseSkillsSelect = ({
 	setValue,
 	watch,
-	errors
+	errors,
 }: CourseSkillsSelectProps) => {
+	const { t } = useTranslation('coursePage')
 	const selectedSkills = watch('skills')
 
 	return (
 		<div>
 			<label className='block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300'>
-				Навыки*
+				{t('skillsLabel')}
 			</label>
 			<Listbox
 				value={selectedSkills}
@@ -57,12 +59,12 @@ export const CourseSkillsSelect = ({
 										key={skill}
 										className='inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
 									>
-										{skill}
+										{t(skill)}
 									</span>
 								))
 							) : (
 								<span className='text-gray-400 dark:text-white/30'>
-									Выберите навыки
+									{t('selectSkills')}
 								</span>
 							)}
 						</div>
@@ -120,7 +122,7 @@ export const CourseSkillsSelect = ({
 													selected ? 'font-medium' : 'font-normal'
 												}`}
 											>
-												{skill}
+												{t(skill)}
 											</span>
 											{selected ? (
 												<span className='absolute inset-y-0 left-0 flex items-center pl-3 text-purple-600 dark:text-purple-400'>

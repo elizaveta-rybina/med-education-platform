@@ -2,20 +2,24 @@ import {
 	Popover,
 	PopoverButton,
 	PopoverPanel,
-	Transition
+	Transition,
 } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import * as React from 'react'
-import { products } from '../data/products'
+import { useTranslation } from 'react-i18next'
+import { useProducts } from '../data/products'
 import CourseItem from './CourseItem'
 
 const DesktopCoursesDropdown: React.FC = () => {
+	const { t } = useTranslation('header')
+	const products = useProducts()
+
 	return (
 		<Popover className='relative'>
 			{({ open }) => (
 				<>
 					<PopoverButton className='flex items-center gap-x-1 text-base font-semibold text-gray-900 hover:text-purple-500 transition-colors'>
-						Курсы
+						{t('courses')}
 						<ChevronDownIcon
 							className={`h-5 w-5 flex-none transform transition-transform ${
 								open ? 'rotate-180' : ''
