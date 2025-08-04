@@ -33,7 +33,11 @@ const DesktopNav: React.FC<DesktopNavProps> = ({ user, handleLogout }) => {
 			</PopoverGroup>
 			<div className='hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-4'>
 				{user ? (
-					<DesktopUserDropdown user={user} handleLogout={handleLogout} />
+					<div className='flex justify-between items-center gap-x-4'>
+						<ThemeToggleButton />
+						<LanguageToggleButton />
+						<DesktopUserDropdown user={user} handleLogout={handleLogout} />
+					</div>
 				) : (
 					<div className='flex justify-between items-center gap-x-4'>
 						<ThemeToggleButton />

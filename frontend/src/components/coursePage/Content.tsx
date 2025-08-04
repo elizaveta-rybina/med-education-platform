@@ -1,6 +1,7 @@
 import { ImageBlock, TextBlock } from '@/data/types'
 import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { DragDropTableComponent } from './DragDropTableComponent'
 import { FreeInputBlock } from './FreeInputBlock'
 import { GameBlock } from './GameBlock'
@@ -9,6 +10,7 @@ import { TestBlock } from './TestBlock'
 import { TheoryBlock } from './TheoryBlock'
 
 const Content = () => {
+	const { t } = useTranslation('coursePage')
 	const { course, markChapterAsRead } = useCourse()
 	const [currentModuleIndex, setCurrentModuleIndex] = useState(0)
 	const [currentChapterIndex, setCurrentChapterIndex] = useState(0)
@@ -30,8 +32,7 @@ const Content = () => {
 					setCurrentModule(module)
 					setCurrentChapter(chapter)
 					setShowTest(false)
-					setCurrentQuestionIndex(0)
-					setTestResults([])
+					// Не сбрасываем currentQuestionIndex и testResults, чтобы сохранить прогресс
 				}
 			})
 		})
@@ -61,9 +62,13 @@ const Content = () => {
 			return newResults
 		})
 
-		if (currentQuestionIndex < testBlocks.length - 1) {
+		// Автоматический переход только для неперетаскиваемых задач
+		if (
+			currentTestBlock?.type !== 'drag-drop-table' &&
+			currentQuestionIndex < testBlocks.length - 1
+		) {
 			setTimeout(handleNextQuestion, 1000)
-		} else {
+		} else if (currentQuestionIndex === testBlocks.length - 1) {
 			markChapterAsRead(currentModule.id, currentChapter.id)
 		}
 	}
@@ -75,7 +80,7 @@ const Content = () => {
 	}, [course.modules])
 
 	if (!currentModule || !currentChapter)
-		return <div className='p-6 text-center text-gray-500'>Загрузка...</div>
+		return <div className='p-6 text-center text-gray-500'>{t('loading')}</div>
 
 	const testBlocks = currentChapter.blocks.filter(block =>
 		['question', 'drag-drop-table', 'free-input', 'game'].includes(block.type)
@@ -121,18 +126,18 @@ const Content = () => {
 	}
 
 	return (
-		<div className='flex-1 p-4 sm:p-6  min-h-screen'>
+		<div className='flex-1 p-4 sm:p-6 min-h-screen'>
 			<div className='max-w-9xl mx-auto'>
 				<h1 className='text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center'>
 					{currentChapter.title}
 					{currentChapter.isRead && (
 						<span className='ml-2 text-green-500 text-sm font-normal'>
-							✓ Прочитано
+							{t('completed')}
 						</span>
 					)}
 				</h1>
 
-				{/* Full-width blocks: drag-drop-table or game */}
+				{/* Полноэкранные блоки: drag-drop-table или game */}
 				{(hasDragDrop && currentTestBlock?.type === 'drag-drop-table') ||
 				(hasGame && currentTestBlock?.type === 'game') ? (
 					<div className='w-full'>
@@ -148,14 +153,17 @@ const Content = () => {
 										disabled={currentQuestionIndex === 0}
 										className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
 									>
-										Назад
+										{t('back')}
 									</button>
 									<button
 										onClick={handleNextQuestion}
-										disabled={currentQuestionIndex === testBlocks.length - 1}
+										disabled={
+											testResults[currentQuestionIndex] === undefined ||
+											currentQuestionIndex === testBlocks.length - 1
+										}
 										className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
 									>
-										Далее
+										{t('next')}
 									</button>
 								</div>
 							</>
@@ -171,7 +179,7 @@ const Content = () => {
 					</div>
 				) : (
 					<div className='flex flex-col lg:flex-row gap-6'>
-						{/* Theory Column */}
+						{/* Колонка с теорией */}
 						<div className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-2/3'} w-full`}>
 							<div className='space-y-6'>
 								{theoryBlocks.map(block => (
@@ -188,13 +196,13 @@ const Content = () => {
 										onClick={handleMarkAsRead}
 										className='px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-200'
 									>
-										Отметить как прочитанное
+										{t('markAsCompleted')}
 									</button>
 								</div>
 							)}
 						</div>
 
-						{/* Test/Question Column */}
+						{/* Колонка с тестами/вопросами */}
 						{(showTest || currentChapter.isRead) &&
 							testBlocks.length > 0 &&
 							currentTestBlock && (
@@ -205,8 +213,10 @@ const Content = () => {
 										{currentTestBlock.type === 'question' && (
 											<div className='bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200'>
 												<h2 className='text-lg sm:text-xl font-semibold text-gray-800 mb-4'>
-													Проверка знаний ({currentQuestionIndex + 1}/
-													{testBlocks.length})
+													{t('knowledgeCheck', {
+														currentQuestionIndex: currentQuestionIndex + 1,
+														totalQuestions: testBlocks.length
+													})}
 												</h2>
 												<TestBlock
 													block={currentTestBlock}
@@ -227,8 +237,6 @@ const Content = () => {
 												/>
 											</div>
 										)}
-
-										
 									</div>
 								</div>
 							)}
