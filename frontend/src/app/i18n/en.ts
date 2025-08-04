@@ -1,6 +1,6 @@
 const en = {
 	translation: {
-		login: 'Sign In',
+		login: 'Sign In'
 	},
 	header: {
 		profile: 'Profile',
@@ -28,20 +28,20 @@ const en = {
 		resourcesDescription: 'Access to study materials and library',
 		support: 'Support',
 		supportDescription: 'Help and consultations from our specialists',
-		login: 'Sign In',
+		login: 'Sign In'
 	},
 	homePage: {
 		title: 'Discover the world of medicine of tomorrow',
 		description: 'Your path to innovation starts here. Join the courses!',
 		buttonText: 'Go to training',
-		imageAlt: 'Medical courses',
+		imageAlt: 'Medical courses'
 	},
 	footer: {
 		university: 'N.P. Ogarev MSU',
 		courses: 'Courses',
 		contacts: 'Contacts',
 		privacyPolicy: 'Privacy Policy',
-		copyright: '© {year} N.P. Ogarev MSU. All rights reserved.',
+		copyright: '© {{year}} N.P. Ogarev MSU. All rights reserved.'
 	},
 	coursePage: {
 		title: 'Doctor VR:',
@@ -129,13 +129,48 @@ const en = {
 		physiologyImageAlt: 'Physiology',
 		startCourse: 'Start Course',
 		comingSoon: 'Coming Soon',
-		duration: '⏱ {duration}',
-		modules: '📚 {modulesCount} Modules',
+		duration: '⏱ {{duration}}',
+		modules: '📚 {{modulesCount}} Modules',
 		unavailable: 'Unavailable',
 		moduleProgress: 'Module Progress',
 		finalTest: 'Final Module Test',
 		testAvailable: 'Available for completion',
-		testLocked: 'Available after completing all {totalTopics} topics',
+		testLocked: 'Available after completing all {{totalTopics}} topics',
+		loading: 'Loading...',
+		completed: '✓ Completed',
+		back: 'Back',
+		next: 'Next',
+		markAsCompleted: 'Mark as Completed',
+		knowledgeCheck:
+			'Knowledge Check ({{currentQuestionIndex}}/{{totalQuestions}})',
+		previous: 'Previous',
+		nextChapter: 'Next',
+		error: 'Error',
+		errorMessage: 'An error occurred: {{testError}}',
+		tryAgain: 'Try Again',
+		testResults: 'Test Results',
+		testResultsSummary:
+			'You answered {{totalCorrect}} out of {{totalQuestions}} questions correctly.',
+		testPassed: 'Test Passed',
+		testFailed: 'Test Failed',
+		submittingResults: 'Submitting Results...',
+		questionNumber: 'Question {{currentQuestionIndex}} of {{totalQuestions}}',
+		nextQuestion: 'Next Question',
+		completeTest: 'Complete Test',
+		retakeTest: 'Retake Test',
+		timeRemaining: 'remaining',
+		timeUp: 'Time’s up! Answers will be automatically submitted',
+		enterAnswer: 'Enter your answer here...',
+		characterCount: '{{currentLength}}/{{maxLength}} characters',
+		answerSubmitted: 'Answer Submitted',
+		submitForReview: 'Submit for Review',
+		availableAnswers: 'Available Answers',
+		dragHere: 'Drag here',
+		allAnswersUsed: 'All answers used',
+		checkAnswers: 'Check',
+		resetAnswers: 'Reset',
+		answersIncorrect: 'There are errors in the answers. Check again!',
+		answersCorrect: '✓ All answers are correct! Great job!'
 	},
 	auth: {
 		backToHome: 'Back to Home',
@@ -168,8 +203,8 @@ const en = {
 		termsAgreement:
 			'By creating an account, you agree to the <terms>Terms of Use</terms> and our <privacy>Privacy Policy</privacy>',
 		termsOfUse: 'Terms of Use',
-		privacyPolicy: 'Privacy Policy',
-	},
+		privacyPolicy: 'Privacy Policy'
+	}
 }
 
 export default en

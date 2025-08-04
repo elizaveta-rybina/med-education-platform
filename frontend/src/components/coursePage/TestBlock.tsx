@@ -1,6 +1,7 @@
 import { DragDropTableBlock, QuestionBlock } from '@/data/types'
 import { useTest } from '@/hooks/tests/useTest'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface TestBlockProps {
 	block: QuestionBlock | DragDropTableBlock
@@ -19,6 +20,7 @@ export const TestBlock = ({
 	totalQuestions,
 	onNext
 }: TestBlockProps) => {
+	const { t } = useTranslation('coursePage')
 	const { testResults, testError, submitTest, resetTestForChapter } =
 		useTest(chapterId)
 	const [selectedOptions, setSelectedOptions] = useState<string[]>([])
@@ -86,14 +88,14 @@ export const TestBlock = ({
 		if (testError) {
 			return (
 				<div className='my-6 p-4 bg-gray-50 rounded-lg'>
-					<h3 className='font-medium text-lg mb-4'>Ошибка</h3>
-					<p className='text-sm mb-4'>Произошла ошибка: {testError}</p>
+					<h3 className='font-medium text-lg mb-4'>{t('error')}</h3>
+					<p className='text-sm mb-4'>{t('errorMessage', { testError })}</p>
 					<div className='flex justify-end'>
 						<button
 							onClick={handleReset}
 							className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
 						>
-							Попробовать снова
+							{t('tryAgain')}
 						</button>
 					</div>
 				</div>
@@ -103,31 +105,33 @@ export const TestBlock = ({
 		if (testResults) {
 			const passed = testResults.totalCorrect >= 3
 			const bgColor = passed ? 'bg-green-100' : 'bg-red-100'
-			const statusText = passed ? 'Тест зачтён' : 'Тест не зачтён'
+			const statusText = passed ? t('testPassed') : t('testFailed')
 
 			return (
 				<div className={`my-6 p-4 rounded-lg ${bgColor}`}>
-					<h3 className='font-medium text-lg mb-4'>Результаты тестирования</h3>
+					<h3 className='font-medium text-lg mb-4'>{t('testResults')}</h3>
 					<p className='text-sm mb-2'>
-						Вы ответили правильно на {testResults.totalCorrect} из{' '}
-						{testResults.totalQuestions} вопросов.
+						{t('testResultsSummary', {
+							totalCorrect: testResults.totalCorrect,
+							totalQuestions: testResults.totalQuestions
+						})}
 					</p>
 					<p className='text-sm font-semibold'>{statusText}</p>
 					{/* <div className='flex justify-end'>
-				<button
-					onClick={handleReset}
-					className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
-				>
-					Пройти тест заново
-				</button>
-			</div> */}
+            <button
+              onClick={handleReset}
+              className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
+            >
+              {t('retakeTest')}
+            </button>
+          </div> */}
 				</div>
 			)
 		}
 
 		return (
 			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
-				<h3 className='font-medium text-lg mb-4'>Отправка результатов...</h3>
+				<h3 className='font-medium text-lg mb-4'>{t('submittingResults')}</h3>
 				<div className='flex justify-center'>
 					<div className='animate-spin h-5 w-5 border-2 border-purple-500 rounded-full border-t-transparent'></div>
 				</div>
@@ -140,7 +144,10 @@ export const TestBlock = ({
 			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
 				<div className='flex justify-between items-center mb-4'>
 					<h3 className='font-medium text-lg'>
-						Вопрос {questionIndex + 1} из {totalQuestions}
+						{t('questionNumber', {
+							currentQuestionIndex: questionIndex + 1,
+							totalQuestions
+						})}
 					</h3>
 				</div>
 
@@ -168,8 +175,8 @@ export const TestBlock = ({
 						className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
 					>
 						{questionIndex < totalQuestions - 1
-							? 'Следующий вопрос'
-							: 'Завершить тестирование'}
+							? t('nextQuestion')
+							: t('completeTest')}
 					</button>
 				</div>
 			</div>
@@ -181,7 +188,10 @@ export const TestBlock = ({
 			<div className='my-6 p-4 bg-gray-50 rounded-lg'>
 				<div className='flex justify-between items-center mb-4'>
 					<h3 className='font-medium text-lg'>
-						Вопрос {questionIndex + 1} из {totalQuestions}
+						{t('questionNumber', {
+							currentQuestionIndex: questionIndex + 1,
+							totalQuestions
+						})}
 					</h3>
 				</div>
 
@@ -234,8 +244,8 @@ export const TestBlock = ({
 						className='px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition'
 					>
 						{questionIndex < totalQuestions - 1
-							? 'Следующий вопрос'
-							: 'Завершить тестирование'}
+							? t('nextQuestion')
+							: t('completeTest')}
 					</button>
 				</div>
 			</div>
