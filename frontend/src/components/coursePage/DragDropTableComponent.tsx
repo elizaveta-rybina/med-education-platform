@@ -249,7 +249,7 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 						<tbody>
 							{groupedRows.map(group => (
 								<React.Fragment key={`group-${group.system}`}>
-									{group.effects.map((effect, effectIndex) => (
+									{group.effects.map((effect) => (
 										<tr
 											key={`effect-${effect.id}`}
 											className={`border-b min-h-[3rem] ${

@@ -23,9 +23,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
-	const { t, i18n } = useTranslation('coursePage')
-	const [inputValue, setInputValue] = useState('')
-	const [isSubmitted, setIsSubmitted] = useState(false)
+	const { i18n } = useTranslation('coursePage')
 	const [isLoading, setIsLoading] = useState(true)
 	const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -52,14 +50,6 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		return () => window.removeEventListener('message', handleMessage)
 	}, [block.gameUrl, onComplete])
 
-	// Handle input submission
-	const handleSubmit = () => {
-		if (inputValue.trim()) {
-			setIsSubmitted(true)
-			onComplete(true)
-		}
-	}
-
 	// Handle iframe load/error
 	const handleIframeLoad = () => {
 		setIsLoading(false)
@@ -70,11 +60,6 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		setLoadError(
 			'Не удалось загрузить игру. Пожалуйста, проверьте подключение или попробуйте позже.'
 		)
-	}
-
-	// Handle manual completion
-	const handleManualComplete = () => {
-		onComplete(true)
 	}
 
 	return (
