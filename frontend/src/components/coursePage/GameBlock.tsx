@@ -1,4 +1,11 @@
-import React, { useState } from 'react'
+import { sampleDropdownTableBlock as gameContentEn } from '@/data/game-content.en.ts'
+import { sampleDropdownTableBlockRu as gameContentRu } from '@/data/game-content.ts'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import {
+	DropdownTableBlock,
+	DropdownTableComponent
+} from './DropDownTableComponent'
 
 interface GameBlockProps {
 	block: {
@@ -16,13 +23,18 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
+	const { t, i18n } = useTranslation('coursePage')
 	const [inputValue, setInputValue] = useState('')
 	const [isSubmitted, setIsSubmitted] = useState(false)
 	const [isLoading, setIsLoading] = useState(true)
 	const [loadError, setLoadError] = useState<string | null>(null)
 
+	// Выбор данных таблицы в зависимости от языка
+	const gameTableData: DropdownTableBlock =
+		i18n.language === 'ru' ? gameContentRu : gameContentEn
+
 	// Handle messages from the game
-	React.useEffect(() => {
+	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
 			console.log(
 				'Event origin:',
@@ -100,47 +112,17 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 				/>
 			</div>
 
-			<div className='game-instructions bg-blue-50 p-3 rounded-lg text-sm text-blue-800 mb-6'>
-				<p className='font-medium mb-1'>Управление игрой:</p>
-				<p>Используйте мышку и клавиатуру для взаимодействия с игрой.</p>
-			</div>
-
-			<div className='game-explanation'>
-				<h3 className='text-base sm:text-lg font-semibold text-gray-800 mb-2'>
-					Опишите ваш интерактивный опыт
-				</h3>
-				<textarea
-					value={inputValue}
-					onChange={e => setInputValue(e.target.value)}
-					disabled={isSubmitted}
-					placeholder='Опишите, что вы узнали о гипоксии и как интерактивный опыт помог вам понять гипоксию (200-300 слов)'
-					className='w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed'
-					rows={6}
-					maxLength={1000}
+			{/* Добавление подписи и таблицы */}
+			<div className='mt-6'>
+				<DropdownTableComponent // Исправлен компонент на DropDownTableComponent
+					block={gameTableData}
+					onComplete={isCorrect => {
+						if (isCorrect) onComplete(true)
+					}}
 				/>
-				{!isSubmitted && (
-					<div className='flex gap-3 mt-3'>
-						<button
-							onClick={handleSubmit}
-							disabled={!inputValue.trim()}
-							className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
-						>
-							Отправить
-						</button>
-						{loadError && (
-							<button
-								onClick={handleManualComplete}
-								className='px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200'
-							>
-								Завершить игру
-							</button>
-						)}
-					</div>
-				)}
-				{isSubmitted && (
-					<p className='mt-2 text-sm text-green-500'>Ответ отправлен</p>
-				)}
 			</div>
 		</div>
 	)
 }
+
+export default GameBlock
