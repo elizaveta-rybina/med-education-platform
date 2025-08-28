@@ -1,9 +1,9 @@
 import { Block } from '@/data/types'
-import { DragDropTableComponent } from './DragDropTableComponent'
-import { FreeInputBlock } from './FreeInputBlock'
-import { GameBlock } from './GameBlock'
-import { TestBlock } from './TestBlock'
-import { TheoryBlock } from './TheoryBlock'
+import { DragDropTableComponent } from './block/DragDropTableComponent'
+import { FreeInputBlock } from './block/FreeInputBlock'
+import { GameBlock } from './block/GameBlock'
+import { TestBlock } from './block/TestBlock'
+import { TheoryBlock } from './block/TheoryBlock'
 
 interface ContentRendererProps {
 	block: Block

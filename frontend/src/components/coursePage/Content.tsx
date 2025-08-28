@@ -1,15 +1,12 @@
-import { ImageBlock, TextBlock } from '@/data/types'
+import { Block, ImageBlock, TextBlock } from '@/data/types'
 import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DragDropTableComponent } from './DragDropTableComponent'
-import { FreeInputBlock } from './FreeInputBlock'
-import { GameBlock } from './GameBlock'
+import { ChapterHeader } from './ChapterHeader'
 import { NavigationButtons } from './NavigationButtons'
-import { TestBlock } from './TestBlock'
-import { TheoryBlock } from './TheoryBlock'
+import { FullScreenBlock, TestSection, TheorySection } from './sections'
 
-const Content = () => {
+export const Content: React.FC = () => {
 	const { t } = useTranslation('coursePage')
 	const { course, markChapterAsRead } = useCourse()
 	const [currentModuleIndex, setCurrentModuleIndex] = useState(0)
@@ -32,7 +29,6 @@ const Content = () => {
 					setCurrentModule(module)
 					setCurrentChapter(chapter)
 					setShowTest(false)
-					// Не сбрасываем currentQuestionIndex и testResults, чтобы сохранить прогресс
 				}
 			})
 		})
@@ -62,7 +58,6 @@ const Content = () => {
 			return newResults
 		})
 
-		// Автоматический переход только для неперетаскиваемых задач
 		if (
 			currentTestBlock?.type !== 'drag-drop-table' &&
 			currentQuestionIndex < testBlocks.length - 1
@@ -84,18 +79,18 @@ const Content = () => {
 
 	const testBlocks = currentChapter.blocks.filter(block =>
 		['question', 'drag-drop-table', 'free-input', 'game'].includes(block.type)
-	)
+	) as Block[]
 
 	const theoryBlocks = currentChapter.blocks.filter(block =>
 		['text', 'image'].includes(block.type)
-	)
+	) as TextBlock[] | ImageBlock[]
 
 	const hasTheoryBlocks = theoryBlocks.length > 0
 	const hasDragDrop = currentChapter.blocks.some(
 		b => b.type === 'drag-drop-table'
 	)
-	const hasFreeInput = currentChapter.blocks.some(b => b.type === 'free-input')
 	const hasGame = currentChapter.blocks.some(b => b.type === 'game')
+	const hasFreeInput = currentChapter.blocks.some(b => b.type === 'free-input')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
 	const navigateTo = (direction: 'prev' | 'next') => {
@@ -126,123 +121,47 @@ const Content = () => {
 	}
 
 	return (
-		<div className='flex-1 p-4 sm:p-6 min-h-screen'>
+		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t-1'>
 			<div className='max-w-9xl mx-auto'>
-				<h1 className='text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center'>
-					{currentChapter.title}
-					{currentChapter.isRead && (
-						<span className='ml-2 text-green-500 text-sm font-normal'>
-							{t('completed')}
-						</span>
-					)}
-				</h1>
-
-				{/* Полноэкранные блоки: drag-drop-table или game */}
+				<ChapterHeader
+					title={currentChapter.title}
+					isRead={currentChapter.isRead}
+				/>
 				{(hasDragDrop && currentTestBlock?.type === 'drag-drop-table') ||
 				(hasGame && currentTestBlock?.type === 'game') ? (
-					<div className='w-full'>
-						{currentTestBlock?.type === 'drag-drop-table' && (
-							<>
-								<DragDropTableComponent
-									block={currentTestBlock}
-									onComplete={handleQuestionComplete}
-								/>
-								<div className='flex gap-3 mt-6'>
-									<button
-										onClick={handlePrevQuestion}
-										disabled={currentQuestionIndex === 0}
-										className='px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
-									>
-										{t('back')}
-									</button>
-									<button
-										onClick={handleNextQuestion}
-										disabled={
-											testResults[currentQuestionIndex] === undefined ||
-											currentQuestionIndex === testBlocks.length - 1
-										}
-										className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
-									>
-										{t('next')}
-									</button>
-								</div>
-							</>
-						)}
-						{currentTestBlock?.type === 'game' && (
-							<div className='w-full max-w-9xl mx-auto'>
-								<GameBlock
-									block={currentTestBlock}
-									onComplete={handleQuestionComplete}
-								/>
-							</div>
-						)}
-					</div>
+					<FullScreenBlock
+						block={currentTestBlock}
+						currentQuestionIndex={currentQuestionIndex}
+						totalQuestions={testBlocks.length}
+						onComplete={handleQuestionComplete}
+						onPrev={handlePrevQuestion}
+						onNext={handleNextQuestion}
+						isPrevDisabled={currentQuestionIndex === 0}
+						isNextDisabled={
+							testResults[currentQuestionIndex] === undefined ||
+							currentQuestionIndex === testBlocks.length - 1
+						}
+					/>
 				) : (
 					<div className='flex flex-col lg:flex-row gap-6'>
-						{/* Колонка с теорией */}
 						<div className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-2/3'} w-full`}>
-							<div className='space-y-6'>
-								{theoryBlocks.map(block => (
-									<TheoryBlock
-										key={block.id}
-										block={block as TextBlock | ImageBlock}
-									/>
-								))}
-							</div>
-
-							{!currentChapter.isRead && hasTheoryBlocks && (
-								<div className='mt-6 pt-4 border-t border-gray-200'>
-									<button
-										onClick={handleMarkAsRead}
-										className='px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-all duration-200'
-									>
-										{t('markAsCompleted')}
-									</button>
-								</div>
-							)}
+							<TheorySection
+								theoryBlocks={theoryBlocks}
+								isRead={currentChapter.isRead}
+								onMarkAsRead={handleMarkAsRead}
+							/>
 						</div>
-
-						{/* Колонка с тестами/вопросами */}
-						{(showTest || currentChapter.isRead) &&
-							testBlocks.length > 0 &&
-							currentTestBlock && (
-								<div
-									className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-1/3'} w-full`}
-								>
-									<div className='lg:sticky lg:top-6 space-y-6'>
-										{currentTestBlock.type === 'question' && (
-											<div className='bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200'>
-												<h2 className='text-lg sm:text-xl font-semibold text-gray-800 mb-4'>
-													{t('knowledgeCheck', {
-														currentQuestionIndex: currentQuestionIndex + 1,
-														totalQuestions: testBlocks.length
-													})}
-												</h2>
-												<TestBlock
-													block={currentTestBlock}
-													moduleId={currentModule.id}
-													chapterId={currentChapter.id}
-													questionIndex={currentQuestionIndex}
-													totalQuestions={testBlocks.length}
-													onNext={handleNextQuestion}
-												/>
-											</div>
-										)}
-
-										{currentTestBlock.type === 'free-input' && (
-											<div className='bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200'>
-												<FreeInputBlock
-													block={currentTestBlock}
-													onComplete={handleQuestionComplete}
-												/>
-											</div>
-										)}
-									</div>
-								</div>
-							)}
+						<TestSection
+							testBlocks={testBlocks}
+							currentQuestionIndex={currentQuestionIndex}
+							moduleId={currentModule.id}
+							chapterId={currentChapter.id}
+							showTest={showTest}
+							isRead={currentChapter.isRead}
+							onComplete={handleQuestionComplete}
+						/>
 					</div>
 				)}
-
 				<NavigationButtons
 					course={course}
 					currentModuleIndex={currentModuleIndex}
