@@ -1,4 +1,4 @@
-import { DropdownTableBlock } from '@/components/coursePage/DropDownTableComponent'
+import { DropdownTableBlock } from '@/components/coursePage/block/DropDownTableComponent'
 
 export const sampleDropdownTableBlockRu: DropdownTableBlock = {
 	id: 'dtb-1',

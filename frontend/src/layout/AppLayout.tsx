@@ -1,4 +1,4 @@
-import { Header } from '@/components/header'
+import { Header } from '@/components/navigation'
 import Footer from '@/components/shared/footer'
 import { Outlet } from 'react-router'
 

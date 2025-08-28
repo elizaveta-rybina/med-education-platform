@@ -2,7 +2,7 @@
 import { ImageBlock, TextBlock } from '@/data/types'
 
 interface TheoryBlockProps {
-  block: TextBlock | ImageBlock;
+  block: TextBlock | ImageBlock ;
 }
 
 export const TheoryBlock = ({ block }: TheoryBlockProps) => {

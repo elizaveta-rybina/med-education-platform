@@ -2,8 +2,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { ScrollToTop } from '@/components/common/ScrollToTop'
 import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
-import { CoursePage, HomePage, NotFound } from '@/pages'
-import PersonalAccountStudent from '@/pages/Account/PersonalAccountStudent'
+import { CoursePage, NotFound } from '@/pages'
 import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
 import StudentUsers from '@/pages/Admin/StudentUsers'
@@ -15,6 +14,7 @@ import HomeAdmin from '@/pages/Dashboard/Home'
 import GDevelopEditor from '@/pages/GDevelop/GDevelopEditor'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute'
+import { SidebarProvider } from '@/context/SidebarContext'
 
 const router = createBrowserRouter([
 	{
@@ -25,22 +25,13 @@ const router = createBrowserRouter([
 			</ErrorBoundary>
 		),
 		children: [
-			{ path: '/', element: <HomePage /> },
-			{ path: '/course/:id', element: <CoursePage /> },
+			{ path: '/', element: <CoursePage /> },
 			{
-				path: '/course/physiology',
+				path: '/course/:courseId',
 				element: (
-					<ProtectedRoute>
+					<SidebarProvider>
 						<CourseInnerPage />
-					</ProtectedRoute>
-				)
-			},
-			{
-				path: '/profile',
-				element: (
-					<ProtectedRoute>
-						<PersonalAccountStudent />
-					</ProtectedRoute>
+					</SidebarProvider>
 				)
 			}
 		]
@@ -95,7 +86,7 @@ const router = createBrowserRouter([
 			}
 		]
 	},
-	{ path: '/signin', element: <SignIn /> },
+	{ path: '/admin', element: <SignIn /> },
 	{ path: '/games', element: <GDevelopEditor /> },
 	{ path: '/signup', element: <SignUp /> },
 	{ path: '*', element: <NotFound /> }

@@ -1,19 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router'
 import { useSidebar } from '../context/SidebarContext'
-import {
-	BookIcon,
-	CalenderIcon,
-	ChatIcon,
-	ChevronDownIcon,
-	ExamIcon,
-	GridIcon,
-	PageIcon,
-	PieChartIcon,
-	SettingIcon,
-	TeacherIcon,
-	UserIcon
-} from '../icons'
+import { BookIcon, ChevronDownIcon, GridIcon, PageIcon } from '../icons'
 
 type NavItem = {
 	name: string
@@ -33,61 +21,16 @@ const navItems: NavItem[] = [
 		name: 'Курсы',
 		subItems: [
 			{ name: 'Все курсы', path: '/admin/courses' },
-			{ name: 'Создать курс', path: '/admin/courses/new' },
-			{ name: 'Категории', path: '/admin/categories' }
-		]
-	},
-	{
-		icon: <UserIcon />,
-		name: 'Студенты',
-		subItems: [
-			{ name: 'Все студенты', path: '/admin/students' },
-			{ name: 'Группы', path: '/admin/student-groups' }
-		]
-	},
-	{
-		icon: <TeacherIcon />,
-		name: 'Преподаватели',
-		path: '/admin/teachers'
-	},
-	{
-		icon: <ExamIcon />,
-		name: 'Тестирование',
-		subItems: [
-			{ name: 'Тесты', path: '/admin/tests' },
-			{ name: 'Результаты', path: '/admin/test-results' }
+			{ name: 'Создать курс', path: '/admin/courses/new' }
 		]
 	}
 ]
 
 const othersItems: NavItem[] = [
 	{
-		icon: <ChatIcon />,
-		name: 'Сообщения',
-		path: '/admin/messages'
-	},
-	{
-		icon: <CalenderIcon />,
-		name: 'Календарь',
-		path: '/admin/calendar'
-	},
-	{
-		icon: <PieChartIcon />,
-		name: 'Аналитика',
-		subItems: [
-			{ name: 'Прогресс', path: '/admin/analytics/progress' },
-			{ name: 'Финансы', path: '/admin/analytics/finance' }
-		]
-	},
-	{
 		icon: <BookIcon />,
 		name: 'Конструктор игр',
 		path: '/games'
-	},
-	{
-		icon: <SettingIcon />,
-		name: 'Настройки',
-		path: '/admin/settings'
 	}
 ]
 
@@ -272,7 +215,7 @@ const AppSidebar: React.FC = () => {
 							</span>
 						) : (
 							<span className='text-xl font-bold text-purple-600 dark:text-purple-400'>
-								EA
+								Dr.VR
 							</span>
 						)}
 					</Link>
