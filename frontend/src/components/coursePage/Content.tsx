@@ -85,7 +85,6 @@ export const Content: React.FC = () => {
 		['text', 'image'].includes(block.type)
 	) as TextBlock[] | ImageBlock[]
 
-	const hasTheoryBlocks = theoryBlocks.length > 0
 	const hasDragDrop = currentChapter.blocks.some(
 		b => b.type === 'drag-drop-table'
 	)

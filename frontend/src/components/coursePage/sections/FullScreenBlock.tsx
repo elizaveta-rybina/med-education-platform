@@ -15,8 +15,6 @@ interface FullScreenBlockProps {
 
 export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 	block,
-	currentQuestionIndex,
-	totalQuestions,
 	onComplete,
 	onPrev,
 	onNext,
