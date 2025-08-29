@@ -14,7 +14,6 @@ import HomeAdmin from '@/pages/Dashboard/Home'
 import GDevelopEditor from '@/pages/GDevelop/GDevelopEditor'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute'
-import { SidebarProvider } from '@/context/SidebarContext'
 
 const router = createBrowserRouter([
 	{
@@ -28,11 +27,7 @@ const router = createBrowserRouter([
 			{ path: '/', element: <CoursePage /> },
 			{
 				path: '/course/:courseId',
-				element: (
-					<SidebarProvider>
-						<CourseInnerPage />
-					</SidebarProvider>
-				)
+				element: <CourseInnerPage />
 			}
 		]
 	},

@@ -21,24 +21,24 @@ const SideBarCourse = () => {
 
 	const allChapters = course.modules.flatMap(module => module.chapters)
 
-	// Toggle function based on screen size
 	const handleToggle = () => {
 		if (window.innerWidth >= 1024) {
-			toggleSidebar() // Toggle desktop sidebar (isExpanded)
+			toggleSidebar()
 		} else {
-			toggleMobileSidebar() // Toggle mobile sidebar (isMobileOpen)
+			toggleMobileSidebar()
 		}
 	}
 
 	return (
 		<aside
-			className={`bg-white dark:bg-gray-900 dark:border-gray-800 min-h-screen transition-all duration-300 ease-in-out border-r border-gray-200 ${
-				isMobileOpen ? 'block w-full' : 'hidden'
-			} lg:block ${isExpanded ? 'w-80' : 'w-12'}`}
+			className={`fixed top-0 left-0 mt-16 lg:mt-0 bg-white dark:bg-gray-900 dark:border-gray-800 h-screen transition-all duration-300 ease-in-out border-r border-gray-200 z-50
+        ${isExpanded || isMobileOpen ? 'w-80' : 'w-12'}
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0`}
 		>
 			<div className='flex flex-col h-full overflow-y-auto'>
 				{/* Header */}
-				<div className='flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800'>
+				<div className='flex items-center justify-between p-2 lg:p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800'>
 					{(isExpanded || isMobileOpen) && (
 						<h2 className='text-lg font-bold text-gray-800 dark:text-gray-200 truncate'>
 							{course.title}
@@ -85,7 +85,7 @@ const SideBarCourse = () => {
 					</button>
 				</div>
 
-				{/* Chapters list */}
+				{/* Chapters list and Footer (unchanged) */}
 				{(isExpanded || isMobileOpen) && (
 					<nav className='flex-1 p-2'>
 						<ul className='space-y-1'>
@@ -122,10 +122,9 @@ const SideBarCourse = () => {
 					</nav>
 				)}
 
-				{/* Footer */}
 				{(isExpanded || isMobileOpen) && (
 					<div className='p-4 mt-auto text-xs text-gray-500 dark:text-gray-400'>
-						Course v1.0
+						Doctor VR v1.0.0
 					</div>
 				)}
 			</div>
