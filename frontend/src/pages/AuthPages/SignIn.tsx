@@ -1,17 +1,17 @@
-import PageMeta from "../../components/common/PageMeta";
-import AuthLayout from "./AuthPageLayout";
-import SignInForm from "@/components/auth/SignInForm";
+import { SignInForm } from '@/components/auth'
+import { PageMeta } from '@/components/common'
+import AuthLayout from './AuthPageLayout'
 
-export default function SignIn() {
-  return (
-    <>
-      <PageMeta
-        title="Вход в личный кабинет | Доктор VR"
-        description="Страница входа в личный кабинет на образовательной платформе Доктор VR"
-      />
-      <AuthLayout>
-        <SignInForm />
-      </AuthLayout>
-    </>
-  );
+export const SignIn = () => {
+	return (
+		<>
+			<PageMeta
+				title='Вход в личный кабинет | Доктор VR'
+				description='Страница входа в личный кабинет на образовательной платформе Доктор VR'
+			/>
+			<AuthLayout>
+				<SignInForm />
+			</AuthLayout>
+		</>
+	)
 }

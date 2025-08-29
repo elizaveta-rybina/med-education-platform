@@ -7,7 +7,7 @@ import { HelmetProvider, Helmet } from "react-helmet-async";
  * @returns {JSX.Element} React-компонент, который внедряет мета-теги в head документа
  */
 
-const PageMeta = ({
+export const PageMeta = ({
   title,
   description,
 }: {
@@ -31,5 +31,3 @@ export const AppWrapper = ({ children }: { children: React.ReactNode }) => (
   // HelmetProvider должен оборачивать все компоненты, где используется Helmet
   <HelmetProvider>{children}</HelmetProvider>
 );
-
-export default PageMeta;

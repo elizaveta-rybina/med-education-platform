@@ -5,7 +5,7 @@ interface ComponentCardProps {
   desc?: string; // Description text
 }
 
-const ComponentCard: React.FC<ComponentCardProps> = ({
+export const ComponentCard: React.FC<ComponentCardProps> = ({
   title,
   children,
   className = "",
@@ -35,4 +35,3 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   );
 };
 
-export default ComponentCard;

@@ -1,10 +1,12 @@
+import React, { useState } from 'react'
+
+import { useTranslation } from 'react-i18next'
+
 import {
 	ModalButtonAuthentication,
 	ModalSignIn,
-	NavButton,
+	NavButton
 } from '@/components/shared'
-import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 interface CourseButtonProps {
 	isRegistered: boolean
@@ -15,7 +17,7 @@ interface CourseButtonProps {
 const CourseButton: React.FC<CourseButtonProps> = ({
 	isRegistered,
 	isLoggedIn,
-	onRegister,
+	onRegister
 }) => {
 	const { t } = useTranslation('coursePage')
 	const [registered, setRegistered] = useState(isRegistered)

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
-import LanguageToggleButton from '@/components/common/LanguageToggleButton'
-import { ThemeToggleButton } from '../components/common/ThemeToggleButton'
+import { LanguageToggleButton } from '@/components/common'
+import { ThemeToggleButton } from '../components/common'
 import { useSidebar } from '../context/SidebarContext'
 
 const AppHeader: React.FC = () => {

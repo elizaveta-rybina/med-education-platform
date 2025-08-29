@@ -1,6 +1,6 @@
+import { useTheme } from '@/context/ThemeContext'
 import { MoonIcon, SunIcon } from '@heroicons/react/24/outline'
 import * as React from 'react'
-import { useTheme } from '../../context/ThemeContext'
 
 export const ThemeToggleButton: React.FC = () => {
 	const { toggleTheme } = useTheme()

@@ -23,7 +23,7 @@ import { useLocation } from "react-router";
  * и автоматически прокручивает страницу к началу при каждом изменении маршрута.
  * Прокрутка выполняется с плавной анимацией (smooth scroll behavior).
  */
-export function ScrollToTop() {
+export const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   /**
