@@ -5,8 +5,8 @@ import {
 	CourseTitle,
 	NavigationPanel,
 	SkillsGrid,
-} from '@/components/courses'
-import AccordionModule from '@/components/courses/AccordionModule'
+} from '@/components/coursePage'
+import AccordionModule from '@/components/coursePage/AccordionModule'
 import { Subtitle } from '@/components/shared'
 import CardList from '@/components/shared/cardList'
 import { useModulesData } from '@/data/accordion'

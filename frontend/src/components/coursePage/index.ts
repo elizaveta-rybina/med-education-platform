@@ -1,5 +1,7 @@
-import Content from './Content'
-import SideBarCourse from './SideBar'
+import CourseButton from './courseButton'
+import CourseTitle from './courseTitle'
+import NavigationPanel from './NavigationPanel'
+import Skill from './skills/Skill'
+import SkillsGrid from './skills/SkillsGrid'
 
-export { Content, SideBarCourse }
-
+export { CourseButton, CourseTitle, NavigationPanel, Skill, SkillsGrid }
