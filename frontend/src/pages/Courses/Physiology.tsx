@@ -1,4 +1,4 @@
-import { Content, SideBarCourse } from '@/components/coursePage'
+import { Content, SideBarCourse } from '@/components/courseInner'
 import { CourseHeader } from '@/components/navigation/ui/CourseHeader'
 import { CourseProvider } from '@/context/CourseContext'
 import { SidebarProvider, useSidebar } from '@/context/SidebarContext'
