@@ -26,4 +26,3 @@ export const LanguageToggleButton: React.FC = () => {
 	)
 }
 
-export default LanguageToggleButton

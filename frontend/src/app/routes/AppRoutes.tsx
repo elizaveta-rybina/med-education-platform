@@ -1,5 +1,4 @@
-import ErrorBoundary from '@/components/common/ErrorBoundary'
-import { ScrollToTop } from '@/components/common/ScrollToTop'
+import { ErrorBoundary, ScrollToTop } from '@/components/common'
 import AdminLayout from '@/layout/AdminLayout'
 import AppLayout from '@/layout/AppLayout'
 import { CoursePage, NotFound } from '@/pages'
@@ -7,8 +6,7 @@ import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
 import StudentUsers from '@/pages/Admin/StudentUsers'
 import TeacherUsers from '@/pages/Admin/TeacherUsers'
-import SignIn from '@/pages/AuthPages/SignIn'
-import SignUp from '@/pages/AuthPages/SignUp'
+import { SignIn } from '@/pages/AuthPages'
 import CourseInnerPage from '@/pages/Courses/Physiology'
 import HomeAdmin from '@/pages/Dashboard/Home'
 import GDevelopEditor from '@/pages/GDevelop/GDevelopEditor'
@@ -83,7 +81,6 @@ const router = createBrowserRouter([
 	},
 	{ path: '/admin', element: <SignIn /> },
 	{ path: '/games', element: <GDevelopEditor /> },
-	{ path: '/signup', element: <SignUp /> },
 	{ path: '*', element: <NotFound /> }
 ])
 

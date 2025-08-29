@@ -12,7 +12,7 @@ import Input from '../form/input/InputField'
 import Button from '../ui/button/Button'
 import { ErrorAlert } from './ErrorAlert'
 
-export default function SignInForm() {
+export const SignInForm = () => {
 	const { t } = useTranslation('auth')
 	const status = useAppSelector(selectAuthStatus)
 	const error = useAppSelector(selectAuthError)
@@ -23,13 +23,13 @@ export default function SignInForm() {
 		register,
 		handleSubmit,
 		formState: { errors, isValid },
-		reset,
+		reset
 	} = useForm<LoginData>({
 		mode: 'onChange',
 		defaultValues: {
 			email: '',
-			password: '',
-		},
+			password: ''
+		}
 	})
 
 	const onSubmit = async (data: LoginData) => {
@@ -74,8 +74,8 @@ export default function SignInForm() {
 										required: t('emailRequired'),
 										pattern: {
 											value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-											message: t('emailInvalid'),
-										},
+											message: t('emailInvalid')
+										}
 									})}
 									error={errors.email?.message}
 								/>
@@ -93,8 +93,8 @@ export default function SignInForm() {
 											required: t('passwordRequired'),
 											minLength: {
 												value: 6,
-												message: t('passwordMinLength'),
-											},
+												message: t('passwordMinLength')
+											}
 										})}
 										error={errors.password?.message}
 									/>
@@ -134,18 +134,6 @@ export default function SignInForm() {
 								</Button>
 							</div>
 						</form>
-
-						<div className='mt-5'>
-							<p className='text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start'>
-								{t('noAccount')}{' '}
-								<Link
-									to='/signup'
-									className='text-purple-500 hover:text-purple-600 dark:text-purple-400'
-								>
-									{t('signUpLink')}
-								</Link>
-							</p>
-						</div>
 					</div>
 				</div>
 			</div>
