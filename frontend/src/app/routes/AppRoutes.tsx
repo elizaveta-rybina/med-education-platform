@@ -4,8 +4,6 @@ import AppLayout from '@/layout/AppLayout'
 import { CoursePage, NotFound } from '@/pages'
 import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
-import StudentUsers from '@/pages/Admin/StudentUsers'
-import TeacherUsers from '@/pages/Admin/TeacherUsers'
 import { SignIn } from '@/pages/AuthPages'
 import CourseInnerPage from '@/pages/Courses/Physiology'
 import HomeAdmin from '@/pages/Dashboard/Home'
@@ -42,22 +40,6 @@ const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<HomeAdmin />
-					</ProtectedRoute>
-				)
-			},
-			{
-				path: '/admin/teachers',
-				element: (
-					<ProtectedRoute>
-						<TeacherUsers />
-					</ProtectedRoute>
-				)
-			},
-			{
-				path: '/admin/students',
-				element: (
-					<ProtectedRoute>
-						<StudentUsers />
 					</ProtectedRoute>
 				)
 			},
