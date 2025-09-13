@@ -22,7 +22,7 @@ const CourseInfo = () => {
 				imageAlt={t('imageAlt')}
 				imageSrc={courseImage}
 			/>
-			<div className='flex justify-between my-10'>
+			<div className='flex justify-between my-15'>
 				<ModuleInfo
 					topText={t('modules.top')}
 					bottomText={t('modules.bottom')}
