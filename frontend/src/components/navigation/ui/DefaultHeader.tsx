@@ -8,7 +8,7 @@ export const DefaultHeader: React.FC = ({}) => {
 	const { t } = useTranslation()
 
 	return (
-		<header className='sticky top-0 flex w-full bg-white border-gray-200 z-50 dark:border-gray-800 dark:bg-gray-900'>
+		<header className='sticky top-0 flex w-full bg-[#7D4F93]  z-50 h-[68px]'>
 			<nav className='container mx-auto flex items-center justify-between p-4 lg:p-6'>
 				<div className='flex items-center gap-4'>
 					<Link to='/' className='p-1.5'>

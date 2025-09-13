@@ -44,10 +44,22 @@ const en = {
 		copyright: '© {{year}} N.P. Ogarev MSU. All rights reserved.'
 	},
 	coursePage: {
+		modules: {
+			top: '26 modules',
+			bottom: 'Available to complete'
+		},
+		time: {
+			top: '25 minutes',
+			bottom: 'And the topic is mastered'
+		},
+		course: {
+			top: '2nd–3rd year',
+			bottom: 'For those ready to move\nfrom cramming to practice'
+		},
 		title: 'Doctor VR:',
-		subtitle: 'Virtual Pathophysiology Lab',
+		subtitle: 'Virtual Physiology Lab',
 		description:
-			'Helps understand the basics of physiology through interactive experiments and modeling of bodily processes',
+			'Clinical cases, visual experiments and visual materials — everything to improve clinical thinking and pass the exam confidently!',
 		imageAlt: 'Lightning',
 		skillsTitle: 'Skills Acquired',
 		modulesTitle: 'Modules',
@@ -55,7 +67,7 @@ const en = {
 			'This course includes five modules where you will explore key aspects of human physiology. Each module covers essential body systems, starting with the basics of physiology and progressing to in-depth studies of the cardiovascular, respiratory, nervous, and muscular systems. This course provides a comprehensive understanding of how organs and systems interact to maintain health and vitality, preparing you for more advanced physiological concepts.',
 		recommendationsTitle: 'Recommendations',
 		decorativeImageAlt: 'Decorative illustration',
-		goToCourse: 'Go to Course',
+		goToModules: 'Go to modules',
 		register: 'Register',
 		signIn: 'Sign In to Your Account',
 		navAbout: 'About',
@@ -130,7 +142,6 @@ const en = {
 		startCourse: 'Start Course',
 		comingSoon: 'Coming Soon',
 		duration: '⏱ {{duration}}',
-		modules: '📚 {{modulesCount}} Modules',
 		unavailable: 'Unavailable',
 		moduleProgress: 'Module Progress',
 		finalTest: 'Final Module Test',

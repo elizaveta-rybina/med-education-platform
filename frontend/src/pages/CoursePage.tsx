@@ -1,10 +1,8 @@
 import backCourse from '@/assets/backCourse.png'
-import courseImage from '@/assets/courseImage.png'
 import {
-	CourseButton,
-	CourseTitle,
+	CourseInfo,
 	NavigationPanel,
-	SkillsGrid,
+	SkillsGrid
 } from '@/components/coursePage'
 import AccordionModule from '@/components/coursePage/AccordionModule'
 import { Subtitle } from '@/components/shared'
@@ -13,39 +11,18 @@ import { useModulesData } from '@/data/accordion'
 import { useNavItems } from '@/data/navItems'
 import { useCourses } from '@/data/recommend'
 import { useSkills } from '@/data/skills'
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const CoursePage: React.FC = () => {
 	const { t } = useTranslation('coursePage')
-	const [isLoggedIn, setIsLoggedIn] = useState(true)
-	const [isRegistered] = useState(true)
 	const navItems = useNavItems()
 	const skills = useSkills()
 	const modules = useModulesData()
 	const courses = useCourses()
 
 	return (
-		<div className='my-8 container mx-auto px-4'>
-			<CourseTitle
-				title={
-					<>
-						<span className='text-7xl font-extrabold bg-gradient-to-r from-purple-700 to-pink-500 bg-clip-text text-transparent drop-shadow-lg'>
-							{t('title')}
-							<br />
-						</span>
-						<span className='block my-4'>{t('subtitle')}</span>
-					</>
-				}
-				description={t('description')}
-				imageAlt={t('imageAlt')}
-				imageSrc={courseImage}
-			/>
-			<CourseButton
-				isRegistered={isRegistered}
-				isLoggedIn={isLoggedIn}
-				onRegister={() => setIsLoggedIn(true)}
-			/>
+		<div className='my-8 container mx-auto'>
+			<CourseInfo />
 			<NavigationPanel items={navItems} />
 			<Subtitle title={t('skillsTitle')} anchor='about' />
 			<SkillsGrid skills={skills} />

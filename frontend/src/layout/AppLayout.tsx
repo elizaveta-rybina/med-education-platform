@@ -1,5 +1,4 @@
 import { Header } from '@/components/navigation'
-import Footer from '@/components/shared/footer'
 import { Outlet } from 'react-router'
 
 const AppLayout: React.FC = () => {
@@ -12,7 +11,7 @@ const AppLayout: React.FC = () => {
 					<Outlet />
 				</div>
 			</div>
-			<Footer />
+			{/* <Footer /> */}
 		</div>
 	)
 }

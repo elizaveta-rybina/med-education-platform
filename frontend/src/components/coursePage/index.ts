@@ -1,7 +1,6 @@
-import CourseButton from './courseButton'
-import CourseTitle from './courseTitle'
+import CourseInfo from './CourseInfo'
 import NavigationPanel from './NavigationPanel'
 import Skill from './skills/Skill'
 import SkillsGrid from './skills/SkillsGrid'
 
-export { CourseButton, CourseTitle, NavigationPanel, Skill, SkillsGrid }
+export { CourseInfo, NavigationPanel, Skill, SkillsGrid }
