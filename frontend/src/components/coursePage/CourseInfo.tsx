@@ -2,7 +2,7 @@ import courseImage from '@/assets/courseImage.png'
 import { CourseButton, CourseTitle, ModuleInfo } from '@/entities'
 import { useTranslation } from 'react-i18next'
 
-const CourseInfo = () => {
+export const CourseInfo = () => {
 	const { t } = useTranslation('coursePage')
 	return (
 		<div>
@@ -34,5 +34,3 @@ const CourseInfo = () => {
 		</div>
 	)
 }
-
-export default CourseInfo
