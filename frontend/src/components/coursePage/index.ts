@@ -1,3 +1,2 @@
-import CourseInfo from './CourseInfo'
-
-export { CourseInfo }
+export { CourseInfo } from './CourseInfo'
+export { CourseSteps } from './CourseSteps'

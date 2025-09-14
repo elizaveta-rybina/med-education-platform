@@ -56,6 +56,12 @@ const en = {
 			top: '2nd–3rd year',
 			bottom: 'For those ready to move\nfrom cramming to practice'
 		},
+		steps: {
+			title: 'How does it work?',
+			step1: 'Read the theory and\n reinforce the material with a test',
+			step2: 'Solve a clinical case',
+			step3: 'Simulate pathological\n processes in real time'
+		},
 		title: 'Doctor VR:',
 		subtitle: 'Virtual Physiology Lab',
 		description:
