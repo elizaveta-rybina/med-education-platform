@@ -1,6 +1,6 @@
-import { Block, ImageBlock, TextBlock } from '@/data/types'
+import { Block, Chapter, ImageBlock, Module, TextBlock } from '@/data/types'
 import { useCourse } from '@/hooks/useCourse'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChapterHeader } from './ChapterHeader'
 import { NavigationButtons } from './NavigationButtons'
@@ -11,31 +11,36 @@ export const Content: React.FC = () => {
 	const { course, markChapterAsRead } = useCourse()
 	const [currentModuleIndex, setCurrentModuleIndex] = useState(0)
 	const [currentChapterIndex, setCurrentChapterIndex] = useState(0)
-	const [currentModule, setCurrentModule] = useState(course.modules[0])
-	const [currentChapter, setCurrentChapter] = useState(
-		course.modules[0]?.chapters[0]
-	)
+	const [currentModule, setCurrentModule] = useState<Module | null>(null)
+	const [currentChapter, setCurrentChapter] = useState<Chapter | null>(null)
 	const [showTest, setShowTest] = useState(false)
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 	const [testResults, setTestResults] = useState<boolean[]>([])
 
-	const updateCurrentChapter = () => {
+	const updateCurrentChapter = useCallback(() => {
+		if (!course) return
 		const hash = window.location.hash.substring(1)
-		course.modules.forEach((module, mIdx) => {
-			module.chapters.forEach((chapter, cIdx) => {
+		for (let mIdx = 0; mIdx < course.modules.length; mIdx++) {
+			const module = course.modules[mIdx]
+			for (let cIdx = 0; cIdx < module.chapters.length; cIdx++) {
+				const chapter = module.chapters[cIdx]
 				if (chapter.hash === hash) {
 					setCurrentModuleIndex(mIdx)
 					setCurrentChapterIndex(cIdx)
 					setCurrentModule(module)
 					setCurrentChapter(chapter)
 					setShowTest(false)
+					return
 				}
-			})
-		})
-	}
+			}
+		}
+		// если hash не совпал ни с чем — взять первый модуль/главу
+		setCurrentModule(course.modules[0] || null)
+		setCurrentChapter(course.modules[0]?.chapters[0] || null)
+	}, [course])
 
 	const handleNextQuestion = () => {
-		if (currentQuestionIndex < testBlocks.length - 1) {
+		if (testBlocks && currentQuestionIndex < testBlocks.length - 1) {
 			setCurrentQuestionIndex(prev => prev + 1)
 		}
 	}
@@ -47,6 +52,7 @@ export const Content: React.FC = () => {
 	}
 
 	const handleMarkAsRead = () => {
+		if (!currentModule || !currentChapter) return
 		markChapterAsRead(currentModule.id, currentChapter.id)
 		setShowTest(true)
 	}
@@ -60,22 +66,26 @@ export const Content: React.FC = () => {
 
 		if (
 			currentTestBlock?.type !== 'drag-drop-table' &&
-			currentQuestionIndex < testBlocks.length - 1
+			currentQuestionIndex < (testBlocks?.length || 0) - 1
 		) {
 			setTimeout(handleNextQuestion, 1000)
-		} else if (currentQuestionIndex === testBlocks.length - 1) {
-			markChapterAsRead(currentModule.id, currentChapter.id)
+		} else if (testBlocks && currentQuestionIndex === testBlocks.length - 1) {
+			if (currentModule && currentChapter) {
+				markChapterAsRead(currentModule.id, currentChapter.id)
+			}
 		}
 	}
 
 	useEffect(() => {
+		if (!course) return
 		updateCurrentChapter()
 		window.addEventListener('hashchange', updateCurrentChapter)
 		return () => window.removeEventListener('hashchange', updateCurrentChapter)
-	}, [course.modules])
+	}, [course, updateCurrentChapter])
 
-	if (!currentModule || !currentChapter)
+	if (!course || !currentModule || !currentChapter) {
 		return <div className='p-6 text-center text-gray-500'>{t('loading')}</div>
+	}
 
 	const testBlocks = currentChapter.blocks.filter(block =>
 		['question', 'drag-drop-table', 'free-input', 'game'].includes(block.type)
@@ -121,7 +131,7 @@ export const Content: React.FC = () => {
 
 	return (
 		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t-1'>
-			<div className='max-w-9xl mx-auto'>
+			<div className='max-w-9xl mx-auto pb-20'>
 				<ChapterHeader
 					title={currentChapter.title}
 					isRead={currentChapter.isRead}
@@ -177,13 +187,13 @@ export const Content: React.FC = () => {
 						)}
 					</div>
 				)}
-				<NavigationButtons
-					course={course}
-					currentModuleIndex={currentModuleIndex}
-					currentChapterIndex={currentChapterIndex}
-					onNavigate={navigateTo}
-				/>
 			</div>
+			<NavigationButtons
+				course={course}
+				currentModuleIndex={currentModuleIndex}
+				currentChapterIndex={currentChapterIndex}
+				onNavigate={navigateTo}
+			/>
 		</div>
 	)
 }
