@@ -1,6 +1,7 @@
 import { Block } from '@/data/types'
+import { DragDropTableComponent } from '@/features/drag-drop-table'
 import { useTranslation } from 'react-i18next'
-import { DragDropTableComponent, GameBlock } from '../block'
+import { GameBlock } from '../block'
 
 interface FullScreenBlockProps {
 	block: Block
