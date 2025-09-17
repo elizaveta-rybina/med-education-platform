@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import React from 'react'
 
 interface StepCardProps {
@@ -29,15 +28,7 @@ export const StepCard: React.FC<StepCardProps> = ({
 	}
 
 	return (
-		<motion.div
-			className='relative inline-flex items-center overflow-visible'
-			style={{ originY: 0.5 }}
-			initial={{ opacity: 0, y: 50 }}
-			whileInView={{ opacity: 1, y: 0 }}
-			exit={{ opacity: 0, y: 50 }}
-			transition={{ duration: 0.6, ease: 'easeOut' }}
-			viewport={{ amount: 0.3 }}
-		>
+		<div className='relative inline-flex items-center overflow-visible'>
 			{/* Пластина с кругом */}
 			<div
 				className='rounded-full px-4 py-2 flex items-center justify-start'
@@ -55,6 +46,6 @@ export const StepCard: React.FC<StepCardProps> = ({
 			<div className='bg-white h-[100px] w-[375px] rounded-full px-6 text-black text-xl shadow-lg relative z-20 whitespace-pre-line my-auto flex items-center justify-center text-center'>
 				{text}
 			</div>
-		</motion.div>
+		</div>
 	)
 }
