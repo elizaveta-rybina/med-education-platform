@@ -33,12 +33,6 @@ export const TestSection: React.FC<TestSectionProps> = ({
 		<div className='lg:sticky lg:top-6 space-y-6'>
 			{currentTestBlock.type === 'question' && (
 				<div className='bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200'>
-					<h2 className='text-lg sm:text-xl font-semibold text-gray-800 mb-4'>
-						{t('knowledgeCheck', {
-							currentQuestionIndex: currentQuestionIndex + 1,
-							totalQuestions: testBlocks.length
-						})}
-					</h2>
 					<TestBlockComponent
 						block={currentTestBlock}
 						moduleId={moduleId}

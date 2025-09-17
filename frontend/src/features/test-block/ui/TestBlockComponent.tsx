@@ -24,7 +24,6 @@ export const TestBlockComponent: React.FC<TestBlockProps> = ({
 		isSubmitting,
 		selectedOptions,
 		handleOptionChange,
-		handleDragDropChange,
 		handleNext,
 		handleReset
 	} = useTestBlock({

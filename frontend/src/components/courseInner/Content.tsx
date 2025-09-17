@@ -143,22 +143,38 @@ export const Content: React.FC = () => {
 					/>
 				) : (
 					<div className='flex flex-col lg:flex-row gap-6'>
-						<div className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-2/3'} w-full`}>
-							<TheorySection
-								theoryBlocks={theoryBlocks}
+						{currentChapter.isRead ? (
+							<TestSection
+								testBlocks={testBlocks}
+								currentQuestionIndex={currentQuestionIndex}
+								moduleId={currentModule.id}
+								chapterId={currentChapter.id}
+								showTest={showTest}
 								isRead={currentChapter.isRead}
-								onMarkAsRead={handleMarkAsRead}
+								onComplete={handleQuestionComplete}
 							/>
-						</div>
-						<TestSection
-							testBlocks={testBlocks}
-							currentQuestionIndex={currentQuestionIndex}
-							moduleId={currentModule.id}
-							chapterId={currentChapter.id}
-							showTest={showTest}
-							isRead={currentChapter.isRead}
-							onComplete={handleQuestionComplete}
-						/>
+						) : (
+							<>
+								<div
+									className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-2/3'} w-full`}
+								>
+									<TheorySection
+										theoryBlocks={theoryBlocks}
+										isRead={currentChapter.isRead}
+										onMarkAsRead={handleMarkAsRead}
+									/>
+								</div>
+								<TestSection
+									testBlocks={testBlocks}
+									currentQuestionIndex={currentQuestionIndex}
+									moduleId={currentModule.id}
+									chapterId={currentChapter.id}
+									showTest={showTest}
+									isRead={currentChapter.isRead}
+									onComplete={handleQuestionComplete}
+								/>
+							</>
+						)}
 					</div>
 				)}
 				<NavigationButtons
