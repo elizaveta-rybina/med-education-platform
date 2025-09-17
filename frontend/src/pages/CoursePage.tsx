@@ -2,7 +2,8 @@ import {
 	CourseInfo,
 	CourseModules,
 	CoursePartners,
-	CourseSteps
+	CourseSteps,
+	Footer
 } from '@/components/coursePage'
 
 const CoursePage: React.FC = () => {
@@ -12,6 +13,7 @@ const CoursePage: React.FC = () => {
 			<CourseSteps />
 			<CourseModules />
 			<CoursePartners />
+			<Footer />
 		</div>
 	)
 }
