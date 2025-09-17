@@ -30,7 +30,7 @@ export const CourseInfo = () => {
 				<ModuleInfo topText={t('time.top')} bottomText={t('time.bottom')} />
 				<ModuleInfo topText={t('course.top')} bottomText={t('course.bottom')} />
 			</div>
-			<CourseButton targetId='' />
+			<CourseButton targetId='course_modules' />
 		</div>
 	)
 }
