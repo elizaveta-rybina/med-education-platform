@@ -1,4 +1,9 @@
-import { CourseInfo, CourseModules, CourseSteps } from '@/components/coursePage'
+import {
+	CourseInfo,
+	CourseModules,
+	CoursePartners,
+	CourseSteps
+} from '@/components/coursePage'
 
 const CoursePage: React.FC = () => {
 	return (
@@ -6,6 +11,7 @@ const CoursePage: React.FC = () => {
 			<CourseInfo />
 			<CourseSteps />
 			<CourseModules />
+			<CoursePartners />
 		</div>
 	)
 }
