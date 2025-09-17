@@ -1,13 +1,5 @@
 import { useState } from 'react'
-
-interface Module {
-	id: number
-	shortTitle: { en: string; ru: string }
-	title: { en: string; ru: string }
-	description: { en: string; ru: string }
-	time: { en: string; ru: string }
-	image: string | { en: string; ru: string }
-}
+import { Module } from '../cfg/modules.data'
 
 interface ModuleTabsProps {
 	language?: 'en' | 'ru'
@@ -72,7 +64,7 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 							className='w-80 h-48 rounded-[10px] object-cover'
 						/>
 						<button className='mt-4 w-56 h-9 bg-[#8C3192] rounded-[10px] flex items-center justify-center text-white text-xl self-center'>
-							{language === 'en' ? 'Start Now' : 'Начать работу'}
+							{language === 'en' ? 'Get started' : 'Начать работу'}
 						</button>
 					</div>
 				</div>

@@ -24,6 +24,7 @@ export const CourseModules = () => {
 			<motion.h2
 				className='bg-gradient-to-r from-[#6C3F99] to-[#BE1B86] bg-clip-text text-transparent text-center justify-start text-6xl/tight italic font-bold mb-25 mt-40'
 				style={{ originY: 0.5 }}
+				id="course_modules"
 				{...animationProps}
 			>
 				{t('card_modules.title')}
