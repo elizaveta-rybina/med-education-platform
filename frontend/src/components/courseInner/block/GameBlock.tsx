@@ -1,11 +1,11 @@
 import { sampleDropdownTableBlockRu as gameContentRu } from '@/data/semester_one/13/game-content'
 import { sampleDropdownTableBlock as gameContentEn } from '@/data/semester_one/13/game-content.en'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
 	DropdownTableBlock,
 	DropdownTableComponent
-} from './DropDownTableComponent'
+} from '@/features/dropdown-table'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface GameBlockProps {
 	block: {
@@ -27,7 +27,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	const [isLoading, setIsLoading] = useState(true)
 	const [loadError, setLoadError] = useState<string | null>(null)
 
-	// Выбор данных таблицы в зависимости от языка
+	// Select table data based on language
 	const gameTableData: DropdownTableBlock =
 		i18n.language === 'ru' ? gameContentRu : gameContentEn
 
@@ -97,9 +97,9 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 				/>
 			</div>
 
-			{/* Добавление подписи и таблицы */}
+			{/* Add caption and table */}
 			<div className='mt-6'>
-				<DropdownTableComponent // Исправлен компонент на DropDownTableComponent
+				<DropdownTableComponent
 					block={gameTableData}
 					onComplete={isCorrect => {
 						if (isCorrect) onComplete(true)
