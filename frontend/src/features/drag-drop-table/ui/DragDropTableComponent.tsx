@@ -1,202 +1,34 @@
-import { DragDropTableBlock } from '@/data/types'
-import {
-	DndContext,
-	DragEndEvent,
-	DragOverlay,
-	closestCenter,
-	useDraggable,
-	useDroppable
-} from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
-interface DraggableAnswerProps {
-	id: string
-	children: React.ReactNode
-}
-
-function DraggableAnswer({ id, children }: DraggableAnswerProps) {
-	const { attributes, listeners, setNodeRef, transform } = useDraggable({ id })
-
-	const style = {
-		transform: CSS.Translate.toString(transform)
-	}
-
-	return (
-		<div
-			ref={setNodeRef}
-			style={style}
-			{...listeners}
-			{...attributes}
-			className='px-3 py-2 m-1 bg-white border border-gray-200 rounded-lg shadow-sm cursor-grab hover:shadow-md transition-all active:shadow-sm active:cursor-grabbing'
-		>
-			{children}
-		</div>
-	)
-}
-
-interface DroppableCellProps {
-	id: string
-	children: React.ReactNode
-	isOver?: boolean
-}
-
-function DroppableCell({ id, children, isOver }: DroppableCellProps) {
-	const { setNodeRef } = useDroppable({ id })
-
-	return (
-		<td
-			ref={setNodeRef}
-			className={`p-3 border ${
-				isOver ? 'bg-blue-50' : 'bg-white'
-			} min-h-[3rem] transition-colors`}
-		>
-			{children}
-		</td>
-	)
-}
-
-interface DragDropTableComponentProps {
-	block: DragDropTableBlock
-	onComplete?: (isCorrect: boolean) => void
-}
+import { useDragDropTable } from '../model/hooks/useDragDropTable'
+import { useGroupedRows } from '../model/hooks/useGroupedRows'
+import { DragDropTableComponentProps } from '../model/types'
+import { DraggableAnswer } from './DraggableAnswer'
+import { DroppableCell } from './DroppableCell'
 
 export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
 	const { t } = useTranslation('coursePage')
-	type GroupedRow = {
-		system: string
-		effects: Array<{
-			id: string
-			effect: string
-		}>
-	}
 
-	const groupedRows = block.rows.reduce<GroupedRow[]>((acc, row, index) => {
-		if (!row.id || !row.column1 || !row.column2) {
-			console.warn(`Invalid row data at index ${index}:`, row)
-			return acc
-		}
-		const existingGroup = acc.find(group => group.system === row.column1)
-		if (existingGroup) {
-			existingGroup.effects.push({
-				id: row.id,
-				effect: row.column2 as string
-			})
-		} else {
-			acc.push({
-				system: row.column1 as string,
-				effects: [
-					{
-						id: row.id,
-						effect: row.column2 as string
-					}
-				]
-			})
-		}
-		return acc
-	}, [])
+	const groupedRows = useGroupedRows(block)
+	const {
+		assigned,
+		availableAnswers,
+		activeAnswer,
+		errors,
+		isCompleted,
+		handleDragStart,
+		handleDragEnd,
+		checkAnswers,
+		resetAnswers,
+		removeAnswer
+	} = useDragDropTable(block, onComplete)
 
-	const [assigned, setAssigned] = useState<Record<string, string[]>>(
-		Object.fromEntries(block.rows.map(row => [row.id, []]))
-	)
-	const [availableAnswers, setAvailableAnswers] = useState(block.answers)
-	const [activeAnswer, setActiveAnswer] = useState<{
-		id: string
-		content: React.ReactNode
-	} | null>(null)
-	const [errors, setErrors] = useState<Record<string, boolean>>({})
-	const [isCompleted, setIsCompleted] = useState(false)
 	const [hasInteracted, setHasInteracted] = useState(false)
 
-	const handleDragStart = (event: DragEndEvent) => {
-		const { active } = event
-		const answer = block.answers.find(a => a.id === active.id)
-		if (answer) setActiveAnswer(answer)
-		setHasInteracted(true)
-	}
-
-	const handleDragEnd = (event: DragEndEvent) => {
-		const { active, over } = event
-		setActiveAnswer(null)
-
-		if (over?.id) {
-			const rowId = String(over.id)
-			const answerId = String(active.id)
-
-			setAssigned(prev => ({
-				...prev,
-				[rowId]: [...prev[rowId], answerId]
-			}))
-
-			setAvailableAnswers(prev => prev.filter(a => a.id !== answerId))
-			setHasInteracted(true)
-		}
-	}
-
-	const checkAnswers = () => {
-		const newErrors: Record<string, boolean> = {}
-		let allCorrect = true
-
-		block.rows.forEach(row => {
-			const userAnswers = assigned[row.id] || []
-			const correctAnswers = block.correctAnswers[row.id] || []
-
-			const isCorrect =
-				userAnswers.length === 0 && correctAnswers.length > 0
-					? false
-					: correctAnswers.every(id => userAnswers.includes(id)) &&
-					  userAnswers.every(id => correctAnswers.includes(id))
-
-			newErrors[row.id] = !isCorrect
-			if (!isCorrect) allCorrect = false
-		})
-
-		setErrors(newErrors)
-		setIsCompleted(true)
-		onComplete(allCorrect)
-	}
-
-	const resetAnswers = () => {
-		setAssigned(Object.fromEntries(block.rows.map(row => [row.id, []])))
-		setAvailableAnswers(block.answers)
-		setErrors({})
-		setIsCompleted(false)
-		setHasInteracted(false)
-	}
-
-	const removeAnswer = (rowId: string, answerId: string) => {
-		setAssigned(prev => ({
-			...prev,
-			[rowId]: prev[rowId].filter(id => id !== answerId)
-		}))
-		setAvailableAnswers(prev => [
-			...prev,
-			block.answers.find(a => a.id === answerId)!
-		])
-		setIsCompleted(false)
-		setHasInteracted(true)
-	}
-
-	// Reset state when block changes
-	useEffect(() => {
-		setAssigned(Object.fromEntries(block.rows.map(row => [row.id, []])))
-		setAvailableAnswers(block.answers)
-		setErrors(Object.fromEntries(block.rows.map(row => [row.id, false])))
-		setIsCompleted(false)
-	}, [block])
-
-	// Initialize errors state for all rows
-	useEffect(() => {
-		if (Object.keys(errors).length === 0 && block.rows.length > 0) {
-			setErrors(Object.fromEntries(block.rows.map(row => [row.id, false])))
-		}
-	}, [block.rows])
-
-	// Check answers only after user interaction and all answers are assigned
 	useEffect(() => {
 		if (
 			hasInteracted &&
@@ -206,9 +38,8 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 		) {
 			checkAnswers()
 		}
-	}, [availableAnswers, isCompleted, assigned, hasInteracted])
+	}, [availableAnswers, isCompleted, assigned, hasInteracted, checkAnswers])
 
-	// Fallback for empty groupedRows
 	if (groupedRows.length === 0) {
 		return <div className='text-red-700'>{t('noRowsAvailable')}</div>
 	}
@@ -228,8 +59,14 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 			</h4>
 			<DndContext
 				collisionDetection={closestCenter}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
+				onDragStart={e => {
+					handleDragStart(e)
+					setHasInteracted(true)
+				}}
+				onDragEnd={e => {
+					handleDragEnd(e)
+					setHasInteracted(true)
+				}}
 			>
 				<div className='overflow-x-auto mb-8'>
 					<table className='w-full border-collapse border-1'>
@@ -249,7 +86,7 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 						<tbody>
 							{groupedRows.map(group => (
 								<React.Fragment key={`group-${group.system}`}>
-									{group.effects.map((effect) => (
+									{group.effects.map(effect => (
 										<tr
 											key={`effect-${effect.id}`}
 											className={`border-b min-h-[3rem] ${
@@ -262,11 +99,9 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 											<td className='p-4 border-1 text-gray-700 align-top min-h-[3rem]'>
 												{group.system}
 											</td>
-
 											<td className='p-4 border-1 text-gray-700 min-h-[3rem]'>
 												{effect.effect}
 											</td>
-
 											<DroppableCell id={effect.id}>
 												<div className='min-h-[2rem] flex flex-wrap gap-2'>
 													{assigned[effect.id]?.map(answerId => {
@@ -291,7 +126,6 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 															</div>
 														)
 													})}
-
 													{!assigned[effect.id]?.length && (
 														<div className='text-gray-400 text-sm self-center'>
 															{t('dragHere')}
