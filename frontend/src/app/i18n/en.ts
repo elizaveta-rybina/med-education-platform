@@ -74,6 +74,16 @@ const en = {
 		partners: {
 			title: 'Our Partners'
 		},
+		footer: {
+			title: 'Contacts',
+			email1: 'v.t.i@bk.ru',
+			email2: 'smyakushin@mail.ru',
+			telegram1: 't.me/snk_patphys',
+			telegram2: 't.me/medik_foxford',
+			vk_link: 'https://vk.com/snk_patphys',
+			politic: 'Privacy Policy',
+			up_button: 'Up'
+		},
 		title: 'Doctor VR:',
 		subtitle: 'Virtual Physiology Lab',
 		description:
