@@ -1,4 +1,4 @@
-import courseImage from '@/assets/courseImage.png'
+import courseImage from '@/assets/courseImage.svg'
 import { CourseButton, CourseTitle, ModuleInfo } from '@/entities'
 import { useTranslation } from 'react-i18next'
 
