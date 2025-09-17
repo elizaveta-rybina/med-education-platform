@@ -71,6 +71,9 @@ const en = {
 			second_semester_description:
 				'In the second semester, you will study pathophysiology of organs. You will understand way of diseases manifest in different body systems: respiratory, cardiovascular, digestive, nervous, endocrine and others.You will see general mechanisms becoming specific clinical situations.'
 		},
+		partners: {
+			title: 'Our Partners'
+		},
 		title: 'Doctor VR:',
 		subtitle: 'Virtual Physiology Lab',
 		description:
