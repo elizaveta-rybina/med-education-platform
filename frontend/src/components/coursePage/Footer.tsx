@@ -8,7 +8,7 @@ export const Footer = () => {
 	const { t } = useTranslation('coursePage')
 	return (
 		<footer className='w-full h-96 px-26 bg-gradient-to-br from-fuchsia-800 to-purple-900 rounded-[40px] mt-28'>
-			<h2 className='text-center text-left text-white text-5xl font-light uppercase italic pt-8'>
+			<h2 className='text-left text-white text-5xl font-light uppercase italic pt-8'>
 				{t('footer.title')}
 			</h2>
 			<div className='flex flex-row justify-between gap-20 mt-10'>

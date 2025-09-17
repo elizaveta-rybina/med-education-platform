@@ -1,5 +1,5 @@
 // data/courseData.ts
-import { Course, DragDropTableBlock } from './types'
+import { Course, DragDropTableBlock } from '../../types'
 
 export const courseData: Course = {
 	id: 'course-1',

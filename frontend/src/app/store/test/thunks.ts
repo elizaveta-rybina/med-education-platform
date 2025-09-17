@@ -1,4 +1,4 @@
-import { courseData } from '@/data/content'
+import { courseData } from '@/data/semester_one/13/content'
 import { DragDropTableBlock, QuestionBlock } from '@/data/types'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Answer, TestState } from './slice'

@@ -1,5 +1,5 @@
-import { courseData as courseDataRu } from '@/data/content'
-import { courseData as courseDataEn } from '@/data/content.en'
+import { courseData as courseDataRu } from '@/data/semester_one/13/content'
+import { courseData as courseDataEn } from '@/data/semester_one/13/content.en'
 import {
 	createContext,
 	ReactNode,

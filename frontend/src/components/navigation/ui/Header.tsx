@@ -1,37 +1,44 @@
-import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { CourseHeader } from './CourseHeader'
-import { DefaultHeader } from './DefaultHeader'
+import logo from '@/assets/logo.png'
+import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
+import React from 'react'
+//import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
-export const Header: React.FC = () => {
-	const [isMobileMenuOpen, setMobileMenuOpen] = useState(false)
-	const location = useLocation()
-	const inputRef = useRef<HTMLInputElement>(null)
+interface HeaderProps {
+	backgroundColor?: string
+}
 
-	const isCoursePage = location.pathname.toLowerCase().includes('course')
+export const Header: React.FC<HeaderProps> = ({
+	backgroundColor = '#7D4F93'
+}) => {
+	const { t } = useTranslation()
 
-	const toggleMobileMenu = () => {
-		setMobileMenuOpen(!isMobileMenuOpen)
-	}
+	return (
+		<header
+			className='sticky top-0 flex w-full z-50 h-[68px]'
+			style={{ backgroundColor }}
+		>
+			<nav className='container mx-auto flex items-center justify-between p-4 lg:p-6'>
+				<div className='flex items-center gap-4'>
+					<Link to='/' className='p-1.5'>
+						<span className='sr-only text-lg'>{t('platformName')}</span>
+						<img
+							alt={t('logo')}
+							src={logo}
+							className='h-10 w-auto sm:h-12 lg:h-12 dark:hidden'
+						/>
+					</Link>
+				</div>
 
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-				event.preventDefault()
-				inputRef.current?.focus()
-			}
-		}
-
-		document.addEventListener('keydown', handleKeyDown)
-		return () => document.removeEventListener('keydown', handleKeyDown)
-	}, [])
-
-	return isCoursePage ? (
-		<CourseHeader
-			isMobileMenuOpen={isMobileMenuOpen}
-			toggleMobileMenu={toggleMobileMenu}
-		/>
-	) : (
-		<DefaultHeader />
+				{/* Right side: Buttons and Hamburger Menu */}
+				<div className='flex items-center gap-2 sm:gap-4'>
+					<div className='flex items-center gap-2 2xsm:gap-3'>
+						{/* <ThemeToggleButton /> */}
+						<LanguageToggleButton />
+					</div>
+				</div>
+			</nav>
+		</header>
 	)
 }
