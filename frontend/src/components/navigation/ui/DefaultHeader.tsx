@@ -1,6 +1,6 @@
 import logo from '@/assets/logo.png'
 import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
-import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
+//import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -24,7 +24,7 @@ export const DefaultHeader: React.FC = ({}) => {
 				{/* Right side: Buttons and Hamburger Menu */}
 				<div className='flex items-center gap-2 sm:gap-4'>
 					<div className='flex items-center gap-2 2xsm:gap-3'>
-						<ThemeToggleButton />
+						{/* <ThemeToggleButton /> */}
 						<LanguageToggleButton />
 					</div>
 				</div>
