@@ -62,6 +62,15 @@ const en = {
 			step2: 'Solve a clinical case',
 			step3: 'Simulate pathological\n processes in real time'
 		},
+		card_modules: {
+			title: 'Modules',
+			first_semester_title: '1st Semester',
+			second_semester_title: '2nd Semester',
+			first_semester_description:
+				'In the first semester, you will study the basics of pathological physiology: you will learn how cells are damaged, why do inflammation, hypoxia, allergies, tumor growth and other typical processes occur.This knowledge will help you understand diseases development.',
+			second_semester_description:
+				'In the second semester, you will study pathophysiology of organs. You will understand way of diseases manifest in different body systems: respiratory, cardiovascular, digestive, nervous, endocrine and others.You will see general mechanisms becoming specific clinical situations.'
+		},
 		title: 'Doctor VR:',
 		subtitle: 'Virtual Physiology Lab',
 		description:
