@@ -1,6 +1,7 @@
 import { Block } from '@/data/types'
+import { TestBlockComponent } from '@/features/test-block'
 import { useTranslation } from 'react-i18next'
-import { FreeInputBlock, TestBlock } from '../block'
+import { FreeInputBlock } from '../block'
 
 interface TestSectionProps {
 	testBlocks: Block[]
@@ -38,7 +39,7 @@ export const TestSection: React.FC<TestSectionProps> = ({
 							totalQuestions: testBlocks.length
 						})}
 					</h2>
-					<TestBlock
+					<TestBlockComponent
 						block={currentTestBlock}
 						moduleId={moduleId}
 						chapterId={chapterId}
