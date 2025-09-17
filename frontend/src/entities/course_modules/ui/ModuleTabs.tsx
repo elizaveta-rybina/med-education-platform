@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Module } from '../cfg/modules.data'
 
 interface ModuleTabsProps {
@@ -7,12 +8,16 @@ interface ModuleTabsProps {
 }
 
 export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
+	const navigate = useNavigate()
 	const [active, setActive] = useState(1)
 	const current = modules.find(m => m.id === active)!
 
-	// Handle image source based on type
 	const getImageSrc = (image: Module['image'], lang: 'en' | 'ru'): string => {
 		return typeof image === 'string' ? image : image[lang]
+	}
+
+	const handleStart = () => {
+		navigate(`/course/${current.id}`)
 	}
 
 	return (
@@ -40,7 +45,7 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 			{/* Card */}
 			<div className='flex flex-col border-2 border-t-2 border-[#8C3192] rounded-b-[20px] bg-white shadow-[6px_10px_4px_rgba(0,0,0,0.25)] p-5 rounded-tr-[20px]'>
 				{/* Title */}
-				<div className='text-black text-3xl w-full mb-4'>
+				<div className='text-black text-3xl w-full mb-4 whitespace-pre-wrap'>
 					{current.title[language]}
 				</div>
 
@@ -63,7 +68,10 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 							alt={current.title[language]}
 							className='w-80 h-48 rounded-[10px] object-cover'
 						/>
-						<button className='mt-4 w-56 h-9 bg-[#8C3192] rounded-[10px] flex items-center justify-center text-white text-xl self-center'>
+						<button
+							onClick={handleStart}
+							className='mt-4 w-56 h-9 bg-[#8C3192] rounded-[10px] flex items-center justify-center text-white text-xl self-center'
+						>
 							{language === 'en' ? 'Get started' : 'Начать работу'}
 						</button>
 					</div>

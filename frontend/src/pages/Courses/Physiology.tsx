@@ -1,8 +1,7 @@
 import { Content, SideBarCourse } from '@/components/courseInner'
-import { CourseHeader } from '@/components/navigation/ui/CourseHeader'
+import { Header } from '@/components/navigation/ui/Header'
 import { CourseProvider } from '@/context/CourseContext'
 import { SidebarProvider, useSidebar } from '@/context/SidebarContext'
-import { useState } from 'react'
 
 const Backdrop: React.FC = () => {
 	const { isMobileOpen, toggleMobileSidebar } = useSidebar()
@@ -19,11 +18,6 @@ const Backdrop: React.FC = () => {
 
 const CourseLayoutContent: React.FC = () => {
 	const { isExpanded, isHovered, isMobileOpen } = useSidebar()
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-	const toggleMobileMenu = () => {
-		setIsMobileMenuOpen(prev => !prev)
-	}
 
 	return (
 		<div className='min-h-screen xl:flex'>
@@ -36,10 +30,7 @@ const CourseLayoutContent: React.FC = () => {
 					isExpanded || isHovered ? 'lg:ml-[320px]' : 'lg:ml-[48px]'
 				} ${isMobileOpen ? 'ml-0' : ''}`}
 			>
-				<CourseHeader
-					isMobileMenuOpen={isMobileMenuOpen}
-					toggleMobileMenu={toggleMobileMenu}
-				/>
+				<Header backgroundColor='#fff' />
 				<div className='max-w-[1536px]'>
 					<Content />
 				</div>

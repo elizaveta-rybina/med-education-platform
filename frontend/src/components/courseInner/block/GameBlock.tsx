@@ -1,5 +1,5 @@
-import { sampleDropdownTableBlock as gameContentEn } from '@/data/game-content.en.ts'
-import { sampleDropdownTableBlockRu as gameContentRu } from '@/data/game-content.ts'
+import { sampleDropdownTableBlockRu as gameContentRu } from '@/data/semester_one/13/game-content'
+import { sampleDropdownTableBlock as gameContentEn } from '@/data/semester_one/13/game-content.en'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {

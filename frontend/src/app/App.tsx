@@ -11,7 +11,7 @@ function App() {
 			<QueryClientProvider client={queryClient}>
 				<SidebarProvider>
 					<div className='min-h-screen flex flex-col'>
-						<main className='flex-1 bg-gradient-to-b from-white to-[#E0C6FA] overflow-hidden'>
+						<main className='flex-1'>
 							<AppRouter />
 						</main>
 					</div>
