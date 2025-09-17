@@ -1,4 +1,6 @@
+export { Footer } from './Footer'
+
 export { CourseInfo } from './CourseInfo'
 export { CourseModules } from './CourseModules'
-export { CourseSteps } from './CourseSteps'
 export { CoursePartners } from './CoursePartners'
+export { CourseSteps } from './CourseSteps'
