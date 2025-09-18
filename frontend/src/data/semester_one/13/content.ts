@@ -1,8 +1,9 @@
 // data/courseData.ts
-import { Course, DragDropTableBlock } from '../../types'
+import { DragDropTableBlock } from '@/features/drag-drop-table/model'
+import { Course } from '../../types'
 
 export const courseData: Course = {
-	id: 'course-1',
+	id: 'course-13',
 	title: 'Гипоксия',
 	description: 'Полный курс по теме Гипоксия',
 	modules: [
@@ -11,7 +12,7 @@ export const courseData: Course = {
 			title: 'Определение и классификация гипоксии',
 			chapters: [
 				{
-					id: 'chapter-1-1',
+					id: 'chapter-13-1',
 					title: 'Определение и классификация гипоксии',
 					hash: 'what-is',
 					isRead: false,
@@ -166,7 +167,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-2',
+					id: 'chapter-13-2',
 					title: 'Типы гипоксии по причине возникновения',
 					hash: 'types-vosn',
 					isRead: false,
@@ -338,7 +339,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-3',
+					id: 'chapter-13-3',
 					title: 'Эндогенные типы гипоксии',
 					hash: 'endogenous-types',
 					isRead: false,
@@ -489,7 +490,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-4',
+					id: 'chapter-13-4',
 					title: 'Биохимические механизмы гипоксии',
 					hash: 'biochemical-mechanisms',
 					isRead: false,
@@ -659,7 +660,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-5',
+					id: 'chapter-13-5',
 					title: 'Механизмы адаптации к гипоксии (срочные)',
 					hash: 'acute-adaptation',
 					isRead: false,
@@ -826,7 +827,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-6',
+					id: 'chapter-13-6',
 					title: 'Механизмы адаптации к гипоксии (долговременные)',
 					hash: 'chronic-adaptation',
 					isRead: false,
@@ -979,7 +980,7 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-7',
+					id: 'chapter-13-7',
 					title: 'Задание. «Механизмы адаптации к гипоксии»',
 					hash: 'dnd-blocks',
 					isRead: false,
@@ -1209,7 +1210,24 @@ export const courseData: Course = {
 					]
 				},
 				{
-					id: 'chapter-1-8',
+					id: 'chapter-13-9',
+					title: 'Интерактивный опыт',
+					hash: 'game-case',
+					isRead: false,
+					blocks: [
+						{
+							id: 'game-1',
+							type: 'game',
+							title: 'Симуляция гипоксии',
+							gameUrl:
+								'https://gd.games/instant-builds/caf4bee6-10bf-4cfc-bab1-bf442be15eb7',
+							width: '100%',
+							height: 'auto'
+						}
+					]
+				},
+				{
+					id: 'chapter-13-8',
 					title: 'Клинический случай: высотная болезнь',
 					hash: 'altitude-case',
 					isRead: false,
@@ -1260,23 +1278,6 @@ export const courseData: Course = {
 							],
 							timeLimit: 1800, // 45 минут
 							submissionText: 'Ответ направлен на проверку преподавателю'
-						}
-					]
-				},
-				{
-					id: 'chapter-1-9',
-					title: 'Интерактивный опыт',
-					hash: 'game-case',
-					isRead: false,
-					blocks: [
-						{
-							id: 'game-1',
-							type: 'game',
-							title: 'Симуляция гипоксии',
-							gameUrl:
-								'https://gd.games/instant-builds/caf4bee6-10bf-4cfc-bab1-bf442be15eb7',
-							width: '100%',
-							height: 'auto'
 						}
 					]
 				}
