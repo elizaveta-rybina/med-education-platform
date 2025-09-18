@@ -10,8 +10,8 @@ export interface DragDropTableBlock {
 	}[]
 	rows: {
 		id: string
-		column1: string | React.ReactNode
-		column2: string | React.ReactNode
+		column1?: string | React.ReactNode
+		column2?: string | React.ReactNode
 	}[]
 	answers: {
 		id: string

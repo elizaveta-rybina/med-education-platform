@@ -1,6 +1,5 @@
 import { Block } from '@/data/types'
 import { TestBlockComponent } from '@/features/test-block'
-import { useTranslation } from 'react-i18next'
 import { FreeInputBlock } from '../block'
 
 interface TestSectionProps {
@@ -22,7 +21,6 @@ export const TestSection: React.FC<TestSectionProps> = ({
 	isRead,
 	onComplete
 }) => {
-	const { t } = useTranslation('coursePage')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
 	if (!(showTest || isRead) || testBlocks.length === 0 || !currentTestBlock) {
