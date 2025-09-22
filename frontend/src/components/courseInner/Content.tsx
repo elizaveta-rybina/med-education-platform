@@ -165,9 +165,7 @@ export const Content: React.FC = () => {
 							/>
 						) : (
 							<>
-								<div
-									className={`${hasFreeInput ? 'lg:w-1/2' : 'lg:w-2/3'} w-full`}
-								>
+								<div className={`w-full`}>
 									<TheorySection
 										theoryBlocks={theoryBlocks}
 										isRead={currentChapter.isRead}

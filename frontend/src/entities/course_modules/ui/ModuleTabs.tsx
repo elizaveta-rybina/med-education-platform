@@ -8,6 +8,7 @@ interface ModuleTabsProps {
 }
 
 export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
+	//TODO: replace without id
 	const navigate = useNavigate()
 	const [active, setActive] = useState(1)
 	const current = modules.find(m => m.id === active)!

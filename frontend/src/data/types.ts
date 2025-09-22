@@ -29,10 +29,27 @@ export type Block =
 	| FreeInputBlock
 	| GameBlock
 
+// Define the structure for Tiptap/ProseMirror JSON content
+export interface RichTextContent {
+	type: string
+	content?: Array<RichTextNode>
+	attrs?: Record<string, any>
+	text?: string
+	marks?: Array<{ type: string; attrs?: Record<string, any> }>
+}
+
+export interface RichTextNode {
+	type: string
+	content?: Array<RichTextNode>
+	attrs?: Record<string, any>
+	text?: string
+	marks?: Array<{ type: string; attrs?: Record<string, any> }>
+}
+
 export interface TextBlock {
 	id: string
 	type: 'text'
-	content: string
+	content: RichTextContent
 }
 
 export interface ImageBlock {
@@ -81,31 +98,28 @@ export interface DragDropTableBlock {
 	correctAnswers: Record<string, string[]>
 }
 
-// Новый тип: Блок свободного ввода ответа
 export interface FreeInputBlock {
 	id: string
 	type: 'free-input'
 	title: string
-	caseDescription?: string // HTML-форматированное описание кейса
+	caseDescription?: string
 	questions: {
 		id: string
 		text: string
 		maxLength?: number
 		placeholder?: string
 	}[]
-	timeLimit: number // В секундах
-	submissionText: string // Сообщение после отправки
+	timeLimit: number
+	submissionText: string
 }
 
 export interface GameBlock {
 	id: string
 	type: 'game'
 	title?: string
-	gameUrl: string // Обязательное поле для URL игры
-	width?: string // Например "800px" или "100%"
-	height?: string // Например "600px"
-	// Дополнительные параметры игры при необходимости
-	// например, параметры запуска, настройки и т.д.
+	gameUrl: string
+	width?: string
+	height?: string
 }
 
 export interface TableColumn {

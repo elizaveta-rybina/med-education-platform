@@ -17,7 +17,7 @@ export const NavigationButtons = ({
 	currentChapterIndex,
 	onNavigate
 }: NavigationButtonsProps) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const isFirstChapter = currentModuleIndex === 0 && currentChapterIndex === 0
 	const isLastChapter =
 		currentModuleIndex === course.modules.length - 1 &&
