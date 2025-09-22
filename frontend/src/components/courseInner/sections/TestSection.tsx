@@ -1,5 +1,6 @@
 import { Block } from '@/data/types'
 import { TestBlockComponent } from '@/features/test-block'
+import React from 'react'
 import { FreeInputBlock } from '../block'
 
 interface TestSectionProps {
@@ -23,7 +24,15 @@ export const TestSection: React.FC<TestSectionProps> = ({
 }) => {
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
-	if (!(showTest || isRead) || testBlocks.length === 0 || !currentTestBlock) {
+	if (
+		!(showTest || isRead) ||
+		testBlocks.length === 0 ||
+		!currentTestBlock ||
+		!chapterId
+	) {
+		console.warn(
+			`Invalid test state: chapterId=${chapterId}, block=${currentTestBlock?.id}, showTest=${showTest}, isRead=${isRead}`
+		)
 		return null
 	}
 
@@ -39,7 +48,11 @@ export const TestSection: React.FC<TestSectionProps> = ({
 						totalQuestions={testBlocks.length}
 						onNext={() => {
 							if (currentQuestionIndex < testBlocks.length - 1) {
-								onComplete(true) // Assuming onNext implies correct for simplicity
+								console.log(`Moving to next question for chapter ${chapterId}`)
+								onComplete(true) // Замените на проверку правильности, если доступно
+							} else {
+								console.log(`Test completed for chapter ${chapterId}`)
+								onComplete(true)
 							}
 						}}
 					/>

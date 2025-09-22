@@ -22,7 +22,7 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 	isPrevDisabled,
 	isNextDisabled
 }) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 
 	return (
 		<div className='w-full'>

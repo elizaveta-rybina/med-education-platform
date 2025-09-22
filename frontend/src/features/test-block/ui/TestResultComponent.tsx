@@ -10,6 +10,7 @@ interface TestResultComponentProps {
 export const TestResultComponent: React.FC<TestResultComponentProps> = memo(
 	({ testResults, testError, handleReset, t }) => {
 		if (testError) {
+			console.error('Test error:', testError) // Log for debugging
 			return (
 				<div className='my-8 p-6 bg-white rounded-xl shadow-sm border border-red-200 max-w-3xl mx-auto'>
 					<h3 className='text-xl font-semibold text-red-700 mb-4'>
@@ -18,15 +19,6 @@ export const TestResultComponent: React.FC<TestResultComponentProps> = memo(
 					<p className='text-base text-gray-600 mb-6'>
 						{t('errorMessage', { testError })}
 					</p>
-					<div className='flex justify-end'>
-						<button
-							onClick={handleReset}
-							className='px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition duration-200'
-							aria-label={t('tryAgain')}
-						>
-							{t('tryAgain')}
-						</button>
-					</div>
 				</div>
 			)
 		}
@@ -40,7 +32,7 @@ export const TestResultComponent: React.FC<TestResultComponentProps> = memo(
 
 			return (
 				<div
-					className={` p-6 bg-white rounded-xl shadow-sm border ${bgColor} max-w-3xl mx-auto`}
+					className={`p-6 bg-white rounded-xl shadow-sm border ${bgColor} max-w-3xl mx-auto`}
 				>
 					<h3 className='text-xl font-semibold text-gray-800 mb-4'>
 						{t('testResults')}

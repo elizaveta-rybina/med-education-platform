@@ -11,7 +11,7 @@ export const useTestBlock = ({
 	totalQuestions,
 	onNext
 }: TestBlockProps) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const { testResults, testError, submitTest, resetTestForChapter } =
 		useTest(chapterId)
 
@@ -48,9 +48,9 @@ export const useTestBlock = ({
 		[]
 	)
 
-	//TODO: ускорить работу с ответами
 	const handleNext = useCallback(async () => {
 		if (selectedOptions.size === 0) {
+			console.warn(`No options selected for question ${block.id}`)
 			onNext()
 			return
 		}
@@ -77,11 +77,14 @@ export const useTestBlock = ({
 			setLocalAnswers(updatedAnswers)
 
 			if (questionIndex === totalQuestions - 1) {
+				console.log(`Completing test for chapter ${chapterId}`, updatedAnswers)
 				setIsTestCompleted(true)
 				await submitTest(updatedAnswers)
 			} else {
 				onNext()
 			}
+		} catch (err) {
+			console.error(`Error in handleNext for chapter ${chapterId}:`, err)
 		} finally {
 			setIsSubmitting(false)
 		}
@@ -92,7 +95,8 @@ export const useTestBlock = ({
 		selectedOptions,
 		localAnswers,
 		onNext,
-		submitTest
+		submitTest,
+		chapterId
 	])
 
 	const handleReset = useCallback(() => {
