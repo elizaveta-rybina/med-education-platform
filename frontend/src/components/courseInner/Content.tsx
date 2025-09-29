@@ -30,13 +30,14 @@ export const Content: React.FC = () => {
 					setCurrentModule(module)
 					setCurrentChapter(chapter)
 					setShowTest(false)
+					setCurrentQuestionIndex(0)
 					return
 				}
 			}
 		}
-		// если hash не совпал ни с чем — взять первый модуль/главу
 		setCurrentModule(course.modules[0] || null)
 		setCurrentChapter(course.modules[0]?.chapters[0] || null)
+		setCurrentQuestionIndex(0)
 	}, [course])
 
 	const handleNextQuestion = () => {
@@ -93,7 +94,7 @@ export const Content: React.FC = () => {
 
 	const theoryBlocks = currentChapter.blocks.filter(block =>
 		['text', 'image'].includes(block.type)
-	) as TextBlock[] | ImageBlock[]
+	) as (TextBlock | ImageBlock)[]
 
 	const hasDragDrop = currentChapter.blocks.some(
 		b => b.type === 'drag-drop-table'
@@ -101,6 +102,14 @@ export const Content: React.FC = () => {
 	const hasGame = currentChapter.blocks.some(b => b.type === 'game')
 	const hasFreeInput = currentChapter.blocks.some(b => b.type === 'free-input')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
+
+	// Проверяем, заблокирована ли текущая таблица
+	const isCurrentTableLocked = () => {
+		if (currentTestBlock?.type !== 'drag-drop-table') return true
+		const savedData = JSON.parse(localStorage.getItem('dndResults') || '{}')
+		const blockData = savedData[currentTestBlock.id] || {}
+		return blockData.isLocked || false
+	}
 
 	const navigateTo = (direction: 'prev' | 'next') => {
 		let newModuleIndex = currentModuleIndex
@@ -140,6 +149,7 @@ export const Content: React.FC = () => {
 				(hasGame && currentTestBlock?.type === 'game') ? (
 					<FullScreenBlock
 						block={currentTestBlock}
+						testBlocks={testBlocks}
 						currentQuestionIndex={currentQuestionIndex}
 						totalQuestions={testBlocks.length}
 						onComplete={handleQuestionComplete}
@@ -147,6 +157,8 @@ export const Content: React.FC = () => {
 						onNext={handleNextQuestion}
 						isPrevDisabled={currentQuestionIndex === 0}
 						isNextDisabled={
+							(currentTestBlock?.type === 'drag-drop-table' &&
+								!isCurrentTableLocked()) ||
 							testResults[currentQuestionIndex] === undefined ||
 							currentQuestionIndex === testBlocks.length - 1
 						}
@@ -165,7 +177,7 @@ export const Content: React.FC = () => {
 							/>
 						) : (
 							<>
-								<div className={`w-full`}>
+								<div className='w-full'>
 									<TheorySection
 										theoryBlocks={theoryBlocks}
 										isRead={currentChapter.isRead}

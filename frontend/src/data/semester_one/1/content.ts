@@ -2019,7 +2019,7 @@ export const courseData: Course = {
 				},
 				{
 					id: 'chapter-1-6',
-					title: 'Задание. «Механизмы адаптации к гипоксии»',
+					title: 'Задание. «Исходы заболеваний и стадии умирания организма»',
 					hash: 'dnd-blocks',
 					isRead: false,
 					blocks: [
@@ -2032,12 +2032,12 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Исходы заболевания', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '' },
-								{ id: 'row2', column1: '' },
-								{ id: 'row3', column1: '' },
-								{ id: 'row4', column1: '' },
-								{ id: 'row5', column1: '' },
-								{ id: 'row6', column1: '' }
+								{ id: 'row1', column1: '1', column2: '' },
+								{ id: 'row2', column1: '2', column2: '' },
+								{ id: 'row3', column1: '3', column2: '' },
+								{ id: 'row4', column1: '4', column2: '' },
+								{ id: 'row5', column1: '5', column2: '' },
+								{ id: 'row6', column1: '6', column2: '' }
 							],
 							answers: [
 								{ id: 'ans1', content: 'Выздоровление полное' },
@@ -2065,10 +2065,10 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Стадии умирания', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '' },
-								{ id: 'row2', column1: '' },
-								{ id: 'row3', column1: '' },
-								{ id: 'row4', column1: '' }
+								{ id: 'row1', column1: '1', column2: '' },
+								{ id: 'row2', column1: '2', column2: '' },
+								{ id: 'row3', column1: '3', column2: '' },
+								{ id: 'row4', column1: '4', column2: '' }
 							],
 							answers: [
 								{ id: 'ans1', content: 'Предагония' },
@@ -2094,9 +2094,10 @@ export const courseData: Course = {
 						{
 							id: 'game-1',
 							type: 'game',
-							title: 'Симуляция гипоксии',
+							title:
+								'Патогенное действие на организм уменьшения кислорода во вдыхаемом воздухе в условиях гипотермии',
 							gameUrl:
-								'https://gd.games/instant-builds/caf4bee6-10bf-4cfc-bab1-bf442be15eb7',
+								'https://gd.games/instant-builds/eae6daea-127e-4393-9d1d-fc262f8defec',
 							width: '100%',
 							height: 'auto'
 						}

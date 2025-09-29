@@ -58,6 +58,22 @@ const en = {
 		}
 	},
 	courseInner: {
+		dnd: {
+			noRowsAvailable: 'No rows available',
+			removeAnswer: 'Remove answer',
+			dragHere: 'Drag here',
+			availableAnswers: 'Available Answers',
+			allAnswersUsed: 'All answers used',
+			checkAnswers: 'Check',
+			resetAnswers: 'Reset',
+			answersIncorrect: 'There are errors in the answers. Check again!',
+			answersCorrect: '✓ All answers are correct! Great job!',
+			tableLocked: 'The table is locked. You have used all your attempts.',
+			attemptsLeft: 'attempts left',
+			correctAnswersCount: 'Correct answers: {{count}} out of {{total}}. ',
+			taskProgress: 'Task Progress: {{current}} / {{total}}',
+			nextTable: 'Next Table'
+		},
 		completed: '✓ Completed',
 		back: 'Back',
 		next: 'Next',

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDropdownTable } from '../model/hooks/useDropdownTable'
 import { DropdownTableBlock } from '../model/types'
@@ -12,7 +13,7 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 	block,
 	onComplete
 }) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const {
 		selectedAnswers,
 		errors,
@@ -21,6 +22,39 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 		checkAnswers,
 		resetAnswers
 	} = useDropdownTable({ block, onComplete })
+	const [isLocked, setIsLocked] = useState(false)
+
+	// Загрузка сохранённых ответов из localStorage при монтировании
+	useEffect(() => {
+		const savedAnswers = localStorage.getItem('ddtAnswers')
+		if (savedAnswers) {
+			const parsedAnswers = JSON.parse(savedAnswers)
+			Object.entries(parsedAnswers).forEach(([cellId, answerId]) => {
+				// Разбиваем cellId (например, 'row1-col1') на rowId и colIndex
+				const [rowId, colPart] = cellId.split('-col')
+				const colIndex = parseInt(colPart, 10)
+				if (rowId && !isNaN(colIndex)) {
+					handleSelectChange(rowId, colIndex, answerId as string)
+				}
+			})
+			setIsLocked(true) // Блокируем таблицу, если ответы уже сохранены
+		}
+	}, [handleSelectChange])
+
+	// Модифицированный checkAnswers для сохранения в localStorage
+	const handleCheckAnswers = () => {
+		checkAnswers()
+		localStorage.setItem('ddtAnswers', JSON.stringify(selectedAnswers))
+		setIsLocked(true) // Блокируем после первой проверки
+	}
+
+	// Модифицированный resetAnswers, чтобы учитывать isLocked
+	const handleResetAnswers = () => {
+		if (!isLocked) {
+			resetAnswers()
+			localStorage.removeItem('ddtAnswers') // Очищаем localStorage, если не заблокировано
+		}
+	}
 
 	return (
 		<div className='max-w-6xl mx-auto bg-white p-6 shadow border border-gray-200 rounded-md'>
@@ -64,10 +98,13 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 											colIndex={index}
 											value={value}
 											columnId={block.columns[index].id}
-											options={block.columnOptions[block.columns[index].id]}
+											options={
+												block.columnOptions[block.columns[index].id] || []
+											}
 											selectedAnswer={selectedAnswers[cellId]}
 											hasError={errors[cellId]}
-											onSelectChange={handleSelectChange}
+											onSelectChange={isLocked ? () => {} : handleSelectChange}
+											disabled={isLocked}
 										/>
 									)
 								})}
@@ -79,14 +116,20 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 
 			<div className='flex gap-3 mt-6'>
 				<button
-					onClick={checkAnswers}
-					className='px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition'
+					onClick={handleCheckAnswers}
+					className={`px-4 py-2 bg-purple-600 text-white rounded-md transition ${
+						isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700'
+					}`}
+					disabled={isLocked}
 				>
 					{t('checkAnswers')}
 				</button>
 				<button
-					onClick={resetAnswers}
-					className='px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition'
+					onClick={handleResetAnswers}
+					className={`px-4 py-2 border border-gray-300 text-gray-700 rounded-md transition ${
+						isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
+					}`}
+					disabled={isLocked}
 				>
 					{t('resetAnswers')}
 				</button>

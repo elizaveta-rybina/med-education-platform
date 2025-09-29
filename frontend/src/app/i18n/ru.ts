@@ -59,6 +59,22 @@ const ru = {
 		}
 	},
 	courseInner: {
+		dnd: {
+			noRowsAvailable: 'Нет доступных строк',
+			removeAnswer: 'Удалить ответ',
+			dragHere: 'Перетащите сюда',
+			availableAnswers: 'Доступные ответы',
+			allAnswersUsed: 'Все ответы использованы',
+			checkAnswers: 'Проверить',
+			resetAnswers: 'Сбросить',
+			answersIncorrect: 'Есть ошибки в ответах. Проверьте еще раз!',
+			answersCorrect: '✓ Все ответы верные! Отличная работа!',
+			tableLocked: 'Таблица заблокирована. Вы использовали все попытки.',
+			attemptsLeft: 'попыток осталось',
+			correctAnswersCount: 'Правильных ответов: {{count}} из {{total}}. ',
+			taskProgress: 'Прогресс задания: {{current}} / {{total}}',
+			nextTable: 'Следующая таблица'
+		},
 		completed: '✓ Прочитано',
 		back: 'Назад',
 		next: 'Далее',
