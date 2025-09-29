@@ -1,5 +1,13 @@
 const ru = {
 	coursePage: {
+		auth: {
+			button: 'Войти',
+			title: 'Войти в систему',
+			email: 'Электронная почта',
+			password: 'Пароль',
+			invalidCredentials: 'Неверный email или пароль',
+			logout: 'Выйти'
+		},
 		info: {
 			title: 'Доктор VR:',
 			subtitle: 'Виртуальная лаборатория по физиологии',
