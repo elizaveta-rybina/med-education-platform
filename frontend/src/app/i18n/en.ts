@@ -1,5 +1,13 @@
 const en = {
 	coursePage: {
+		auth: {
+			button: 'Sign In',
+			title: 'Sign in to our platform',
+			email: 'Email',
+			password: 'Password',
+			invalidCredentials: 'Invalid email or password',
+			logout: 'Logout'
+		},
 		info: {
 			title: 'Doctor VR:',
 			subtitle: 'Virtual Physiology Lab',
