@@ -11,6 +11,7 @@ import { Course, QuestionBlock } from '../data/types'
 
 interface CourseContextType {
 	course: Course | null
+	courseId?: string // Добавляем courseId
 	markChapterAsRead: (moduleId: string, chapterId: string) => void
 	answerQuestion: (
 		moduleId: string,
@@ -211,6 +212,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 		<CourseContext.Provider
 			value={{
 				course,
+				courseId, // Добавляем courseId в значение контекста
 				markChapterAsRead,
 				answerQuestion,
 				getTestResults,
