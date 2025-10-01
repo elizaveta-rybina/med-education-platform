@@ -52,19 +52,9 @@ export const useDropdownTable = ({
 		block.rows.forEach(row => {
 			row.values.forEach((_, index) => {
 				const cellId = `${row.id}-col${index}`
-				const columnId = block.columns[index].id
 				const userAnswer = selectedAnswers[cellId] || ''
 				const correctAnswerKey = `${row.id}-col${index}`
 				const correctAnswerId = block.correctAnswers[correctAnswerKey] || ''
-
-				// Находим правильный ответ из cellOptions или columnOptions
-				const options =
-					row.cellOptions?.[`col${index}`] ||
-					block.columnOptions?.[columnId] ||
-					[]
-				const correctAnswer = options.find(
-					opt => opt.id === correctAnswerId
-				)?.content
 
 				// Проверяем только ячейки, где ожидается выбор (correctAnswerId существует)
 				if (index > 0 && correctAnswerId) {

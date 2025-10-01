@@ -17,7 +17,6 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 	rowId,
 	colIndex,
 	value,
-	columnId,
 	options,
 	selectedAnswer,
 	hasError,

@@ -1,6 +1,5 @@
 import { Block, DragDropTableBlock } from '@/data/types'
 import { DragDropTableComponent } from '@/features/drag-drop-table'
-import { useCourse } from '@/hooks/useCourse'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GameBlock } from '../block'
@@ -21,8 +20,6 @@ interface FullScreenBlockProps {
 export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 	block,
 	testBlocks,
-	currentQuestionIndex,
-	totalQuestions,
 	onComplete,
 	onPrev,
 	onNext,
@@ -31,7 +28,6 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 	chapterHash
 }) => {
 	const { t } = useTranslation('courseInner')
-	const { course } = useCourse()
 
 	// Memoization of dragDropTables to prevent array recreation
 	const dragDropTables: DragDropTableBlock[] = useMemo(

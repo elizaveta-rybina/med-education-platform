@@ -132,7 +132,6 @@ export const Content: React.FC = () => {
 		b => b.type === 'drag-drop-table'
 	)
 	const hasGame = currentChapter.blocks.some(b => b.type === 'game')
-	const hasFreeInput = currentChapter.blocks.some(b => b.type === 'free-input')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
 	const isCurrentTableLocked = () => {
