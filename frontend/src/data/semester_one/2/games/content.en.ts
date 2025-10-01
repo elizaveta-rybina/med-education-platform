@@ -1,318 +1,299 @@
 import { DropdownTableBlock } from '@/features/dropdown-table'
 
 export const gameTableData: DropdownTableBlock = {
-	id: 'dtb-1',
-	title: 'Mouse Experiment Results',
-	tableTitle: 'Select the corresponding values for each mouse',
+	id: 'dtb-2-1',
+	title: 'Results of the experiment with rats',
+	tableTitle: 'Select the corresponding values for each rat',
 	columns: [
-		{ id: 'parameter', title: '' },
-		{ id: 'mouse1', title: 'First Mouse' },
-		{ id: 'mouse2', title: 'Second Mouse' },
-		{ id: 'mouse3', title: 'Third Mouse' }
+		{ id: 'parameter', title: '', width: '40%' },
+		{ id: 'mouse1', title: 'Rat 1', width: '20%' },
+		{ id: 'mouse2', title: 'Rat 2', width: '20%' },
+		{ id: 'mouse3', title: 'Rat 3', width: '20%' }
 	],
 	rows: [
-		{ id: 'row1', values: ['Acting Factor', '', '', ''] },
+		{
+			id: 'row1',
+			values: ['Path of current flow', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'path1', content: 'Hind limbs' },
+					{ id: 'path2', content: 'Brain' },
+					{ id: 'path3', content: 'Heart' }
+				],
+				col2: [
+					{ id: 'path1', content: 'Hind limbs' },
+					{ id: 'path2', content: 'Brain' },
+					{ id: 'path3', content: 'Heart' }
+				],
+				col3: [
+					{ id: 'path1', content: 'Hind limbs' },
+					{ id: 'path2', content: 'Brain' },
+					{ id: 'path3', content: 'Heart' }
+				]
+			}
+		},
 		{
 			id: 'row2',
-			values: ['Animal Behavior at the Start of the Experiment', '', '', '']
+			values: ['Target of electric current', '', '', ''],
+			cellOptions: {
+				col1: [
+					{
+						id: 'target1',
+						content: 'Skeletal and smooth muscles'
+					},
+					{
+						id: 'target2',
+						content: 'Skeletal and smooth muscles, medulla oblongata'
+					},
+					{
+						id: 'target3',
+						content: 'Skeletal and smooth muscles, heart'
+					},
+					{
+						id: 'target4',
+						content: 'Skeletal and smooth muscles, medulla oblongata, heart'
+					}
+				],
+				col2: [
+					{
+						id: 'target1',
+						content: 'Skeletal and smooth muscles'
+					},
+					{
+						id: 'target2',
+						content: 'Skeletal and smooth muscles, medulla oblongata'
+					},
+					{
+						id: 'target3',
+						content: 'Skeletal and smooth muscles, heart'
+					},
+					{
+						id: 'target4',
+						content: 'Skeletal and smooth muscles, medulla oblongata, heart'
+					}
+				],
+				col3: [
+					{
+						id: 'target1',
+						content: 'Skeletal and smooth muscles'
+					},
+					{
+						id: 'target2',
+						content: 'Skeletal and smooth muscles, medulla oblongata'
+					},
+					{
+						id: 'target3',
+						content: 'Skeletal and smooth muscles, heart'
+					},
+					{
+						id: 'target4',
+						content: 'Skeletal and smooth muscles, medulla oblongata, heart'
+					}
+				]
+			}
 		},
 		{
 			id: 'row3',
-			values: [
-				'Animal Behavior 15 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
+			values: ['Frequency after anesthesia onset', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'freq1', content: '80' },
+					{ id: 'freq2', content: '95' },
+					{ id: 'freq3', content: '100' },
+					{ id: 'freq4', content: '120' }
+				],
+				col2: [
+					{ id: 'freq1', content: '80' },
+					{ id: 'freq2', content: '95' },
+					{ id: 'freq3', content: '100' },
+					{ id: 'freq4', content: '120' }
+				],
+				col3: [
+					{ id: 'freq1', content: '80' },
+					{ id: 'freq2', content: '95' },
+					{ id: 'freq3', content: '100' },
+					{ id: 'freq4', content: '120' }
+				]
+			}
 		},
 		{
 			id: 'row4',
-			values: [
-				'Animal Behavior 27 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
+			values: ['General condition after current passage', '', '', ''],
+			cellOptions: {
+				col1: [
+					{
+						id: 'state1',
+						content: 'Short-term (1–2 s) convulsive contractions of hind limbs'
+					},
+					{
+						id: 'state2',
+						content:
+							'Generalized tonic seizures, “bull posture”, then clonic seizures'
+					},
+					{ id: 'state3', content: 'Generalized tonic seizures' }
+				],
+				col2: [
+					{
+						id: 'state1',
+						content: 'Short-term (1–2 s) convulsive contractions of hind limbs'
+					},
+					{
+						id: 'state2',
+						content:
+							'Generalized tonic seizures, “bull posture”, then clonic seizures'
+					},
+					{ id: 'state3', content: 'Generalized tonic seizures' }
+				],
+				col3: [
+					{
+						id: 'state1',
+						content: 'Short-term (1–2 s) convulsive contractions of hind limbs'
+					},
+					{
+						id: 'state2',
+						content:
+							'Generalized tonic seizures, “bull posture”, then clonic seizures'
+					},
+					{ id: 'state3', content: 'Generalized tonic seizures' }
+				]
+			}
 		},
 		{
 			id: 'row5',
-			values: [
-				'Animal Behavior 42 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
+			values: ['Breathing rate and pattern', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'breath1', content: 'Slowing' },
+					{ id: 'breath2', content: 'Acceleration' },
+					{
+						id: 'breath3',
+						content: 'Short-term arrest, then acceleration'
+					},
+					{ id: 'breath4', content: 'Arrest' }
+				],
+				col2: [
+					{ id: 'breath1', content: 'Slowing' },
+					{ id: 'breath2', content: 'Acceleration' },
+					{
+						id: 'breath3',
+						content: 'Short-term arrest, then acceleration'
+					},
+					{ id: 'breath4', content: 'Arrest' }
+				],
+				col3: [
+					{ id: 'breath1', content: 'Slowing' },
+					{ id: 'breath2', content: 'Acceleration' },
+					{
+						id: 'breath3',
+						content: 'Short-term arrest, then acceleration'
+					},
+					{ id: 'breath4', content: 'Arrest' }
+				]
+			}
 		},
 		{
 			id: 'row6',
-			values: [
-				'Animal Breathing Rate at the Start of the Experiment',
-				'',
-				'',
-				''
-			]
+			values: ['Urination, defecation', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'excret1', content: 'None' },
+					{ id: 'excret2', content: 'Only urination' },
+					{ id: 'excret3', content: 'Only defecation' },
+					{ id: 'excret4', content: 'Urination and defecation' }
+				],
+				col2: [
+					{ id: 'excret1', content: 'None' },
+					{ id: 'excret2', content: 'Only urination' },
+					{ id: 'excret3', content: 'Only defecation' },
+					{ id: 'excret4', content: 'Urination and defecation' }
+				],
+				col3: [
+					{ id: 'excret1', content: 'None' },
+					{ id: 'excret2', content: 'Only urination' },
+					{ id: 'excret3', content: 'Only defecation' },
+					{ id: 'excret4', content: 'Urination and defecation' }
+				]
+			}
 		},
 		{
 			id: 'row7',
-			values: [
-				'Animal Breathing Rate 15 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
+			values: ['ECG result', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'ecg1', content: 'Slowed rhythm' },
+					{ id: 'ecg2', content: 'Increased rhythm' },
+					{ id: 'ecg3', content: 'Extrasystoles' },
+					{ id: 'ecg4', content: 'Ventricular fibrillation' },
+					{ id: 'ecg5', content: 'Not recorded' }
+				],
+				col2: [
+					{ id: 'ecg1', content: 'Slowed rhythm' },
+					{ id: 'ecg2', content: 'Increased rhythm' },
+					{ id: 'ecg3', content: 'Extrasystoles' },
+					{ id: 'ecg4', content: 'Ventricular fibrillation' },
+					{ id: 'ecg5', content: 'Not recorded' }
+				],
+				col3: [
+					{ id: 'ecg1', content: 'Slowed rhythm' },
+					{ id: 'ecg2', content: 'Increased rhythm' },
+					{ id: 'ecg3', content: 'Extrasystoles' },
+					{ id: 'ecg4', content: 'Ventricular fibrillation' },
+					{ id: 'ecg5', content: 'Not recorded' }
+				]
+			}
 		},
 		{
 			id: 'row8',
-			values: [
-				'Animal Breathing Rate 27 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row9',
-			values: [
-				'Animal Breathing Rate 42 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row10',
-			values: [
-				'Animal Skin Condition at the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row11',
-			values: [
-				'Animal Skin Condition 15 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row12',
-			values: [
-				'Animal Skin Condition 27 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row13',
-			values: [
-				'Animal Skin Condition 42 Minutes After the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row14',
-			values: [
-				'Animal Body Temperature at the Start of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row15',
-			values: [
-				'Animal Body Temperature at the End of the Experiment',
-				'',
-				'',
-				''
-			]
-		},
-		{
-			id: 'row16',
-			values: ['Reflex Activity at the End of the Experiment', '', '', '']
+			values: ['Condition after the experiment', '', '', ''],
+			cellOptions: {
+				col1: [
+					{ id: 'final1', content: 'Excitement, aggression' },
+					{ id: 'final2', content: 'Return to baseline state' },
+					{ id: 'final3', content: 'Movements sluggish, inhibited' },
+					{ id: 'final4', content: 'Animal death' }
+				],
+				col2: [
+					{ id: 'final1', content: 'Excitement, aggression' },
+					{ id: 'final2', content: 'Return to baseline state' },
+					{ id: 'final3', content: 'Movements sluggish, inhibited' },
+					{ id: 'final4', content: 'Animal death' }
+				],
+				col3: [
+					{ id: 'final1', content: 'Excitement, aggression' },
+					{ id: 'final2', content: 'Return to baseline state' },
+					{ id: 'final3', content: 'Movements sluggish, inhibited' },
+					{ id: 'final4', content: 'Animal death' }
+				]
+			}
 		}
 	],
-	columnOptions: {
-		mouse1: [
-			// Acting Factor
-			{ id: 'factor1', content: 'Isolated Hypoxia' },
-			{ id: 'factor2', content: 'Isolated Low Temperature (Hypothermia)' },
-			{
-				id: 'factor3',
-				content: 'Combination of Low Temperature (Hypothermia) and Hypoxia'
-			},
-			// Behavior
-			{ id: 'beh1', content: 'Active, moving, changing position' },
-			{ id: 'beh2', content: 'Lethargic, apathetic' },
-			{ id: 'beh3', content: 'Sharply slowed' },
-			{ id: 'beh4', content: 'Restless, running around the cage' },
-			{ id: 'beh5', content: 'Dead' },
-			// Breathing Rate
-			{ id: 'br57', content: '57 per min' },
-			{ id: 'br180', content: '180 per min' },
-			{ id: 'br198', content: '198 per min' },
-			{ id: 'br222', content: '222 per min' },
-			{ id: 'br278', content: '278 per min' },
-			{ id: 'br350', content: '350 per min' },
-			{ id: 'br380', content: '380 per min' },
-			{ id: 'br390', content: '390 per min' },
-			{ id: 'br396', content: '396 per min' },
-			{ id: 'br_absent', content: 'Absent' },
-			// Skin Condition
-			{ id: 'skin1', content: 'Pale' },
-			{ id: 'skin2', content: 'Pink' },
-			{ id: 'skin3', content: 'Slight cyanosis (purple color)' },
-			{ id: 'skin4', content: 'Significant cyanosis (purple, red eyes)' },
-			{ id: 'skin5', content: 'Pronounced cyanosis (blue color)' },
-			// Temperature
-			{ id: 'temp1', content: 'Severely lowered (below 30°C)' },
-			{ id: 'temp2', content: 'Slightly lowered (about 34–36°C)' },
-			{ id: 'temp3', content: 'Normal' },
-			{ id: 'temp4', content: 'Slightly elevated (about 38–40°C)' },
-			{ id: 'temp5', content: 'Severely elevated (above 40°C)' },
-			{ id: 'temp6', content: 'Not measured' },
-			// Reflex Activity
-			{ id: 'reflex1', content: 'Reduced' },
-			{ id: 'reflex2', content: 'Normal' },
-			{ id: 'reflex3', content: 'Elevated' },
-			{ id: 'reflex4', content: 'Absent' }
-		],
-		mouse2: [
-			// Same options for the second mouse
-			{ id: 'factor1', content: 'Isolated Hypoxia' },
-			{ id: 'factor2', content: 'Isolated Low Temperature (Hypothermia)' },
-			{
-				id: 'factor3',
-				content: 'Combination of Low Temperature (Hypothermia) and Hypoxia'
-			},
-			{ id: 'beh1', content: 'Active, moving, changing position' },
-			{ id: 'beh2', content: 'Lethargic, apathetic' },
-			{ id: 'beh3', content: 'Sharply slowed' },
-			{ id: 'beh4', content: 'Restless, running around the cage' },
-			{ id: 'beh5', content: 'Dead' },
-			{ id: 'br57', content: '57 per min' },
-			{ id: 'br180', content: '180 per min' },
-			{ id: 'br198', content: '198 per min' },
-			{ id: 'br222', content: '222 per min' },
-			{ id: 'br278', content: '278 per min' },
-			{ id: 'br350', content: '350 per min' },
-			{ id: 'br380', content: '380 per min' },
-			{ id: 'br390', content: '390 per min' },
-			{ id: 'br396', content: '396 per min' },
-			{ id: 'br_absent', content: 'Absent' },
-			{ id: 'skin1', content: 'Pale' },
-			{ id: 'skin2', content: 'Pink' },
-			{ id: 'skin3', content: 'Slight cyanosis (purple color)' },
-			{ id: 'skin4', content: 'Significant cyanosis (purple, red eyes)' },
-			{ id: 'skin5', content: 'Pronounced cyanosis (blue color)' },
-			{ id: 'temp1', content: 'Severely lowered (below 30°C)' },
-			{ id: 'temp2', content: 'Slightly lowered (about 34–36°C)' },
-			{ id: 'temp3', content: 'Normal' },
-			{ id: 'temp4', content: 'Slightly elevated (about 38–40°C)' },
-			{ id: 'temp5', content: 'Severely elevated (above 40°C)' },
-			{ id: 'temp6', content: 'Not measured' },
-			{ id: 'reflex1', content: 'Reduced' },
-			{ id: 'reflex2', content: 'Normal' },
-			{ id: 'reflex3', content: 'Elevated' },
-			{ id: 'reflex4', content: 'Absent' }
-		],
-		mouse3: [
-			// Same options for the third mouse
-			{ id: 'factor1', content: 'Isolated Hypoxia' },
-			{ id: 'factor2', content: 'Isolated Low Temperature (Hypothermia)' },
-			{
-				id: 'factor3',
-				content: 'Combination of Low Temperature (Hypothermia) and Hypoxia'
-			},
-			{ id: 'beh1', content: 'Active, moving, changing position' },
-			{ id: 'beh2', content: 'Lethargic, apathetic' },
-			{ id: 'beh3', content: 'Sharply slowed' },
-			{ id: 'beh4', content: 'Restless, running around the cage' },
-			{ id: 'beh5', content: 'Dead' },
-			{ id: 'br57', content: '57 per min' },
-			{ id: 'br180', content: '180 per min' },
-			{ id: 'br198', content: '198 per min' },
-			{ id: 'br222', content: '222 per min' },
-			{ id: 'br278', content: '278 per min' },
-			{ id: 'br350', content: '350 per min' },
-			{ id: 'br380', content: '380 per min' },
-			{ id: 'br390', content: '390 per min' },
-			{ id: 'br396', content: '396 per min' },
-			{ id: 'br_absent', content: 'Absent' },
-			{ id: 'skin1', content: 'Pale' },
-			{ id: 'skin2', content: 'Pink' },
-			{ id: 'skin3', content: 'Slight cyanosis (purple color)' },
-			{ id: 'skin4', content: 'Significant cyanosis (purple, red eyes)' },
-			{ id: 'skin5', content: 'Pronounced cyanosis (blue color)' },
-			{ id: 'temp1', content: 'Severely lowered (below 30°C)' },
-			{ id: 'temp2', content: 'Slightly lowered (about 34–36°C)' },
-			{ id: 'temp3', content: 'Normal' },
-			{ id: 'temp4', content: 'Slightly elevated (about 38–40°C)' },
-			{ id: 'temp5', content: 'Severely elevated (above 40°C)' },
-			{ id: 'temp6', content: 'Not measured' },
-			{ id: 'reflex1', content: 'Reduced' },
-			{ id: 'reflex2', content: 'Normal' },
-			{ id: 'reflex3', content: 'Elevated' },
-			{ id: 'reflex4', content: 'Absent' }
-		]
-	},
 	correctAnswers: {
-		// First Mouse
-		'row1-mouse1': 'factor2',
-		'row2-mouse1': 'beh1',
-		'row3-mouse1': 'beh4',
-		'row4-mouse1': 'beh4',
-		'row5-mouse1': 'beh4',
-		'row6-mouse1': 'br180',
-		'row7-mouse1': 'br390',
-		'row8-mouse1': 'br350',
-		'row9-mouse1': 'br380',
-		'row10-mouse1': 'skin2',
-		'row11-mouse1': 'skin1',
-		'row12-mouse1': 'skin1',
-		'row13-mouse1': 'skin1',
-		'row14-mouse1': 'temp3',
-		'row15-mouse1': 'temp2',
-		'row16-mouse1': 'reflex2',
-		// Second Mouse
-		'row1-mouse2': 'factor1',
-		'row2-mouse2': 'beh1',
-		'row3-mouse2': 'beh1',
-		'row4-mouse2': 'beh5',
-		'row5-mouse2': 'beh5',
-		'row6-mouse2': 'br180',
-		'row7-mouse2': 'br396',
-		'row8-mouse2': 'br198',
-		'row9-mouse2': 'br_absent',
-		'row10-mouse2': 'skin2',
-		'row11-mouse2': 'skin3',
-		'row12-mouse2': 'skin5',
-		'row13-mouse2': 'skin5',
-		'row14-mouse2': 'temp3',
-		'row15-mouse2': 'temp6',
-		'row16-mouse2': 'reflex4',
-		// Third Mouse
-		'row1-mouse3': 'factor3',
-		'row2-mouse3': 'beh1',
-		'row3-mouse3': 'beh4',
-		'row4-mouse3': 'beh2',
-		'row5-mouse3': 'beh3',
-		'row6-mouse3': 'br180',
-		'row7-mouse3': 'br278',
-		'row8-mouse3': 'br222',
-		'row9-mouse3': 'br57',
-		'row10-mouse3': 'skin2',
-		'row11-mouse3': 'skin3',
-		'row12-mouse3': 'skin4',
-		'row13-mouse3': 'skin5',
-		'row14-mouse3': 'temp3',
-		'row15-mouse3': 'temp1',
-		'row16-mouse3': 'reflex1'
+		// Rat 1
+		'row1-col1': 'path1', // Hind limbs
+		'row2-col1': 'target1', // Skeletal and smooth muscles
+		'row3-col1': 'freq2', // 95
+		'row4-col1': 'state1', // Short-term (1–2 s) convulsive contractions of hind limbs
+		'row5-col1': 'breath2', // Acceleration
+		'row6-col1': 'excret4', // Urination and defecation
+		'row7-col1': 'ecg5', // Not recorded
+		'row8-col1': 'final2', // Return to baseline state
+		// Rat 2
+		'row1-col2': 'path2', // Brain
+		'row2-col2': 'target2', // Skeletal and smooth muscles, medulla oblongata
+		'row3-col2': 'freq2', // 95
+		'row4-col2': 'state2', // Generalized tonic seizures, “bull posture”, then clonic seizures
+		'row5-col2': 'breath3', // Short-term arrest, then acceleration
+		'row6-col2': 'excret4', // Urination and defecation
+		'row7-col2': 'ecg5', // Not recorded
+		'row8-col2': 'final3', // Movements sluggish, inhibited
+		// Rat 3
+		'row1-col3': 'path3', // Heart
+		'row2-col3': 'target3', // Skeletal and smooth muscles, heart
+		'row3-col3': 'freq2', // 95
+		'row4-col3': 'state3', // Generalized tonic seizures
+		'row5-col3': 'breath4', // Arrest
+		'row6-col3': 'excret4', // Urination and defecation
+		'row7-col3': 'ecg4', // Ventricular fibrillation
+		'row8-col3': 'final4' // Animal death
 	}
 }
