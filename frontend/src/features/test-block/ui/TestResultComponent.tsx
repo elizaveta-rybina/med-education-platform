@@ -8,7 +8,7 @@ interface TestResultComponentProps {
 }
 
 export const TestResultComponent: React.FC<TestResultComponentProps> = memo(
-	({ testResults, testError, handleReset, t }) => {
+	({ testResults, testError, t }) => {
 		if (testError) {
 			console.error('Test error:', testError) // Log for debugging
 			return (

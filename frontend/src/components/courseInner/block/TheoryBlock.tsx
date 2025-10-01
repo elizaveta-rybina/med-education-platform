@@ -1,28 +1,42 @@
 // components/TheoryBlock.tsx
-import { ImageBlock, TextBlock } from '@/data/types'
+import {
+	ImageBlock,
+	RichTextContent,
+	RichTextNode,
+	TextBlock
+} from '@/data/types'
 
 interface TheoryBlockProps {
-  block: TextBlock | ImageBlock ;
+	block: TextBlock | ImageBlock
 }
 
 export const TheoryBlock = ({ block }: TheoryBlockProps) => {
-  if (block.type === 'text') {
-    return (
-      <div className="mb-4 whitespace-pre-line">
-        {block.content.split('\n').map((paragraph, i) => (
-          <p key={i} className="mb-2 text-justify">{paragraph}</p>
-        ))}
-      </div>
-    );
-  }
+	const extractText = (node: RichTextContent | RichTextNode): string => {
+		if (node.text) return node.text
+		if (node.content) return node.content.map(extractText).join('')
+		return ''
+	}
 
-  return (
-    <div className="my-6">
-      <img 
-        src={block.url} 
-        alt={block.alt || ''} 
-        className="max-w-full h-auto"
-      />
-    </div>
-  );
-};
+	if (block.type === 'text') {
+		const text = extractText(block.content)
+		return (
+			<div className='mb-4 whitespace-pre-line'>
+				{text.split('\n').map((paragraph: string, i: number) => (
+					<p key={i} className='mb-2 text-justify'>
+						{paragraph}
+					</p>
+				))}
+			</div>
+		)
+	}
+
+	return (
+		<div className='my-6'>
+			<img
+				src={block.url}
+				alt={block.alt || ''}
+				className='max-w-full h-auto'
+			/>
+		</div>
+	)
+}
