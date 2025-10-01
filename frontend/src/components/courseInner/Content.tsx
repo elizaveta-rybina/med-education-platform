@@ -16,10 +16,22 @@ export const Content: React.FC = () => {
 	const [showTest, setShowTest] = useState(false)
 	const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 	const [testResults, setTestResults] = useState<boolean[]>([])
+	const [chapterReadStatus, setChapterReadStatus] = useState<
+		Record<string, boolean>
+	>({})
+
+	// Load isRead state from localStorage
+	useEffect(() => {
+		const savedReadStatus = localStorage.getItem('chapterReadStatus')
+		if (savedReadStatus) {
+			setChapterReadStatus(JSON.parse(savedReadStatus))
+		}
+	}, [])
 
 	const updateCurrentChapter = useCallback(() => {
 		if (!course) return
 		const hash = window.location.hash.substring(1)
+		console.log('Current hash:', hash) // Debug
 		for (let mIdx = 0; mIdx < course.modules.length; mIdx++) {
 			const module = course.modules[mIdx]
 			for (let cIdx = 0; cIdx < module.chapters.length; cIdx++) {
@@ -29,8 +41,9 @@ export const Content: React.FC = () => {
 					setCurrentChapterIndex(cIdx)
 					setCurrentModule(module)
 					setCurrentChapter(chapter)
-					setShowTest(false)
+					setShowTest(chapterReadStatus[chapter.hash] || chapter.isRead)
 					setCurrentQuestionIndex(0)
+					console.log('Chapter found:', chapter.hash) // Debug
 					return
 				}
 			}
@@ -38,7 +51,13 @@ export const Content: React.FC = () => {
 		setCurrentModule(course.modules[0] || null)
 		setCurrentChapter(course.modules[0]?.chapters[0] || null)
 		setCurrentQuestionIndex(0)
-	}, [course])
+		setShowTest(
+			course.modules[0]?.chapters[0]
+				? chapterReadStatus[course.modules[0].chapters[0].hash] ||
+						course.modules[0].chapters[0].isRead
+				: false
+		)
+	}, [course, chapterReadStatus])
 
 	const handleNextQuestion = () => {
 		if (testBlocks && currentQuestionIndex < testBlocks.length - 1) {
@@ -55,6 +74,11 @@ export const Content: React.FC = () => {
 	const handleMarkAsRead = () => {
 		if (!currentModule || !currentChapter) return
 		markChapterAsRead(currentModule.id, currentChapter.id)
+		setChapterReadStatus(prev => {
+			const updatedStatus = { ...prev, [currentChapter.hash]: true }
+			localStorage.setItem('chapterReadStatus', JSON.stringify(updatedStatus))
+			return updatedStatus
+		})
 		setShowTest(true)
 	}
 
@@ -73,6 +97,14 @@ export const Content: React.FC = () => {
 		} else if (testBlocks && currentQuestionIndex === testBlocks.length - 1) {
 			if (currentModule && currentChapter) {
 				markChapterAsRead(currentModule.id, currentChapter.id)
+				setChapterReadStatus(prev => {
+					const updatedStatus = { ...prev, [currentChapter.hash]: true }
+					localStorage.setItem(
+						'chapterReadStatus',
+						JSON.stringify(updatedStatus)
+					)
+					return updatedStatus
+				})
 			}
 		}
 	}
@@ -103,13 +135,15 @@ export const Content: React.FC = () => {
 	const hasFreeInput = currentChapter.blocks.some(b => b.type === 'free-input')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
-	// Проверяем, заблокирована ли текущая таблица
 	const isCurrentTableLocked = () => {
 		if (currentTestBlock?.type !== 'drag-drop-table') return true
 		const savedData = JSON.parse(localStorage.getItem('dndResults') || '{}')
 		const blockData = savedData[currentTestBlock.id] || {}
 		return blockData.isLocked || false
 	}
+
+	const isChapterRead =
+		chapterReadStatus[currentChapter.hash] || currentChapter.isRead
 
 	const navigateTo = (direction: 'prev' | 'next') => {
 		let newModuleIndex = currentModuleIndex
@@ -141,10 +175,7 @@ export const Content: React.FC = () => {
 	return (
 		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t-1'>
 			<div className='max-w-9xl mx-auto pb-20'>
-				<ChapterHeader
-					title={currentChapter.title}
-					isRead={currentChapter.isRead}
-				/>
+				<ChapterHeader title={currentChapter.title} isRead={isChapterRead} />
 				{(hasDragDrop && currentTestBlock?.type === 'drag-drop-table') ||
 				(hasGame && currentTestBlock?.type === 'game') ? (
 					<FullScreenBlock
@@ -162,17 +193,18 @@ export const Content: React.FC = () => {
 							testResults[currentQuestionIndex] === undefined ||
 							currentQuestionIndex === testBlocks.length - 1
 						}
+						chapterHash={currentChapter.hash} // Already passing chapterHash
 					/>
 				) : (
 					<div className='flex flex-col lg:flex-row gap-6'>
-						{currentChapter.isRead ? (
+						{isChapterRead ? (
 							<TestSection
 								testBlocks={testBlocks}
 								currentQuestionIndex={currentQuestionIndex}
 								moduleId={currentModule.id}
 								chapterId={currentChapter.id}
 								showTest={showTest}
-								isRead={currentChapter.isRead}
+								isRead={isChapterRead}
 								onComplete={handleQuestionComplete}
 							/>
 						) : (
@@ -180,7 +212,7 @@ export const Content: React.FC = () => {
 								<div className='w-full'>
 									<TheorySection
 										theoryBlocks={theoryBlocks}
-										isRead={currentChapter.isRead}
+										isRead={isChapterRead}
 										onMarkAsRead={handleMarkAsRead}
 									/>
 								</div>
@@ -190,7 +222,7 @@ export const Content: React.FC = () => {
 									moduleId={currentModule.id}
 									chapterId={currentChapter.id}
 									showTest={showTest}
-									isRead={currentChapter.isRead}
+									isRead={isChapterRead}
 									onComplete={handleQuestionComplete}
 								/>
 							</>

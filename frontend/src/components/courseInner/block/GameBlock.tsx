@@ -3,7 +3,7 @@ import {
 	DropdownTableComponent
 } from '@/features/dropdown-table'
 import { useCourse } from '@/hooks/useCourse'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface GameBlockProps {
@@ -16,11 +16,13 @@ interface GameBlockProps {
 		height?: string
 	}
 	onComplete?: (isCompleted: boolean) => void
+	chapterHash?: string
 }
 
 export const GameBlock: React.FC<GameBlockProps> = ({
 	block,
-	onComplete = () => {}
+	onComplete = () => {},
+	chapterHash
 }) => {
 	const { i18n, t } = useTranslation('courseInner')
 	const { courseId } = useCourse()
@@ -32,7 +34,15 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	const [isIframeLoading, setIsIframeLoading] = useState(true)
 	const [iframeLoadError, setIframeLoadError] = useState<string | null>(null)
 
-	// Динамическая загрузка данных таблицы
+	// Memoized onComplete to prevent unnecessary re-renders
+	const memoizedOnComplete = useCallback(
+		(isCorrect: boolean) => {
+			if (isCorrect) onComplete(true)
+		},
+		[onComplete]
+	)
+
+	// Dynamic loading of table data
 	useEffect(() => {
 		const loadTableData = async () => {
 			if (!courseId) {
@@ -58,26 +68,20 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		loadTableData()
 	}, [courseId, i18n.language, t])
 
-	// Обработка сообщений от игры
+	// Handle messages from the game iframe
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
-			console.log(
-				'Event origin:',
-				event.origin,
-				'Expected origin:',
-				new URL(block.gameUrl).origin
-			)
 			if (event.origin !== new URL(block.gameUrl).origin) return
 			if (event.data === 'GAME_COMPLETED') {
-				onComplete(true)
+				memoizedOnComplete(true)
 			}
 		}
 
 		window.addEventListener('message', handleMessage)
 		return () => window.removeEventListener('message', handleMessage)
-	}, [block.gameUrl, onComplete])
+	}, [block.gameUrl, memoizedOnComplete])
 
-	// Обработка загрузки/ошибки iframe
+	// Handle iframe load/error
 	const handleIframeLoad = () => {
 		setIsIframeLoading(false)
 	}
@@ -136,9 +140,8 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 				{gameTableData && !isTableLoading && !tableLoadError && (
 					<DropdownTableComponent
 						block={gameTableData}
-						onComplete={isCorrect => {
-							if (isCorrect) onComplete(true)
-						}}
+						onComplete={memoizedOnComplete}
+						chapterHash={chapterHash} // Pass chapterHash
 					/>
 				)}
 			</div>

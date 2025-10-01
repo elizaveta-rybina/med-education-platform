@@ -58,6 +58,14 @@ const en = {
 		}
 	},
 	courseInner: {
+		lab_modal: {
+			yourResults: 'Your Results',
+			correctAnswers: 'Correct Answers',
+			totalAnswers: 'Total Answers',
+			percentageCorrect: 'Percentage Correct: {{percentage}}%',
+			restart: 'Restart Lab',
+			close: 'Close'
+		},
 		dnd: {
 			noRowsAvailable: 'No rows available',
 			removeAnswer: 'Remove answer',

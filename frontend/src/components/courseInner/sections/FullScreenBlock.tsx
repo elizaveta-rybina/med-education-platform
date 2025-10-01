@@ -1,5 +1,6 @@
 import { Block, DragDropTableBlock } from '@/data/types'
 import { DragDropTableComponent } from '@/features/drag-drop-table'
+import { useCourse } from '@/hooks/useCourse'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { GameBlock } from '../block'
@@ -14,6 +15,7 @@ interface FullScreenBlockProps {
 	onNext: () => void
 	isPrevDisabled: boolean
 	isNextDisabled: boolean
+	chapterHash?: string // Added to pass chapterHash explicitly
 }
 
 export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
@@ -25,11 +27,13 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 	onPrev,
 	onNext,
 	isPrevDisabled,
-	isNextDisabled
+	isNextDisabled,
+	chapterHash
 }) => {
 	const { t } = useTranslation('courseInner')
+	const { course } = useCourse()
 
-	// Мемоизация dragDropTables для предотвращения пересоздания массива
+	// Memoization of dragDropTables to prevent array recreation
 	const dragDropTables: DragDropTableBlock[] = useMemo(
 		() =>
 			testBlocks.filter(
@@ -38,10 +42,10 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 		[testBlocks]
 	)
 
-	// Состояние для текущей таблицы
+	// State for current table index
 	const [currentBlockIndex, setCurrentBlockIndex] = useState(0)
 
-	// Проверяем, заблокирована ли текущая таблица
+	// Check if the current table is locked
 	const isCurrentTableLocked = () => {
 		if (!dragDropTables.length || block.type !== 'drag-drop-table') return true
 		const savedData = JSON.parse(localStorage.getItem('dndResults') || '{}')
@@ -49,12 +53,11 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 		return blockData.isLocked || false
 	}
 
-	// Обработчики для кнопок
+	// Handlers for navigation buttons
 	const handleNextTable = () => {
 		if (currentBlockIndex < dragDropTables.length - 1) {
 			setCurrentBlockIndex(prev => prev + 1)
 		} else {
-			// Если последняя таблица, вызываем onNext для перехода к следующему вопросу
 			onNext()
 		}
 	}
@@ -63,12 +66,11 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 		if (currentBlockIndex > 0) {
 			setCurrentBlockIndex(prev => prev - 1)
 		} else {
-			// Если первая таблица, вызываем onPrev для перехода к предыдущему вопросу
 			onPrev()
 		}
 	}
 
-	// Переход к первой незалоченной таблице только при первом монтировании
+	// Navigate to the first unlocked table on mount
 	useEffect(() => {
 		const savedData = JSON.parse(localStorage.getItem('dndResults') || '{}')
 		const firstUnlockedIndex = dragDropTables.findIndex(table => {
@@ -76,7 +78,7 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 			return !blockData.isLocked
 		})
 		setCurrentBlockIndex(firstUnlockedIndex !== -1 ? firstUnlockedIndex : 0)
-	}, []) // Пустой массив зависимостей для выполнения только при монтировании
+	}, [dragDropTables])
 
 	return (
 		<div className='w-full'>
@@ -94,7 +96,6 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 						block={dragDropTables[currentBlockIndex]}
 						onComplete={isCorrect => {
 							onComplete(isCorrect)
-							// Автоматический переход к следующей таблице, если текущая завершена
 							if (
 								isCurrentTableLocked() &&
 								currentBlockIndex < dragDropTables.length - 1
@@ -107,6 +108,7 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 								onNext()
 							}
 						}}
+						chapterHash={chapterHash} // Pass chapterHash to DragDropTableComponent
 					/>
 					<div className='flex gap-3 mt-6'>
 						<button
@@ -131,7 +133,11 @@ export const FullScreenBlock: React.FC<FullScreenBlockProps> = ({
 			)}
 			{block.type === 'game' && (
 				<div className='w-full max-w-9xl mx-auto'>
-					<GameBlock block={block} onComplete={onComplete} />
+					<GameBlock
+						block={block}
+						onComplete={onComplete}
+						chapterHash={chapterHash}
+					/>
 				</div>
 			)}
 		</div>
