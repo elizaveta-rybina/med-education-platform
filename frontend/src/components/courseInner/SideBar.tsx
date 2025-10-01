@@ -1,4 +1,5 @@
 import { useSidebar } from '@/context/SidebarContext'
+import { LabResultModal } from '@/features/lab-result/LabResultModal'
 import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa'
@@ -8,10 +9,33 @@ const SideBarCourse = () => {
 		useSidebar()
 	const [currentHash, setCurrentHash] = useState('')
 	const { course } = useCourse()
+	const [chapterReadStatus, setChapterReadStatus] = useState<
+		Record<string, boolean>
+	>({})
 
+	// Load and update chapterReadStatus
+	useEffect(() => {
+		const updateReadStatus = () => {
+			const savedReadStatus = localStorage.getItem('chapterReadStatus')
+			if (savedReadStatus) {
+				const parsedStatus = JSON.parse(savedReadStatus)
+				console.log('SideBarCourse: Updated chapterReadStatus:', parsedStatus)
+				setChapterReadStatus(parsedStatus)
+			}
+		}
+
+		updateReadStatus() // Initial load
+		window.addEventListener('chapterReadStatusUpdated', updateReadStatus)
+		return () =>
+			window.removeEventListener('chapterReadStatusUpdated', updateReadStatus)
+	}, [])
+
+	// Handle hash changes
 	useEffect(() => {
 		const handleHashChange = () => {
-			setCurrentHash(window.location.hash.substring(1))
+			const newHash = window.location.hash.substring(1)
+			setCurrentHash(newHash)
+			console.log('SideBarCourse: Current hash:', newHash)
 		}
 
 		handleHashChange()
@@ -20,6 +44,12 @@ const SideBarCourse = () => {
 	}, [])
 
 	const allChapters = course?.modules.flatMap(m => m.chapters) ?? []
+
+	// Combine isRead from course with saved state
+	const chaptersWithReadStatus = allChapters.map(chapter => ({
+		...chapter,
+		isRead: chapterReadStatus[chapter.hash] || chapter.isRead
+	}))
 
 	const handleToggle = () => {
 		if (window.innerWidth >= 1024) {
@@ -85,11 +115,10 @@ const SideBarCourse = () => {
 					</button>
 				</div>
 
-				{/* Chapters list and Footer (unchanged) */}
 				{(isExpanded || isMobileOpen) && (
 					<nav className='flex-1 p-2'>
 						<ul className='space-y-1'>
-							{allChapters.map(chapter => (
+							{chaptersWithReadStatus.map(chapter => (
 								<li key={chapter.id}>
 									<a
 										href={`#${chapter.hash}`}
@@ -123,8 +152,19 @@ const SideBarCourse = () => {
 				)}
 
 				{(isExpanded || isMobileOpen) && (
-					<div className='p-4 mt-auto text-xs text-gray-500 dark:text-gray-400'>
-						Doctor VR v1.0.0
+					<div className='p-4 mt-auto'>
+						<LabResultModal
+							triggerButton={
+								<button className='w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors'>
+									Проверить результаты
+								</button>
+							}
+							onRestart={() => {
+								setChapterReadStatus({})
+								// Dispatch event to force update
+								window.dispatchEvent(new Event('chapterReadStatusUpdated'))
+							}}
+						/>
 					</div>
 				)}
 			</div>

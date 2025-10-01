@@ -59,6 +59,14 @@ const ru = {
 		}
 	},
 	courseInner: {
+		lab_modal: {
+			yourResults: 'Ваши результаты',
+			correctAnswers: 'Правильных ответов',
+			totalAnswers: 'Всего ответов',
+			percentageCorrect: 'Процент правильных ответов: {{percentage}}%',
+			restart: 'Пройти лабораторную заново',
+			close: 'Отмена'
+		},
 		dnd: {
 			noRowsAvailable: 'Нет доступных строк',
 			removeAnswer: 'Удалить ответ',
