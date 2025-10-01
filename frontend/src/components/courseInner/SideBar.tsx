@@ -19,7 +19,7 @@ const SideBarCourse = () => {
 		return () => window.removeEventListener('hashchange', handleHashChange)
 	}, [])
 
-	const allChapters = course.modules.flatMap(module => module.chapters)
+	const allChapters = course?.modules.flatMap(m => m.chapters) ?? []
 
 	const handleToggle = () => {
 		if (window.innerWidth >= 1024) {
@@ -41,7 +41,7 @@ const SideBarCourse = () => {
 				<div className='flex items-center justify-between p-2 lg:p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800'>
 					{(isExpanded || isMobileOpen) && (
 						<h2 className='text-lg font-bold text-gray-800 dark:text-gray-200 truncate'>
-							{course.title}
+							{course?.title ?? 'Загрузка...'}
 						</h2>
 					)}
 					<button

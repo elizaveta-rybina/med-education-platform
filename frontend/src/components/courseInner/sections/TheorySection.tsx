@@ -1,6 +1,8 @@
-import { TextBlock, ImageBlock } from '@/data/types'
-import { TheoryBlock } from '../block'
+import { ImageBlock, TextBlock } from '@/data/types'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
+
+type HeadingTagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
 interface TheorySectionProps {
 	theoryBlocks: (TextBlock | ImageBlock)[]
@@ -13,14 +15,115 @@ export const TheorySection: React.FC<TheorySectionProps> = ({
 	isRead,
 	onMarkAsRead
 }) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const hasTheoryBlocks = theoryBlocks.length > 0
+
+	// Recursive function to render JSON as styled JSX
+	const renderNode = (node: any): React.ReactNode => {
+		if (node.type === 'text') {
+			let text = <span>{node.text}</span>
+			if (node.marks) {
+				node.marks.forEach((mark: any) => {
+					if (mark.type === 'bold') {
+						text = <strong className='font-bold'>{text}</strong>
+					}
+					if (mark.type === 'italic') {
+						text = <em className='italic'>{text}</em>
+					}
+					if (mark.type === 'underline') {
+						text = <u className='underline'>{text}</u>
+					}
+				})
+			}
+			return text
+		}
+		if (node.type === 'paragraph') {
+			return (
+				<p className='text-base leading-relaxed mb-4'>
+					{node.content?.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</p>
+			)
+		}
+		if (node.type === 'bulletList') {
+			return (
+				<ul className='list-disc pl-6 mb-4'>
+					{node.content?.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</ul>
+			)
+		}
+		if (node.type === 'orderedList') {
+			return (
+				<ol className='list-decimal pl-6 mb-4'>
+					{node.content?.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</ol>
+			)
+		}
+		if (node.type === 'listItem') {
+			return (
+				<li>
+					{node.content?.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</li>
+			)
+		}
+		if (node.type === 'heading') {
+			const level = node.attrs?.level || 1
+			const HeadingTag: HeadingTagType = `h${Math.min(
+				Math.max(level, 1),
+				6
+			)}` as HeadingTagType
+			return (
+				<HeadingTag className={`text-${5 - level}xl font-bold mb-2`}>
+					{node.content?.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</HeadingTag>
+			)
+		}
+		if (node.content) {
+			return (
+				<>
+					{node.content.map((child: any, index: number) => (
+						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
+					))}
+				</>
+			)
+		}
+		return null
+	}
 
 	return (
 		<div className='space-y-6'>
-			{theoryBlocks.map(block => (
-				<TheoryBlock key={block.id} block={block} />
-			))}
+			{theoryBlocks.map(block => {
+				if ('url' in block && block.url) {
+					return (
+						<figure key={block.id} className='w-full max-w-lg mx-auto mb-4'>
+							<img
+								src={block.url}
+								alt={block.alt || ''}
+								className='w-full rounded-lg shadow-md'
+							/>
+							{block.caption && (
+								<figcaption className='text-center text-sm text-gray-600 mt-2'>
+									{block.caption}
+								</figcaption>
+							)}
+						</figure>
+					)
+				}
+				return (
+					<div key={block.id} className='prose max-w-none'>
+						{renderNode((block as TextBlock).content)}
+					</div>
+				)
+			})}
 			{!isRead && hasTheoryBlocks && (
 				<div className='mt-6 pt-4 border-t border-gray-200'>
 					<button

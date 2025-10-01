@@ -1,8 +1,8 @@
 import { Block } from '@/data/types'
-import { DragDropTableComponent } from './block/DragDropTableComponent'
+import { DragDropTableComponent } from '@/features/drag-drop-table'
+import { TestBlockComponent } from '@/features/test-block'
 import { FreeInputBlock } from './block/FreeInputBlock'
 import { GameBlock } from './block/GameBlock'
-import { TestBlock } from './block/TestBlock'
 import { TheoryBlock } from './block/TheoryBlock'
 
 interface ContentRendererProps {
@@ -28,7 +28,7 @@ export const ContentRenderer = ({
 	switch (block.type) {
 		case 'question':
 			return (
-				<TestBlock
+				<TestBlockComponent
 					block={block}
 					moduleId={moduleId}
 					chapterId={chapterId}

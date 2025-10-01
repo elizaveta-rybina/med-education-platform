@@ -1,6 +1,7 @@
 import { Block } from '@/data/types'
-import { useTranslation } from 'react-i18next'
-import { FreeInputBlock, TestBlock } from '../block'
+import { TestBlockComponent } from '@/features/test-block'
+import React from 'react'
+import { FreeInputBlock } from '../block'
 
 interface TestSectionProps {
 	testBlocks: Block[]
@@ -21,10 +22,17 @@ export const TestSection: React.FC<TestSectionProps> = ({
 	isRead,
 	onComplete
 }) => {
-	const { t } = useTranslation('coursePage')
 	const currentTestBlock = testBlocks[currentQuestionIndex]
 
-	if (!(showTest || isRead) || testBlocks.length === 0 || !currentTestBlock) {
+	if (
+		!(showTest || isRead) ||
+		testBlocks.length === 0 ||
+		!currentTestBlock ||
+		!chapterId
+	) {
+		console.warn(
+			`Invalid test state: chapterId=${chapterId}, block=${currentTestBlock?.id}, showTest=${showTest}, isRead=${isRead}`
+		)
 		return null
 	}
 
@@ -32,13 +40,7 @@ export const TestSection: React.FC<TestSectionProps> = ({
 		<div className='lg:sticky lg:top-6 space-y-6'>
 			{currentTestBlock.type === 'question' && (
 				<div className='bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-200'>
-					<h2 className='text-lg sm:text-xl font-semibold text-gray-800 mb-4'>
-						{t('knowledgeCheck', {
-							currentQuestionIndex: currentQuestionIndex + 1,
-							totalQuestions: testBlocks.length
-						})}
-					</h2>
-					<TestBlock
+					<TestBlockComponent
 						block={currentTestBlock}
 						moduleId={moduleId}
 						chapterId={chapterId}
@@ -46,7 +48,11 @@ export const TestSection: React.FC<TestSectionProps> = ({
 						totalQuestions={testBlocks.length}
 						onNext={() => {
 							if (currentQuestionIndex < testBlocks.length - 1) {
-								onComplete(true) // Assuming onNext implies correct for simplicity
+								console.log(`Moving to next question for chapter ${chapterId}`)
+								onComplete(true) // Замените на проверку правильности, если доступно
+							} else {
+								console.log(`Test completed for chapter ${chapterId}`)
+								onComplete(true)
 							}
 						}}
 					/>

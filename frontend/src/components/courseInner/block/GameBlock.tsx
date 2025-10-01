@@ -1,11 +1,10 @@
-import { sampleDropdownTableBlockRu as gameContentRu } from '@/data/semester_one/13/game-content'
-import { sampleDropdownTableBlock as gameContentEn } from '@/data/semester_one/13/game-content.en'
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
 	DropdownTableBlock,
 	DropdownTableComponent
-} from './DropDownTableComponent'
+} from '@/features/dropdown-table'
+import { useCourse } from '@/hooks/useCourse'
+import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface GameBlockProps {
 	block: {
@@ -23,15 +22,43 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
-	const { i18n } = useTranslation('coursePage')
-	const [isLoading, setIsLoading] = useState(true)
-	const [loadError, setLoadError] = useState<string | null>(null)
+	const { i18n, t } = useTranslation('courseInner')
+	const { courseId } = useCourse()
+	const [gameTableData, setGameTableData] = useState<DropdownTableBlock | null>(
+		null
+	)
+	const [isTableLoading, setIsTableLoading] = useState(true)
+	const [tableLoadError, setTableLoadError] = useState<string | null>(null)
+	const [isIframeLoading, setIsIframeLoading] = useState(true)
+	const [iframeLoadError, setIframeLoadError] = useState<string | null>(null)
 
-	// Выбор данных таблицы в зависимости от языка
-	const gameTableData: DropdownTableBlock =
-		i18n.language === 'ru' ? gameContentRu : gameContentEn
+	// Динамическая загрузка данных таблицы
+	useEffect(() => {
+		const loadTableData = async () => {
+			if (!courseId) {
+				setTableLoadError(t('courseIdMissing'))
+				setIsTableLoading(false)
+				return
+			}
+			try {
+				const langSuffix = i18n.language === 'en' ? '.en' : ''
+				const module = await import(
+					`@/data/semester_one/${courseId}/games/content${langSuffix}.ts`
+				)
+				const newData: DropdownTableBlock = module.gameTableData
+				setGameTableData(newData)
+				setIsTableLoading(false)
+			} catch (e) {
+				console.error('Ошибка загрузки данных таблицы игры:', e)
+				setTableLoadError(t('tableLoadError'))
+				setIsTableLoading(false)
+			}
+		}
 
-	// Handle messages from the game
+		loadTableData()
+	}, [courseId, i18n.language, t])
+
+	// Обработка сообщений от игры
 	useEffect(() => {
 		const handleMessage = (event: MessageEvent) => {
 			console.log(
@@ -50,16 +77,14 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		return () => window.removeEventListener('message', handleMessage)
 	}, [block.gameUrl, onComplete])
 
-	// Handle iframe load/error
+	// Обработка загрузки/ошибки iframe
 	const handleIframeLoad = () => {
-		setIsLoading(false)
+		setIsIframeLoading(false)
 	}
 
 	const handleIframeError = () => {
-		setIsLoading(false)
-		setLoadError(
-			'Не удалось загрузить игру. Пожалуйста, проверьте подключение или попробуйте позже.'
-		)
+		setIsIframeLoading(false)
+		setIframeLoadError(t('gameLoadError'))
 	}
 
 	return (
@@ -74,14 +99,14 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 				className='game-container mb-6 w-full max-w-[1200px] mx-auto relative'
 				style={{ aspectRatio: '1917 / 1090' }}
 			>
-				{isLoading && (
+				{isIframeLoading && (
 					<div className='absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg'>
-						<p className='text-gray-600'>Загрузка игры...</p>
+						<p className='text-gray-600'>{t('loadingGame')}</p>
 					</div>
 				)}
-				{loadError && (
+				{iframeLoadError && (
 					<div className='absolute inset-0 flex items-center justify-center bg-gray-200 rounded-lg'>
-						<p className='text-red-600'>{loadError}</p>
+						<p className='text-red-600'>{iframeLoadError}</p>
 					</div>
 				)}
 				<iframe
@@ -97,14 +122,25 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 				/>
 			</div>
 
-			{/* Добавление подписи и таблицы */}
 			<div className='mt-6'>
-				<DropdownTableComponent // Исправлен компонент на DropDownTableComponent
-					block={gameTableData}
-					onComplete={isCorrect => {
-						if (isCorrect) onComplete(true)
-					}}
-				/>
+				{isTableLoading && (
+					<div className='flex items-center justify-center bg-gray-200 rounded-lg p-4'>
+						<p className='text-gray-600'>{t('loadingTable')}</p>
+					</div>
+				)}
+				{tableLoadError && (
+					<div className='flex items-center justify-center bg-gray-200 rounded-lg p-4'>
+						<p className='text-red-600'>{tableLoadError}</p>
+					</div>
+				)}
+				{gameTableData && !isTableLoading && !tableLoadError && (
+					<DropdownTableComponent
+						block={gameTableData}
+						onComplete={isCorrect => {
+							if (isCorrect) onComplete(true)
+						}}
+					/>
+				)}
 			</div>
 		</div>
 	)
