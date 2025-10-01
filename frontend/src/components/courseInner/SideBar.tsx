@@ -8,10 +8,23 @@ const SideBarCourse = () => {
 		useSidebar()
 	const [currentHash, setCurrentHash] = useState('')
 	const { course } = useCourse()
+	const [chapterReadStatus, setChapterReadStatus] = useState<
+		Record<string, boolean>
+	>({})
 
+	// Загрузка состояния isRead из localStorage при монтировании
+	useEffect(() => {
+		const savedReadStatus = localStorage.getItem('chapterReadStatus')
+		if (savedReadStatus) {
+			setChapterReadStatus(JSON.parse(savedReadStatus))
+		}
+	}, [])
+
+	// Обработка изменения hash
 	useEffect(() => {
 		const handleHashChange = () => {
-			setCurrentHash(window.location.hash.substring(1))
+			const newHash = window.location.hash.substring(1)
+			setCurrentHash(newHash)
 		}
 
 		handleHashChange()
@@ -20,6 +33,12 @@ const SideBarCourse = () => {
 	}, [])
 
 	const allChapters = course?.modules.flatMap(m => m.chapters) ?? []
+
+	// Комбинируем isRead из course с сохраненным состоянием
+	const chaptersWithReadStatus = allChapters.map(chapter => ({
+		...chapter,
+		isRead: chapterReadStatus[chapter.hash] || chapter.isRead
+	}))
 
 	const handleToggle = () => {
 		if (window.innerWidth >= 1024) {
@@ -85,11 +104,11 @@ const SideBarCourse = () => {
 					</button>
 				</div>
 
-				{/* Chapters list and Footer (unchanged) */}
+				{/* Chapters list */}
 				{(isExpanded || isMobileOpen) && (
 					<nav className='flex-1 p-2'>
 						<ul className='space-y-1'>
-							{allChapters.map(chapter => (
+							{chaptersWithReadStatus.map(chapter => (
 								<li key={chapter.id}>
 									<a
 										href={`#${chapter.hash}`}
