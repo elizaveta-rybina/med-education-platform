@@ -1,22 +1,20 @@
-import { JSX, useState } from 'react'
+import React, { JSX, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useCheckAllRead } from './model/useCheckAllRead'
+import { useResults } from './model/useResults'
 
 interface LabResultModalProps {
-	correctAnswers: number
-	totalAnswers: number
-	isCompleted: boolean
 	triggerButton: JSX.Element
-	onRestart: () => void
+	onRestart?: () => void
 }
 
 export const LabResultModal: React.FC<LabResultModalProps> = ({
-	correctAnswers,
-	totalAnswers,
-	isCompleted,
 	triggerButton,
-	onRestart
+	onRestart = () => {}
 }) => {
 	const { t } = useTranslation('courseInner')
+	const { isAllRead, resetReadStatus } = useCheckAllRead()
+	const { correctAnswers, totalAnswers } = useResults()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 
 	// Рассчитываем процент правильных ответов
@@ -30,6 +28,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		localStorage.removeItem('ddtAnswers')
 		localStorage.removeItem('dndResults')
 		localStorage.removeItem('testResults')
+		resetReadStatus() // Сбрасываем chapterReadStatus
 		onRestart()
 		setIsModalOpen(false)
 	}
@@ -37,8 +36,8 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 	return (
 		<>
 			<div
-				onClick={() => isCompleted && setIsModalOpen(true)}
-				className={isCompleted ? '' : 'opacity-50 cursor-not-allowed'}
+				onClick={() => isAllRead && setIsModalOpen(true)}
+				className={isAllRead ? '' : 'opacity-50 cursor-not-allowed'}
 			>
 				{triggerButton}
 			</div>

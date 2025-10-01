@@ -1,6 +1,5 @@
 import { FreeInputBlock as FreeInputBlockType } from '@/data/types'
-import React, { useState } from 'react'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface FreeInputBlockProps {
@@ -12,79 +11,47 @@ export const FreeInputBlock: React.FC<FreeInputBlockProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const [answers, setAnswers] = useState<Record<string, string>>({})
 	const [isSubmitted, setIsSubmitted] = useState(false)
-	const [timeUp, setTimeUp] = useState(false)
 
+	// Ключи для localStorage, привязанные к block.id
+	const answersStorageKey = `freeInputBlock_answers_${block.id}`
+	const submittedStorageKey = `freeInputBlock_submitted_${block.id}`
+
+	// Загрузка данных из localStorage при монтировании
+	useEffect(() => {
+		const savedAnswers = localStorage.getItem(answersStorageKey)
+		if (savedAnswers) {
+			setAnswers(JSON.parse(savedAnswers))
+		}
+
+		const savedSubmitted = localStorage.getItem(submittedStorageKey)
+		if (savedSubmitted === 'true') {
+			setIsSubmitted(true)
+		}
+	}, [answersStorageKey, submittedStorageKey])
+
+	// Сохранение ответов в localStorage при изменении
 	const handleAnswerChange = (questionId: string, value: string) => {
-		setAnswers(prev => ({
-			...prev,
-			[questionId]: value
-		}))
+		setAnswers(prev => {
+			const updatedAnswers = { ...prev, [questionId]: value }
+			localStorage.setItem(answersStorageKey, JSON.stringify(updatedAnswers))
+			return updatedAnswers
+		})
 	}
 
+	// Сохранение состояния отправки
 	const handleSubmit = () => {
 		setIsSubmitted(true)
-		// Здесь будет отправка ответов на сервер
+		localStorage.setItem(submittedStorageKey, 'true')
 		onComplete(false) // Ответ требует проверки преподавателем
 	}
 
-	const formatTime = (time: number) => {
-		const minutes = Math.floor(time / 60)
-		const seconds = time % 60
-		return `${minutes}:${seconds < 10 ? `0${seconds}` : seconds}`
-	}
-
 	return (
-		<div className='max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md'>
-			<h2 className='text-2xl font-bold mb-4 text-gray-800'>{block.title}</h2>
-
-			{/* Описание кейса с HTML-форматированием */}
-			{/* <div 
-        className="mb-6 prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: block.caseDescription }}
-      /> */}
-
-			{/* Таймер и статус */}
-			<div className='mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200'>
-				<div className='flex items-center justify-between'>
-					<div className='flex items-center'>
-						<CountdownCircleTimer
-							isPlaying={!isSubmitted && !timeUp}
-							duration={block.timeLimit}
-							colors={['#3b82f6', '#f59e0b', '#ef4444']}
-							colorsTime={[block.timeLimit, block.timeLimit / 2, 0]}
-							size={80}
-							strokeWidth={6}
-							onComplete={() => {
-								setTimeUp(true)
-								return { shouldRepeat: false }
-							}}
-						>
-							{({ remainingTime }) => (
-								<div className='flex flex-col items-center'>
-									<span className='text-lg font-bold text-gray-700'>
-										{formatTime(remainingTime)}
-									</span>
-									<span className='text-xs text-gray-500'>
-										{t('timeRemaining')}
-									</span>
-								</div>
-							)}
-						</CountdownCircleTimer>
-					</div>
-
-					{timeUp && !isSubmitted && (
-						<div className='bg-red-100 text-red-800 px-4 py-2 rounded-md'>
-							{t('timeUp')}
-						</div>
-					)}
-				</div>
-			</div>
-
+		<div className='max-w-4xl mx-auto p-3 bg-white rounded-lg'>
 			{/* Поля для ответов */}
-			<div className='space-y-6'>
+			<div className=''>
 				{block.questions.map(question => (
 					<div key={question.id} className='mb-6'>
 						<h3 className='text-lg font-medium mb-3 text-gray-800'>
@@ -93,10 +60,10 @@ export const FreeInputBlock: React.FC<FreeInputBlockProps> = ({
 						<textarea
 							value={answers[question.id] || ''}
 							onChange={e => handleAnswerChange(question.id, e.target.value)}
-							className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
+							className='w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500'
 							rows={5}
 							placeholder={t('enterAnswer')}
-							disabled={isSubmitted || timeUp}
+							disabled={isSubmitted}
 							maxLength={question.maxLength}
 						/>
 						{question.maxLength && (
@@ -115,11 +82,11 @@ export const FreeInputBlock: React.FC<FreeInputBlockProps> = ({
 			<div className='flex justify-end mt-6'>
 				<button
 					onClick={handleSubmit}
-					disabled={isSubmitted || timeUp}
+					disabled={isSubmitted}
 					className={`px-6 py-3 rounded-lg font-medium ${
-						isSubmitted || timeUp
+						isSubmitted
 							? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-							: 'bg-blue-600 text-white hover:bg-blue-700'
+							: 'bg-purple-600 text-white hover:bg-purple-700'
 					} transition-colors`}
 				>
 					{isSubmitted ? t('answerSubmitted') : t('submitForReview')}
