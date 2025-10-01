@@ -7,10 +7,14 @@ import { DragDropTableComponentProps } from '../model/types'
 import { DraggableAnswer } from './DraggableAnswer'
 import { DroppableCell } from './DroppableCell'
 
-export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
-	block,
-	onComplete = () => {}
-}) => {
+interface DragDropTableComponentPropsExtended
+	extends DragDropTableComponentProps {
+	chapterHash?: string // Для обновления chapterReadStatus
+}
+
+export const DragDropTableComponent: React.FC<
+	DragDropTableComponentPropsExtended
+> = ({ block, onComplete = () => {}, chapterHash }) => {
 	const { t } = useTranslation('courseInner')
 
 	const groupedRows = useGroupedRows(block)
@@ -43,6 +47,22 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 		}
 	}, [availableAnswers, isCompleted, assigned, hasInteracted, checkAnswers])
 
+	// Обработчик для кнопки "Проверить ответы" с отметкой главы как прочитанной
+	const handleCheckAnswers = () => {
+		if (isLocked || attempts >= 2) return
+
+		checkAnswers()
+
+		// Отметка главы как прочитанной в localStorage
+		console.log('chapterHash', chapterHash)
+		if (chapterHash) {
+			const savedReadStatus = localStorage.getItem('chapterReadStatus')
+			const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}
+			readStatus[chapterHash] = true
+			localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
+		}
+	}
+
 	if (block.rows.length === 0 || block.columns.length === 0) {
 		return (
 			<div className='text-red-700'>{t('dnd.noRowsOrColumnsAvailable')}</div>
@@ -65,7 +85,10 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 			<DndContext
 				collisionDetection={closestCenter}
 				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
+				onDragEnd={e => {
+					setHasInteracted(true)
+					handleDragEnd(e)
+				}}
 			>
 				<div className='overflow-x-auto mb-8'>
 					<table className='w-full border-collapse border-1'>
@@ -137,12 +160,11 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 														</div>
 													)
 												})}
-												{!assigned[`${subRow.id}_effects`] ||
-													(!assigned[`${subRow.id}_effects`]?.length && (
-														<div className='text-gray-400 text-sm self-center'>
-															{t('dnd.dragHere')}
-														</div>
-													))}
+												{!assigned[`${subRow.id}_effects`]?.length && (
+													<div className='text-gray-400 text-sm self-center'>
+														{t('dnd.dragHere')}
+													</div>
+												)}
 											</div>
 										</DroppableCell>
 									</tr>
@@ -183,7 +205,7 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 			<div className='flex gap-3 mt-6'>
 				{!isLocked && (
 					<button
-						onClick={checkAnswers}
+						onClick={handleCheckAnswers}
 						disabled={attempts >= 2}
 						className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed'
 					>
