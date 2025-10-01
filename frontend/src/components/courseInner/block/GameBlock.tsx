@@ -22,7 +22,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 	block,
 	onComplete = () => {}
 }) => {
-	const { i18n, t } = useTranslation('coursePage')
+	const { i18n, t } = useTranslation('courseInner')
 	const { courseId } = useCourse()
 	const [gameTableData, setGameTableData] = useState<DropdownTableBlock | null>(
 		null

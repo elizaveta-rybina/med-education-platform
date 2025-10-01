@@ -52,23 +52,30 @@ export const useDropdownTable = ({
 		block.rows.forEach(row => {
 			row.values.forEach((_, index) => {
 				const cellId = `${row.id}-col${index}`
-				const userAnswer = selectedAnswers[cellId]
 				const columnId = block.columns[index].id
-				const correctAnswerKey = Object.keys(block.correctAnswers).find(
-					key => key === `${row.id}-${columnId}`
-				)
-				const correctAnswerId = correctAnswerKey
-					? block.correctAnswers[correctAnswerKey]
-					: null
-				const correctAnswer = block.columnOptions[columnId]?.find(
+				const userAnswer = selectedAnswers[cellId] || ''
+				const correctAnswerKey = `${row.id}-col${index}`
+				const correctAnswerId = block.correctAnswers[correctAnswerKey] || ''
+
+				// Находим правильный ответ из cellOptions или columnOptions
+				const options =
+					row.cellOptions?.[`col${index}`] ||
+					block.columnOptions?.[columnId] ||
+					[]
+				const correctAnswer = options.find(
 					opt => opt.id === correctAnswerId
 				)?.content
 
-				if (index > 0 && correctAnswer && userAnswer !== correctAnswer) {
-					newErrors[cellId] = true
-					allCorrect = false
+				// Проверяем только ячейки, где ожидается выбор (correctAnswerId существует)
+				if (index > 0 && correctAnswerId) {
+					if (userAnswer !== correctAnswerId) {
+						newErrors[cellId] = true
+						allCorrect = false
+					} else {
+						newErrors[cellId] = false
+					}
 				} else {
-					newErrors[cellId] = false
+					newErrors[cellId] = false // Ячейки без correctAnswerId не проверяются
 				}
 			})
 		})

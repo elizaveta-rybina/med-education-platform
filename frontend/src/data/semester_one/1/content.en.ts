@@ -1967,28 +1967,28 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Disease Outcomes', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '1', column2: '' },
-								{ id: 'row2', column1: '2', column2: '' },
-								{ id: 'row3', column1: '3', column2: '' },
-								{ id: 'row4', column1: '4', column2: '' },
-								{ id: 'row5', column1: '5', column2: '' },
-								{ id: 'row6', column1: '6', column2: '' }
+								{ id: 'row1', title: '1' }, // Статический заголовок строки (было column1: '1')
+								{ id: 'row2', title: '2' },
+								{ id: 'row3', title: '3' },
+								{ id: 'row4', title: '4' },
+								{ id: 'row5', title: '5' },
+								{ id: 'row6', title: '6' }
 							],
 							answers: [
-								{ id: 'ans1', content: 'Complete recovery' },
 								{ id: 'ans2', content: 'Incomplete recovery' },
-								{ id: 'ans3', content: 'Relapse' },
+								{ id: 'ans1', content: 'Complete recovery' },
 								{ id: 'ans4', content: 'Remission' },
+								{ id: 'ans6', content: 'Death' },
+								{ id: 'ans3', content: 'Relapse' },
 								{ id: 'ans5', content: 'Transition to chronic form' },
-								{ id: 'ans6', content: 'Death' }
 							],
 							correctAnswers: {
-								row1: ['ans1'],
-								row2: ['ans2'],
-								row3: ['ans3'],
-								row4: ['ans4'],
-								row5: ['ans5'],
-								row6: ['ans6']
+								row1_effects: ['ans1'], // Формат: rowId_columnId
+								row2_effects: ['ans2'],
+								row3_effects: ['ans3'],
+								row4_effects: ['ans4'],
+								row5_effects: ['ans5'],
+								row6_effects: ['ans6']
 							}
 						},
 						{
@@ -2000,22 +2000,22 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Stages of Dying', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '1', column2: '' },
-								{ id: 'row2', column1: '2', column2: '' },
-								{ id: 'row3', column1: '3', column2: '' },
-								{ id: 'row4', column1: '4', column2: '' }
+								{ id: 'row1', title: '1' },
+								{ id: 'row2', title: '2' },
+								{ id: 'row3', title: '3' },
+								{ id: 'row4', title: '4' }
 							],
 							answers: [
 								{ id: 'ans1', content: 'Pre-agony' },
-								{ id: 'ans2', content: 'Agony' },
 								{ id: 'ans3', content: 'Clinical death' },
-								{ id: 'ans4', content: 'Biological death' }
+								{ id: 'ans4', content: 'Biological death' },
+								{ id: 'ans2', content: 'Agony' },
 							],
 							correctAnswers: {
-								row1: ['ans1'],
-								row2: ['ans2'],
-								row3: ['ans3'],
-								row4: ['ans4']
+								row1_effects: ['ans1'],
+								row2_effects: ['ans2'],
+								row3_effects: ['ans3'],
+								row4_effects: ['ans4']
 							}
 						}
 					]

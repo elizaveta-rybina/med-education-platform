@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDropdownTable } from '../model/hooks/useDropdownTable'
-import { DropdownTableBlock } from '../model/types'
+import { DropdownOption, DropdownTableBlock } from '../model/types'
 import { DropdownCell } from './DropdownCell'
+import React from 'react'
 
 interface DropdownTableComponentProps {
 	block: DropdownTableBlock
@@ -24,35 +25,64 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 	} = useDropdownTable({ block, onComplete })
 	const [isLocked, setIsLocked] = useState(false)
 
-	// Загрузка сохранённых ответов из localStorage при монтировании
+	// Группировка строк по первому столбцу (values[0])
+	const groupedRows = block.rows.reduce<
+		{
+			title: string | React.ReactNode
+			subRows: {
+				id: string
+				values: (string | React.ReactNode)[]
+				cellOptions?: Record<string, DropdownOption[]>
+			}[]
+		}[]
+	>((acc, row) => {
+		const title = row.values[0] || 'Без названия'
+		const existingGroup = acc.find(group => group.title === title)
+		if (existingGroup) {
+			existingGroup.subRows.push({
+				id: row.id,
+				values: row.values,
+				cellOptions: row.cellOptions
+			})
+		} else {
+			acc.push({
+				title,
+				subRows: [
+					{ id: row.id, values: row.values, cellOptions: row.cellOptions }
+				]
+			})
+		}
+		return acc
+	}, [])
+
+	// Загрузка сохранённых ответов из localStorage
 	useEffect(() => {
 		const savedAnswers = localStorage.getItem('ddtAnswers')
 		if (savedAnswers) {
 			const parsedAnswers = JSON.parse(savedAnswers)
 			Object.entries(parsedAnswers).forEach(([cellId, answerId]) => {
-				// Разбиваем cellId (например, 'row1-col1') на rowId и colIndex
 				const [rowId, colPart] = cellId.split('-col')
 				const colIndex = parseInt(colPart, 10)
 				if (rowId && !isNaN(colIndex)) {
 					handleSelectChange(rowId, colIndex, answerId as string)
 				}
 			})
-			setIsLocked(true) // Блокируем таблицу, если ответы уже сохранены
+			setIsLocked(true)
 		}
 	}, [handleSelectChange])
 
-	// Модифицированный checkAnswers для сохранения в localStorage
+	// Модифицированный checkAnswers
 	const handleCheckAnswers = () => {
 		checkAnswers()
 		localStorage.setItem('ddtAnswers', JSON.stringify(selectedAnswers))
-		setIsLocked(true) // Блокируем после первой проверки
+		setIsLocked(true)
 	}
 
-	// Модифицированный resetAnswers, чтобы учитывать isLocked
+	// Модифицированный resetAnswers
 	const handleResetAnswers = () => {
 		if (!isLocked) {
 			resetAnswers()
-			localStorage.removeItem('ddtAnswers') // Очищаем localStorage, если не заблокировано
+			localStorage.removeItem('ddtAnswers')
 		}
 	}
 
@@ -84,31 +114,51 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 						</tr>
 					</thead>
 					<tbody>
-						{block.rows.map(row => (
-							<tr
-								key={row.id}
-								className='border-b border-gray-200 hover:bg-gray-50 transition-colors'
-							>
-								{row.values.map((value, index) => {
-									const cellId = `${row.id}-col${index}`
-									return (
-										<DropdownCell
-											key={cellId}
-											rowId={row.id}
-											colIndex={index}
-											value={value}
-											columnId={block.columns[index].id}
-											options={
-												block.columnOptions[block.columns[index].id] || []
-											}
-											selectedAnswer={selectedAnswers[cellId]}
-											hasError={errors[cellId]}
-											onSelectChange={isLocked ? () => {} : handleSelectChange}
-											disabled={isLocked}
-										/>
-									)
-								})}
-							</tr>
+						{groupedRows.map(group => (
+							<React.Fragment key={`group-${group.title}`}>
+								{group.subRows.map((subRow, index) => (
+									<tr
+										key={subRow.id}
+										className='border-b border-gray-200 hover:bg-gray-50 transition-colors'
+									>
+										{/* Первая колонка: title с rowSpan */}
+										{index === 0 && (
+											<td
+												className='px-4 py-2 border-b border-gray-200 text-gray-700'
+												rowSpan={group.subRows.length}
+											>
+												{group.title}
+											</td>
+										)}
+										{/* Остальные колонки */}
+										{subRow.values.slice(1).map((value, colIndex) => {
+											const actualColIndex = colIndex + 1 // Смещение, так как values[0] — это title
+											const cellId = `${subRow.id}-col${actualColIndex}`
+											const columnId = block.columns[actualColIndex].id
+											const options =
+												subRow.cellOptions?.[`col${actualColIndex}`] ||
+												block.columnOptions?.[columnId] ||
+												[]
+											return (
+												<DropdownCell
+													key={cellId}
+													rowId={subRow.id}
+													colIndex={actualColIndex}
+													value={value}
+													columnId={columnId}
+													options={options}
+													selectedAnswer={selectedAnswers[cellId]}
+													hasError={errors[cellId]}
+													onSelectChange={
+														isLocked ? () => {} : handleSelectChange
+													}
+													disabled={isLocked}
+												/>
+											)
+										})}
+									</tr>
+								))}
+							</React.Fragment>
 						))}
 					</tbody>
 				</table>

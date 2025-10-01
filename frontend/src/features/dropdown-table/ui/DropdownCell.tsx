@@ -4,13 +4,13 @@ import { DropdownOption } from '../model/types'
 interface DropdownCellProps {
 	rowId: string
 	colIndex: number
-	value: string
+	value: string | React.ReactNode
 	columnId: string
 	options: DropdownOption[]
 	selectedAnswer?: string
 	hasError?: boolean
 	onSelectChange: (rowId: string, colIndex: number, value: string) => void
-	disabled?: boolean // Добавляем пропс disabled
+	disabled?: boolean
 }
 
 export const DropdownCell: React.FC<DropdownCellProps> = ({
@@ -40,12 +40,10 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 					}`}
 				>
 					<option value='' disabled>
-						–
+						Выберите ответ
 					</option>
 					{options?.map(option => (
 						<option key={option.id} value={option.id}>
-							{' '}
-							{/* Изменено с option.content на option.id */}
 							{option.content}
 						</option>
 					))}
