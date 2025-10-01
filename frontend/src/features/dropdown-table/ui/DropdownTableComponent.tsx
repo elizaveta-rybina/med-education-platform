@@ -83,20 +83,30 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 
   // Модифицированный checkAnswers
   const handleCheckAnswers = () => {
-    checkAnswers()
-    const savedAnswers = JSON.parse(localStorage.getItem('ddtAnswers') || '{}')
-    savedAnswers[block.id] = selectedAnswers
-    localStorage.setItem('ddtAnswers', JSON.stringify(savedAnswers))
-    setIsLocked(true)
-
-    // Отметка главы как прочитанной в localStorage
-    if (chapterHash) {
-      const savedReadStatus = localStorage.getItem('chapterReadStatus')
-      const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}
-      readStatus[chapterHash] = true
-      localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
-    }
-  }
+		console.log('DropdownTable: handleCheckAnswers, chapterHash:', chapterHash)
+		try {
+			checkAnswers()
+			const savedAnswers = JSON.parse(
+				localStorage.getItem('ddtAnswers') || '{}'
+			)
+			savedAnswers[block.id] = selectedAnswers
+			localStorage.setItem('ddtAnswers', JSON.stringify(savedAnswers))
+			setIsLocked(true)
+			if (chapterHash) {
+				const savedReadStatus = localStorage.getItem('chapterReadStatus')
+				const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}
+				readStatus[chapterHash] = true
+				localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
+				console.log('DropdownTable: Updated chapterReadStatus:', readStatus)
+				// Dispatch custom event
+				window.dispatchEvent(new Event('chapterReadStatusUpdated'))
+			} else {
+				console.warn('DropdownTable: chapterHash is undefined')
+			}
+		} catch (error) {
+			console.error('DropdownTable: Error in handleCheckAnswers:', error)
+		}
+	}
 
   // Модифицированный resetAnswers
   const handleResetAnswers = () => {

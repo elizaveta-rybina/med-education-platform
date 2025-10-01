@@ -37,14 +37,14 @@ export const DragDropTableComponent: React.FC<
 	const [hasInteracted, setHasInteracted] = useState(false)
 
 	useEffect(() => {
-		if (
-			hasInteracted &&
-			availableAnswers.length === 0 &&
-			!isCompleted &&
-			Object.keys(assigned).some(id => assigned[id].length > 0)
-		) {
-			checkAnswers()
-		}
+		// if (
+		// 	hasInteracted &&
+		// 	availableAnswers.length === 0 &&
+		// 	!isCompleted &&
+		// 	Object.keys(assigned).some(id => assigned[id].length > 0)
+		// ) {
+		// 	checkAnswers()
+		// }
 	}, [availableAnswers, isCompleted, assigned, hasInteracted, checkAnswers])
 
 	// Обработчик для кнопки "Проверить ответы" с отметкой главы как прочитанной
