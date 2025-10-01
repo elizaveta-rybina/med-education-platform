@@ -2096,8 +2096,7 @@ export const courseData: Course = {
 							type: 'game',
 							title:
 								'Патогенное действие на организм уменьшения кислорода во вдыхаемом воздухе в условиях гипотермии',
-							gameUrl:
-								'https://gd.games/instant-builds/eae6daea-127e-4393-9d1d-fc262f8defec',
+							gameUrl: '/games/lab1/index.html',
 							width: '100%',
 							height: 'auto'
 						}
