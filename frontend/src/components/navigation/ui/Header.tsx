@@ -1,7 +1,7 @@
 import logo from '@/assets/logo.png'
 import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
-import React from 'react'
-//import { ThemeToggleButton } from '@/components/common/ThemeToggleButton'
+import { LoginButton, LoginModal } from '@/features/auth-modal'
+import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -13,6 +13,11 @@ export const Header: React.FC<HeaderProps> = ({
 	backgroundColor = '#7D4F93'
 }) => {
 	const { t } = useTranslation()
+	const [isModalOpen, setIsModalOpen] = useState(false)
+
+	const toggleModal = () => {
+		setIsModalOpen(!isModalOpen)
+	}
 
 	return (
 		<header
@@ -36,9 +41,11 @@ export const Header: React.FC<HeaderProps> = ({
 					<div className='flex items-center gap-2 2xsm:gap-3'>
 						{/* <ThemeToggleButton /> */}
 						<LanguageToggleButton />
+						<LoginButton onClick={toggleModal} />
 					</div>
 				</div>
 			</nav>
+			<LoginModal isOpen={isModalOpen} onClose={toggleModal} />
 		</header>
 	)
 }

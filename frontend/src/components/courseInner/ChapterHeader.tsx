@@ -9,7 +9,7 @@ export const ChapterHeader: React.FC<ChapterHeaderProps> = ({
 	title,
 	isRead
 }) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 
 	return (
 		<h1 className='text-xl sm:text-2xl font-bold text-gray-800 mb-4 flex items-center'>

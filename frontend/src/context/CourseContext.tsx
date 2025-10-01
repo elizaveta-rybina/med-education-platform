@@ -1,5 +1,3 @@
-import { courseData as courseDataRu } from '@/data/semester_one/13/content'
-import { courseData as courseDataEn } from '@/data/semester_one/13/content.en'
 import {
 	createContext,
 	ReactNode,
@@ -8,10 +6,12 @@ import {
 	useState
 } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useParams } from 'react-router-dom'
 import { Course, QuestionBlock } from '../data/types'
 
 interface CourseContextType {
-	course: Course
+	course: Course | null
+	courseId?: string // Добавляем courseId
 	markChapterAsRead: (moduleId: string, chapterId: string) => void
 	answerQuestion: (
 		moduleId: string,
@@ -32,10 +32,9 @@ export const CourseContext = createContext<CourseContextType | undefined>(
 
 export const CourseProvider = ({ children }: { children: ReactNode }) => {
 	const { i18n } = useTranslation()
-	const initialCourseData = i18n.language === 'en' ? courseDataEn : courseDataRu
-	const [course, setCourse] = useState<Course>(initialCourseData)
+	const { courseId } = useParams<{ courseId: string }>()
+	const [course, setCourse] = useState<Course | null>(null)
 
-	// Preserve user progress when switching languages
 	const mergeCourseData = (
 		newCourseData: Course,
 		oldCourseData: Course
@@ -75,30 +74,46 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 		}
 	}
 
-	// Update course data when language changes
 	useEffect(() => {
-		const newCourseData = i18n.language === 'en' ? courseDataEn : courseDataRu
-		setCourse(prev => mergeCourseData(newCourseData, prev))
-		console.log('Course data updated for language:', i18n.language)
-	}, [i18n.language])
+		const loadCourseData = async () => {
+			if (!courseId) return
+			try {
+				const langSuffix = i18n.language === 'en' ? '.en' : ''
+				const module = await import(
+					`@/data/semester_one/${courseId}/content${langSuffix}.ts`
+				)
+				const newData: Course = module.courseData
+				setCourse(prev => (prev ? mergeCourseData(newData, prev) : newData))
+			} catch (e) {
+				console.error('Ошибка загрузки курса:', e)
+				setCourse(null)
+			}
+		}
+
+		loadCourseData()
+	}, [courseId, i18n.language])
 
 	const markChapterAsRead = useCallback(
 		(moduleId: string, chapterId: string) => {
-			setCourse(prev => ({
-				...prev,
-				modules: prev.modules.map(module =>
-					module.id === moduleId
-						? {
-								...module,
-								chapters: module.chapters.map(chapter =>
-									chapter.id === chapterId
-										? { ...chapter, isRead: true }
-										: chapter
-								)
-						  }
-						: module
-				)
-			}))
+			setCourse(prev =>
+				prev
+					? {
+							...prev,
+							modules: prev.modules.map(module =>
+								module.id === moduleId
+									? {
+											...module,
+											chapters: module.chapters.map(chapter =>
+												chapter.id === chapterId
+													? { ...chapter, isRead: true }
+													: chapter
+											)
+									  }
+									: module
+							)
+					  }
+					: prev
+			)
 		},
 		[]
 	)
@@ -110,7 +125,11 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 			questionId: string,
 			answerId: string
 		) => {
+			let isCorrectAnswer = false
+
 			setCourse(prev => {
+				if (!prev) return prev
+
 				const updatedModules = prev.modules.map(module => {
 					if (module.id !== moduleId) return module
 
@@ -124,11 +143,9 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 							const isCorrect = block.options.some(
 								opt => opt.id === answerId && opt.isCorrect
 							)
-							return {
-								...block,
-								userAnswer: answerId,
-								isCorrect
-							}
+							if (isCorrect) isCorrectAnswer = true
+
+							return { ...block, userAnswer: answerId, isCorrect }
 						})
 
 						return { ...chapter, blocks: updatedBlocks }
@@ -140,23 +157,15 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 				return { ...prev, modules: updatedModules }
 			})
 
-			// Return result of answer check
-			const question = course.modules
-				.find(m => m.id === moduleId)
-				?.chapters.find(c => c.id === chapterId)
-				?.blocks.find(b => b.type === 'question' && b.id === questionId) as
-				| QuestionBlock
-				| undefined
-
-			return (
-				question?.options.some(o => o.id === answerId && o.isCorrect) || false
-			)
+			return isCorrectAnswer
 		},
-		[course]
+		[]
 	)
 
 	const getTestResults = useCallback(
 		(moduleId: string, chapterId: string) => {
+			if (!course) return { correct: 0, total: 0 }
+
 			const chapter = course.modules
 				.find(m => m.id === moduleId)
 				?.chapters.find(c => c.id === chapterId)
@@ -176,21 +185,25 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 
 	const completeChapterTest = useCallback(
 		(moduleId: string, chapterId: string) => {
-			setCourse(prev => ({
-				...prev,
-				modules: prev.modules.map(module =>
-					module.id === moduleId
-						? {
-								...module,
-								chapters: module.chapters.map(chapter =>
-									chapter.id === chapterId
-										? { ...chapter, testPassed: true }
-										: chapter
-								)
-						  }
-						: module
-				)
-			}))
+			setCourse(prev =>
+				prev
+					? {
+							...prev,
+							modules: prev.modules.map(module =>
+								module.id === moduleId
+									? {
+											...module,
+											chapters: module.chapters.map(chapter =>
+												chapter.id === chapterId
+													? { ...chapter, testPassed: true }
+													: chapter
+											)
+									  }
+									: module
+							)
+					  }
+					: prev
+			)
 		},
 		[]
 	)
@@ -199,6 +212,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 		<CourseContext.Provider
 			value={{
 				course,
+				courseId, // Добавляем courseId в значение контекста
 				markChapterAsRead,
 				answerQuestion,
 				getTestResults,

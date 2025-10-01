@@ -1,3 +1,4 @@
+import { LoginModal } from '@/features/auth-modal'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Module } from '../cfg/modules.data'
@@ -10,6 +11,7 @@ interface ModuleTabsProps {
 export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 	const navigate = useNavigate()
 	const [active, setActive] = useState(1)
+	const [isModalOpen, setIsModalOpen] = useState(false)
 	const current = modules.find(m => m.id === active)!
 
 	const getImageSrc = (image: Module['image'], lang: 'en' | 'ru'): string => {
@@ -17,7 +19,15 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 	}
 
 	const handleStart = () => {
-		navigate(`/course/${current.id}`)
+		if (localStorage.getItem('auth') === 'true') {
+			navigate(`/course/${current.id}`)
+		} else {
+			setIsModalOpen(true)
+		}
+	}
+
+	const handleModalClose = () => {
+		setIsModalOpen(false)
 	}
 
 	return (
@@ -77,6 +87,9 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 					</div>
 				</div>
 			</div>
+
+			{/* Login Modal */}
+			<LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
 		</div>
 	)
 }

@@ -21,7 +21,7 @@ export const CourseButton: React.FC<CourseButtonProps> = ({ targetId }) => {
 			onClick={handleClick}
 			className='flex text-xl items-center mx-auto gap-2 border-2 border-[#9D358E] text-[#9D358E] font-medium px-15 py-2 rounded-full hover:bg-purple-50 transition-colors'
 		>
-			{t('goToModules')}
+			{t('info.goToModules')}
 			<ChevronDown size={24} />
 		</button>
 	)

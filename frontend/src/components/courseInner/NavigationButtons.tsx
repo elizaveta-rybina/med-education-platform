@@ -17,7 +17,7 @@ export const NavigationButtons = ({
 	currentChapterIndex,
 	onNavigate
 }: NavigationButtonsProps) => {
-	const { t } = useTranslation('coursePage')
+	const { t } = useTranslation('courseInner')
 	const isFirstChapter = currentModuleIndex === 0 && currentChapterIndex === 0
 	const isLastChapter =
 		currentModuleIndex === course.modules.length - 1 &&
@@ -25,7 +25,7 @@ export const NavigationButtons = ({
 			course.modules[currentModuleIndex].chapters.length - 1
 
 	return (
-		<div className='mt-12 flex justify-between'>
+		<div className='fixed bottom-0 w-10/13 flex justify-between px-4 py-3 bg-white'>
 			<button
 				onClick={() => onNavigate('prev')}
 				disabled={isFirstChapter}

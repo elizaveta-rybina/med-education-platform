@@ -10,8 +10,5 @@ export const useCourse = () => {
 		throw new Error('useCourse must be used within a CourseProvider')
 	}
 
-	console.log('Current language:', i18n.language)
-	console.log('Course data:', context)
-
 	return context
 }
