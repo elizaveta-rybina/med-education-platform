@@ -10,7 +10,7 @@ export const useDragDropTable = (
 	const [availableAnswers, setAvailableAnswers] = useState(block.answers)
 	const [activeAnswer, setActiveAnswer] = useState<{
 		id: string
-		content: React.ReactNode
+		content: string | React.ReactNode
 	} | null>(null)
 	const [errors, setErrors] = useState<Record<string, boolean>>({})
 	const [isCompleted, setIsCompleted] = useState(false)
@@ -26,10 +26,13 @@ export const useDragDropTable = (
 	useEffect(() => {
 		const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}')
 		const blockData = savedData[blockKey] || {}
-		setAssigned(
-			blockData.assigned ||
-				Object.fromEntries(block.rows.map(row => [row.id, []]))
+
+		// Инициализация assigned только для droppable колонки (effects)
+		const initialAssigned = Object.fromEntries(
+			block.rows.map(row => [`${row.id}_effects`, []])
 		)
+
+		setAssigned(blockData.assigned || initialAssigned)
 		setAvailableAnswers(
 			blockData.assigned
 				? block.answers.filter(
@@ -39,7 +42,7 @@ export const useDragDropTable = (
 		)
 		setErrors(
 			blockData.errors ||
-				Object.fromEntries(block.rows.map(row => [row.id, false]))
+				Object.fromEntries(block.rows.map(row => [`${row.id}_effects`, false]))
 		)
 		setIsCompleted(blockData.isCompleted || false)
 		setAttempts(blockData.attempts || 0)
@@ -61,7 +64,7 @@ export const useDragDropTable = (
 		localStorage.setItem(storageKey, JSON.stringify(savedData))
 	}
 
-	// Сохранение после каждого изменения assigned, attempts, isLocked и т.д.
+	// Сохранение после каждого изменения
 	useEffect(() => {
 		if (Object.keys(assigned).length > 0) {
 			saveToStorage()
@@ -81,12 +84,12 @@ export const useDragDropTable = (
 		setActiveAnswer(null)
 
 		if (over?.id) {
-			const rowId = String(over.id)
+			const cellId = String(over.id) // Формат: rowId_effects
 			const answerId = String(active.id)
 
 			setAssigned(prev => ({
 				...prev,
-				[rowId]: [...(prev[rowId] || []), answerId]
+				[cellId]: [...(prev[cellId] || []), answerId]
 			}))
 
 			setAvailableAnswers(prev => prev.filter(a => a.id !== answerId))
@@ -101,18 +104,27 @@ export const useDragDropTable = (
 		let allCorrect = true
 
 		block.rows.forEach(row => {
-			const userAnswers = assigned[row.id] || []
-			const correctAnswers = block.correctAnswers[row.id] || []
+			const cellId = `${row.id}_effects`
+			const userAnswers = (assigned[cellId] || []).map(String)
+			const correctAnswers = (block.correctAnswers[cellId] || []).map(String)
 
-			const isCorrect =
-				userAnswers.length === correctAnswers.length &&
-				correctAnswers.every(id => userAnswers.includes(id)) &&
-				userAnswers.every(id => correctAnswers.includes(id))
+			let isCorrect = false
+			if (correctAnswers.length > 0) {
+				isCorrect =
+					userAnswers.length === correctAnswers.length &&
+					correctAnswers.every(id => userAnswers.includes(id)) &&
+					userAnswers.every(id => correctAnswers.includes(id))
+			}
 
-			newErrors[row.id] = !isCorrect
+			console.log('checking row', row.id, { userAnswers, correctAnswers })
+
+			newErrors[cellId] = !isCorrect
 			if (!isCorrect) allCorrect = false
 			if (isCorrect) localCorrectCount++
 		})
+
+		console.log('assigned', assigned)
+		console.log('correctAnswers', block.correctAnswers)
 
 		setErrors(newErrors)
 		setIsCompleted(true)
@@ -125,18 +137,22 @@ export const useDragDropTable = (
 
 	const resetAnswers = () => {
 		if (isLocked) return
-		setAssigned(Object.fromEntries(block.rows.map(row => [row.id, []])))
+		setAssigned(
+			Object.fromEntries(block.rows.map(row => [`${row.id}_effects`, []]))
+		)
 		setAvailableAnswers(block.answers)
-		setErrors({})
+		setErrors(
+			Object.fromEntries(block.rows.map(row => [`${row.id}_effects`, false]))
+		)
 		setIsCompleted(false)
 		setCorrectCount(0)
 	}
 
-	const removeAnswer = (rowId: string, answerId: string) => {
+	const removeAnswer = (cellId: string, answerId: string) => {
 		if (isLocked) return
 		setAssigned(prev => ({
 			...prev,
-			[rowId]: prev[rowId].filter(id => id !== answerId)
+			[cellId]: prev[cellId].filter(id => id !== answerId)
 		}))
 		setAvailableAnswers(prev => [
 			...prev,

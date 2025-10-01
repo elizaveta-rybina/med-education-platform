@@ -2,18 +2,39 @@ import { DragDropTableBlock } from '../types'
 
 export const useGroupedRows = (block: DragDropTableBlock) => {
 	return block.rows.reduce<
-		{ system: string; effects: Array<{ id: string; effect: string }> }[]
+		{
+			title: string | React.ReactNode
+			subRows: { id: string; characteristic?: string | React.ReactNode }[]
+		}[]
 	>((acc, row) => {
-		if (!row.id || !row.column1 || !row.column2) return acc
-		const existingGroup = acc.find(group => group.system === row.column1)
+		// Пропускаем строки без id
+		if (!row.id) return acc
+
+		// Используем title или значение по умолчанию
+		const title = row.title || 'Без названия'
+
+		// Находим существующую группу по title
+		const existingGroup = acc.find(group => group.title === title)
+
 		if (existingGroup) {
-			existingGroup.effects.push({ id: row.id, effect: row.column2 as string })
+			// Добавляем подстроку в существующую группу
+			existingGroup.subRows.push({
+				id: row.id,
+				characteristic: row.characteristic
+			})
 		} else {
+			// Создаем новую группу
 			acc.push({
-				system: row.column1 as string,
-				effects: [{ id: row.id, effect: row.column2 as string }]
+				title,
+				subRows: [
+					{
+						id: row.id,
+						characteristic: row.characteristic
+					}
+				]
 			})
 		}
+
 		return acc
 	}, [])
 }

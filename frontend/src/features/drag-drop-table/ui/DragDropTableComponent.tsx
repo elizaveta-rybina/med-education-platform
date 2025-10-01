@@ -43,8 +43,10 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 		}
 	}, [availableAnswers, isCompleted, assigned, hasInteracted, checkAnswers])
 
-	if (block.rows.length === 0) {
-		return <div className='text-red-700'>{t('dnd.noRowsAvailable')}</div>
+	if (block.rows.length === 0 || block.columns.length === 0) {
+		return (
+			<div className='text-red-700'>{t('dnd.noRowsOrColumnsAvailable')}</div>
+		)
 	}
 
 	return (
@@ -73,7 +75,7 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 									<th
 										key={column.id}
 										className='p-4 border-1 text-left font-medium text-gray-700'
-										style={{ width: column.width }}
+										style={{ width: column.width || 'auto' }}
 									>
 										{column.title}
 									</th>
@@ -81,47 +83,71 @@ export const DragDropTableComponent: React.FC<DragDropTableComponentProps> = ({
 							</tr>
 						</thead>
 						<tbody>
-							{block.rows.map(row => (
-								<tr
-									key={`row-${row.id}`}
-									className={`border-b min-h-[3rem] ${
-										errors[row.id] ? 'bg-red-50/50' : 'hover:bg-gray-50/50'
-									}`}
-									style={{ display: 'table-row' }}
-								>
-									<DroppableCell id={row.id}>
-										<div className='min-h-[2rem] flex flex-wrap gap-2'>
-											{assigned[row.id]?.map(answerId => {
-												const answer = block.answers.find(
-													a => a.id === answerId
-												)
-												return (
-													<div
-														key={`answer-${answerId}`}
-														className='flex items-center bg-purple-100/80 px-3 py-1 rounded-full text-sm'
-													>
-														<span>{answer?.content}</span>
-														{!isLocked && (
-															<button
-																onClick={() => removeAnswer(row.id, answerId)}
-																className='ml-1.5 text-gray-500 hover:text-gray-700 text-xs'
-																aria-label={t('dnd.removeAnswer')}
-															>
-																×
-															</button>
-														)}
-													</div>
-												)
-											})}
-											{!assigned[row.id]?.length && (
-												<div className='text-gray-400 text-sm self-center'>
-													{t('dnd.dragHere')}
-												</div>
-											)}
-										</div>
-									</DroppableCell>
-								</tr>
-							))}
+							{groupedRows.map(group =>
+								group.subRows.map((subRow, idx) => (
+									<tr
+										key={`row-${subRow.id}`}
+										className={`border-b min-h-[3rem] ${
+											errors[`${subRow.id}_effects`]
+												? 'bg-red-50/50'
+												: 'hover:bg-gray-50/50'
+										}`}
+									>
+										{group.title !== 'Без названия' && idx === 0 && (
+											<td
+												rowSpan={group.subRows.length}
+												className='p-4 border-1 text-gray-700 align-top'
+											>
+												{group.title}
+											</td>
+										)}
+
+										{subRow.characteristic && (
+											<td className='p-4 border-1 text-gray-700'>
+												{subRow.characteristic}
+											</td>
+										)}
+
+										<DroppableCell id={`${subRow.id}_effects`}>
+											<div className='min-h-[2rem] flex flex-wrap gap-2'>
+												{assigned[`${subRow.id}_effects`]?.map(answerId => {
+													const answer = block.answers.find(
+														a => a.id === answerId
+													)
+													return (
+														<div
+															key={`answer-${answerId}`}
+															className='flex items-center bg-purple-100/80 px-3 py-1 rounded-full text-sm'
+														>
+															<span>{answer?.content}</span>
+															{!isLocked && (
+																<button
+																	onClick={() =>
+																		removeAnswer(
+																			`${subRow.id}_effects`,
+																			answerId
+																		)
+																	}
+																	className='ml-1.5 text-gray-500 hover:text-gray-700 text-xs'
+																	aria-label={t('dnd.removeAnswer')}
+																>
+																	×
+																</button>
+															)}
+														</div>
+													)
+												})}
+												{!assigned[`${subRow.id}_effects`] ||
+													(!assigned[`${subRow.id}_effects`]?.length && (
+														<div className='text-gray-400 text-sm self-center'>
+															{t('dnd.dragHere')}
+														</div>
+													))}
+											</div>
+										</DroppableCell>
+									</tr>
+								))
+							)}
 						</tbody>
 					</table>
 				</div>

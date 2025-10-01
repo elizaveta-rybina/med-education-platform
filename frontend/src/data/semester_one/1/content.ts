@@ -2032,12 +2032,12 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Исходы заболевания', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '1', column2: '' },
-								{ id: 'row2', column1: '2', column2: '' },
-								{ id: 'row3', column1: '3', column2: '' },
-								{ id: 'row4', column1: '4', column2: '' },
-								{ id: 'row5', column1: '5', column2: '' },
-								{ id: 'row6', column1: '6', column2: '' }
+								{ id: 'row1' }, // Статический заголовок строки (было column1: '1')
+								{ id: 'row2' },
+								{ id: 'row3' },
+								{ id: 'row4' },
+								{ id: 'row5' },
+								{ id: 'row6' }
 							],
 							answers: [
 								{ id: 'ans1', content: 'Выздоровление полное' },
@@ -2048,12 +2048,12 @@ export const courseData: Course = {
 								{ id: 'ans6', content: 'Смерть' }
 							],
 							correctAnswers: {
-								row1: ['ans1'],
-								row2: ['ans2'],
-								row3: ['ans3'],
-								row4: ['ans4'],
-								row5: ['ans5'],
-								row6: ['ans6']
+								row1_effects: ['ans1'], // Формат: rowId_columnId
+								row2_effects: ['ans2'],
+								row3_effects: ['ans3'],
+								row4_effects: ['ans4'],
+								row5_effects: ['ans5'],
+								row6_effects: ['ans6']
 							}
 						},
 						{
@@ -2065,10 +2065,10 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Стадии умирания', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', column1: '1', column2: '' },
-								{ id: 'row2', column1: '2', column2: '' },
-								{ id: 'row3', column1: '3', column2: '' },
-								{ id: 'row4', column1: '4', column2: '' }
+								{ id: 'row1' },
+								{ id: 'row2' },
+								{ id: 'row3' },
+								{ id: 'row4' }
 							],
 							answers: [
 								{ id: 'ans1', content: 'Предагония' },
@@ -2077,10 +2077,10 @@ export const courseData: Course = {
 								{ id: 'ans4', content: 'Биологическая смерть' }
 							],
 							correctAnswers: {
-								row1: ['ans1'],
-								row2: ['ans2'],
-								row3: ['ans3'],
-								row4: ['ans4']
+								row1_effects: ['ans1'],
+								row2_effects: ['ans2'],
+								row3_effects: ['ans3'],
+								row4_effects: ['ans4']
 							}
 						}
 					]

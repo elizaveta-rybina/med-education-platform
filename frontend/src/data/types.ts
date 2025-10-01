@@ -88,14 +88,14 @@ export interface DragDropTableBlock {
 	}[]
 	rows: {
 		id: string
-		column1?: string | React.ReactNode
-		column2?: string | React.ReactNode
+		title?: string | React.ReactNode
+		characteristic?: string | React.ReactNode
 	}[]
 	answers: {
 		id: string
 		content: string | React.ReactNode
 	}[]
-	correctAnswers: Record<string, string[]>
+	correctAnswers: Record<string, string[]> // Ключи: 'rowId_columnId' (например, 'row1_type')
 }
 
 export interface FreeInputBlock {

@@ -10,14 +10,14 @@ export interface DragDropTableBlock {
 	}[]
 	rows: {
 		id: string
-		column1?: string | React.ReactNode
-		column2?: string | React.ReactNode
+		title?: string | React.ReactNode // Для первой колонки (факторы)
+		characteristic?: string | React.ReactNode // Для второй колонки (характеристики)
 	}[]
 	answers: {
 		id: string
 		content: string | React.ReactNode
 	}[]
-	correctAnswers: Record<string, string[]>
+	correctAnswers: Record<string, string[]> // Формат: { [rowId_columnId]: answerId[] }
 }
 
 export interface DraggableAnswerProps {
