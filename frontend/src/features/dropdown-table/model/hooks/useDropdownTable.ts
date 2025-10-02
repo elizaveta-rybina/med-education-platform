@@ -56,7 +56,6 @@ export const useDropdownTable = ({
 				const correctAnswerKey = `${row.id}-col${index}`
 				const correctAnswerId = block.correctAnswers[correctAnswerKey] || ''
 
-				// Проверяем только ячейки, где ожидается выбор (correctAnswerId существует)
 				if (index > 0 && correctAnswerId) {
 					if (userAnswer !== correctAnswerId) {
 						newErrors[cellId] = true
@@ -65,7 +64,7 @@ export const useDropdownTable = ({
 						newErrors[cellId] = false
 					}
 				} else {
-					newErrors[cellId] = false // Ячейки без correctAnswerId не проверяются
+					newErrors[cellId] = false
 				}
 			})
 		})
