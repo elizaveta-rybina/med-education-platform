@@ -18,26 +18,6 @@ export const useResults = () => {
 		let total = 0
 		let correct = 0
 
-		// Подсчет всех вопросов из структуры курса
-		if (course) {
-			course.modules.forEach(module => {
-				module.chapters.forEach(chapter => {
-					chapter.blocks.forEach(block => {
-						if (block.type === 'question') {
-							total += 1 // Каждый question-блок — один вопрос
-						} else if (block.type === 'drag-drop-table') {
-							// Предполагаем, что каждая строка — один вопрос
-							total += block.rows?.length || 0
-						}
-						// Предполагаем, что ddtAnswers относится к таблицам, аналогичным drag-drop-table
-						// Если ddtAnswers относится к dropdown-table, нужно знать структуру блока
-					})
-				})
-			})
-		} else {
-			console.warn('useResults: Course data not available')
-		}
-
 		// Process testResults (для question-блоков)
 		if (testResults) {
 			try {
@@ -45,7 +25,8 @@ export const useResults = () => {
 					string,
 					{ totalCorrect: number; totalQuestions: number }
 				>
-				Object.values(results).forEach(({ totalCorrect }) => {
+				Object.values(results).forEach(({ totalCorrect, totalQuestions }) => {
+					total += totalQuestions // Учитываем все вопросы из testResults
 					correct += totalCorrect // Учитываем только правильные ответы
 				})
 			} catch (error) {
@@ -53,7 +34,7 @@ export const useResults = () => {
 			}
 		}
 
-		// Process ddtAnswers (предполагаем, что это dropdown-table)
+		// Process ddtAnswers (предполагаемый dropdown-table)
 		if (ddtAnswers) {
 			try {
 				const results = JSON.parse(ddtAnswers) as Record<
@@ -62,29 +43,22 @@ export const useResults = () => {
 					| Record<string, string>
 				>
 				Object.values(results).forEach(block => {
-					if (
-						'answers' in block &&
-						'isCorrect' in block &&
-						block.isCorrect !== undefined
-					) {
-						total += Object.keys(block.answers).filter(
-							key => !key.endsWith('-col0')
-						).length // Учитываем все ячейки, кроме col0
-						correct += block.isCorrect
-							? Object.keys(block.answers).filter(key => !key.endsWith('-col0'))
-									.length
-							: 0
-					} else if ('answers' in block) {
-						// Учитываем все ячейки (кроме col0) как вопросы, даже если isCorrect отсутствует
-						total += Object.keys(block.answers).filter(
+					if ('answers' in block) {
+						// Учитываем все ячейки (кроме col0) как вопросы
+						const questionCount = Object.keys(block.answers).filter(
 							key => !key.endsWith('-col0')
 						).length
-						// Пустые ответы или неправильные не добавляются в correct
+						total += questionCount
+						// Если isCorrect есть и равно true, добавляем все ячейки в correct
+						if ('isCorrect' in block && block.isCorrect) {
+							correct += questionCount
+						}
 					} else {
 						// Учитываем все ячейки (кроме col0) как вопросы
-						total += Object.keys(block).filter(
+						const questionCount = Object.keys(block).filter(
 							key => !key.endsWith('-col0')
 						).length
+						total += questionCount
 					}
 				})
 			} catch (error) {
@@ -102,15 +76,22 @@ export const useResults = () => {
 						isLocked?: boolean
 						errors?: Record<string, boolean>
 						isCompleted?: boolean
+						assigned?: Record<string, string[]>
 					}
 				>
 				Object.values(results).forEach(block => {
-					if (block.correctCount !== undefined) {
-						total += 1 // Каждая строка — один вопрос
-						correct += block.correctCount > 0 ? 1 : 0
+					if (block.correctCount !== undefined && block.assigned) {
+						// Считаем количество строк из assigned
+						const rowCount = Object.keys(block.assigned).length
+						total += rowCount // Каждая строка — один вопрос
+						correct += block.correctCount // Учитываем правильные ответы
 					} else if (block.errors && typeof block.errors === 'object') {
-						total += 1
-						correct += Object.values(block.errors).every(err => !err) ? 1 : 0
+						// Считаем количество строк из errors
+						const rowCount = Object.keys(block.errors).length
+						total += rowCount
+						correct += Object.values(block.errors).every(err => !err)
+							? rowCount
+							: 0
 					}
 				})
 			} catch (error) {
@@ -127,7 +108,7 @@ export const useResults = () => {
 		calculateResults()
 		window.addEventListener('resultsUpdated', calculateResults)
 		return () => window.removeEventListener('resultsUpdated', calculateResults)
-	}, [course]) // Зависимость от course
+	}, []) // Без зависимости от course
 
 	return { correctAnswers, totalAnswers }
 }
