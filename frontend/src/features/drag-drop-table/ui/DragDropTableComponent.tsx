@@ -9,7 +9,7 @@ import { DroppableCell } from './DroppableCell'
 
 interface DragDropTableComponentPropsExtended
 	extends DragDropTableComponentProps {
-	chapterHash?: string // Для обновления chapterReadStatus
+	chapterHash?: string
 }
 
 export const DragDropTableComponent: React.FC<
@@ -52,8 +52,11 @@ export const DragDropTableComponent: React.FC<
 		if (isLocked || attempts >= 2) return
 
 		checkAnswers()
+		if (!chapterHash) {
+			console.error('chapterHash is undefined or empty')
+			return
+		}
 
-		// Отметка главы как прочитанной в localStorage
 		console.log('chapterHash', chapterHash)
 		if (chapterHash) {
 			const savedReadStatus = localStorage.getItem('chapterReadStatus')
@@ -61,6 +64,8 @@ export const DragDropTableComponent: React.FC<
 			readStatus[chapterHash] = true
 			localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
 		}
+
+		window.dispatchEvent(new Event('chapterReadStatusUpdated'))
 	}
 
 	if (block.rows.length === 0 || block.columns.length === 0) {

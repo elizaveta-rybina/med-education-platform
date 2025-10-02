@@ -98,7 +98,6 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 				readStatus[chapterHash] = true
 				localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
 				console.log('DropdownTable: Updated chapterReadStatus:', readStatus)
-				// Dispatch custom event
 				window.dispatchEvent(new Event('chapterReadStatusUpdated'))
 			} else {
 				console.warn('DropdownTable: chapterHash is undefined')
