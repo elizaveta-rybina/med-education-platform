@@ -2040,11 +2040,11 @@ export const courseData: Course = {
 								{ id: 'row6' }
 							],
 							answers: [
-								{ id: 'ans1', content: 'Выздоровление полное' },
 								{ id: 'ans2', content: 'Выздоровление неполное' },
 								{ id: 'ans3', content: 'Рецидив' },
-								{ id: 'ans4', content: 'Ремиссия' },
 								{ id: 'ans5', content: 'Переход в хроническую форму' },
+								{ id: 'ans1', content: 'Выздоровление полное' },
+								{ id: 'ans4', content: 'Ремиссия' },
 								{ id: 'ans6', content: 'Смерть' }
 							],
 							correctAnswers: {
