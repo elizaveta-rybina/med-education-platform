@@ -19,7 +19,6 @@ const SideBarCourse = () => {
 			const savedReadStatus = localStorage.getItem('chapterReadStatus')
 			if (savedReadStatus) {
 				const parsedStatus = JSON.parse(savedReadStatus)
-				console.log('SideBarCourse: Updated chapterReadStatus:', parsedStatus)
 				setChapterReadStatus(parsedStatus)
 			}
 		}
@@ -35,7 +34,6 @@ const SideBarCourse = () => {
 		const handleHashChange = () => {
 			const newHash = window.location.hash.substring(1)
 			setCurrentHash(newHash)
-			console.log('SideBarCourse: Current hash:', newHash)
 		}
 
 		handleHashChange()

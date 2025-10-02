@@ -77,7 +77,6 @@ export const useTestBlock = ({
 			setLocalAnswers(updatedAnswers)
 
 			if (questionIndex === totalQuestions - 1) {
-				console.log(`Completing test for chapter ${chapterId}`, updatedAnswers)
 				setIsTestCompleted(true)
 				await submitTest(updatedAnswers)
 			} else {

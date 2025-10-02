@@ -57,7 +57,6 @@ export const DragDropTableComponent: React.FC<
 			return
 		}
 
-		console.log('chapterHash', chapterHash)
 		if (chapterHash) {
 			const savedReadStatus = localStorage.getItem('chapterReadStatus')
 			const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}

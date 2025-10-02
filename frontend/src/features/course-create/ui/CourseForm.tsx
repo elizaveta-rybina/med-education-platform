@@ -37,12 +37,12 @@ export const CourseForm = ({ onSuccess }: CourseFormProps) => {
 
 		try {
 			await create(formData)
-			console.log('Course created successfully:', {
-				title: data.title,
-				description: data.description,
-				skills: data.skills,
-				modules_description: data.modules_description
-			})
+			// console.log('Course created successfully:', {
+			// 	title: data.title,
+			// 	description: data.description,
+			// 	skills: data.skills,
+			// 	modules_description: data.modules_description
+			// })
 			onSuccess?.()
 		} catch (err) {
 			console.error('Failed to create course:', err)
