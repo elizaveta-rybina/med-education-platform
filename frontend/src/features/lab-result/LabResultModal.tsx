@@ -32,6 +32,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		resetReadStatus()
 		onRestart()
 		setIsModalOpen(false)
+		window.location.reload()
 	}
 
 	const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {

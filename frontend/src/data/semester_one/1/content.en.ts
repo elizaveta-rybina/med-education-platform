@@ -1967,20 +1967,20 @@ export const courseData: Course = {
 								{ id: 'type', title: 'Disease Outcomes', width: '100%' }
 							],
 							rows: [
-								{ id: 'row1', title: '1' }, // Статический заголовок строки (было column1: '1')
-								{ id: 'row2', title: '2' },
-								{ id: 'row3', title: '3' },
-								{ id: 'row4', title: '4' },
-								{ id: 'row5', title: '5' },
-								{ id: 'row6', title: '6' }
+								{ id: 'row1' }, // Статический заголовок строки (было column1: '1')
+								{ id: 'row2' },
+								{ id: 'row3' },
+								{ id: 'row4' },
+								{ id: 'row5' },
+								{ id: 'row6' }
 							],
 							answers: [
-								{ id: 'ans2', content: 'Incomplete recovery' },
 								{ id: 'ans1', content: 'Complete recovery' },
-								{ id: 'ans4', content: 'Remission' },
 								{ id: 'ans6', content: 'Death' },
 								{ id: 'ans3', content: 'Relapse' },
-								{ id: 'ans5', content: 'Transition to chronic form' },
+								{ id: 'ans4', content: 'Remission' },
+								{ id: 'ans2', content: 'Incomplete recovery' },
+								{ id: 'ans5', content: 'Transition to chronic form' }
 							],
 							correctAnswers: {
 								row1_effects: ['ans1'], // Формат: rowId_columnId
@@ -2009,7 +2009,7 @@ export const courseData: Course = {
 								{ id: 'ans1', content: 'Pre-agony' },
 								{ id: 'ans3', content: 'Clinical death' },
 								{ id: 'ans4', content: 'Biological death' },
-								{ id: 'ans2', content: 'Agony' },
+								{ id: 'ans2', content: 'Agony' }
 							],
 							correctAnswers: {
 								row1_effects: ['ans1'],
