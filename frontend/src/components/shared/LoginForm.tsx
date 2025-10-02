@@ -39,8 +39,6 @@ const LoginForm = () => {
         localStorage.setItem('authToken', response.data.token);
       }
       
-      console.log('Успешная авторизация');
-      // Перенаправляем пользователя или обновляем состояние
     }
 
   } catch (err: unknown) {

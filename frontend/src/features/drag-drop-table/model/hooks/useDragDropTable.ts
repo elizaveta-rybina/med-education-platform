@@ -116,15 +116,10 @@ export const useDragDropTable = (
 					userAnswers.every(id => correctAnswers.includes(id))
 			}
 
-			console.log('checking row', row.id, { userAnswers, correctAnswers })
-
 			newErrors[cellId] = !isCorrect
 			if (!isCorrect) allCorrect = false
 			if (isCorrect) localCorrectCount++
 		})
-
-		console.log('assigned', assigned)
-		console.log('correctAnswers', block.correctAnswers)
 
 		setErrors(newErrors)
 		setIsCompleted(true)

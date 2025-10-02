@@ -48,10 +48,8 @@ export const TestSection: React.FC<TestSectionProps> = ({
 						totalQuestions={testBlocks.length}
 						onNext={() => {
 							if (currentQuestionIndex < testBlocks.length - 1) {
-								console.log(`Moving to next question for chapter ${chapterId}`)
-								onComplete(true) // Замените на проверку правильности, если доступно
+								onComplete(true)
 							} else {
-								console.log(`Test completed for chapter ${chapterId}`)
 								onComplete(true)
 							}
 						}}

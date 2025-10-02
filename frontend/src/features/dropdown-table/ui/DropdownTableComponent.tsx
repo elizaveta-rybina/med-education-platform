@@ -83,7 +83,6 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 
   // Модифицированный checkAnswers
   const handleCheckAnswers = () => {
-		console.log('DropdownTable: handleCheckAnswers, chapterHash:', chapterHash)
 		try {
 			checkAnswers()
 			const savedAnswers = JSON.parse(
@@ -97,7 +96,6 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 				const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}
 				readStatus[chapterHash] = true
 				localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
-				console.log('DropdownTable: Updated chapterReadStatus:', readStatus)
 				window.dispatchEvent(new Event('chapterReadStatusUpdated'))
 			} else {
 				console.warn('DropdownTable: chapterHash is undefined')

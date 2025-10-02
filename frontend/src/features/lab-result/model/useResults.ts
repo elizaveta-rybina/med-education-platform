@@ -1,19 +1,13 @@
-import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
 
 export const useResults = () => {
 	const [correctAnswers, setCorrectAnswers] = useState(0)
 	const [totalAnswers, setTotalAnswers] = useState(0)
-	const { course } = useCourse()
 
 	const calculateResults = () => {
 		const testResults = localStorage.getItem('testResults')
 		const ddtAnswers = localStorage.getItem('ddtAnswers')
 		const dndResults = localStorage.getItem('dndResults')
-
-		console.log('useResults: testResults:', testResults)
-		console.log('useResults: ddtAnswers:', ddtAnswers)
-		console.log('useResults: dndResults:', dndResults)
 
 		let total = 0
 		let correct = 0
@@ -99,7 +93,7 @@ export const useResults = () => {
 			}
 		}
 
-		console.log('useResults: total:', total, 'correct:', correct)
+		//console.log('useResults: total:', total, 'correct:', correct)
 		setTotalAnswers(total)
 		setCorrectAnswers(correct)
 	}

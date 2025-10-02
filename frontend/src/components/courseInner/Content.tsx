@@ -31,7 +31,6 @@ export const Content: React.FC = () => {
 	const updateCurrentChapter = useCallback(() => {
 		if (!course) return
 		const hash = window.location.hash.substring(1)
-		console.log('Current hash:', hash) // Debug
 		for (let mIdx = 0; mIdx < course.modules.length; mIdx++) {
 			const module = course.modules[mIdx]
 			for (let cIdx = 0; cIdx < module.chapters.length; cIdx++) {
@@ -43,7 +42,6 @@ export const Content: React.FC = () => {
 					setCurrentChapter(chapter)
 					setShowTest(chapterReadStatus[chapter.hash] || chapter.isRead)
 					setCurrentQuestionIndex(0)
-					console.log('Chapter found:', chapter.hash) // Debug
 					return
 				}
 			}
