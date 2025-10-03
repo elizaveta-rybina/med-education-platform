@@ -6,7 +6,7 @@ export type PartnersData = {
 
 export const partnersData: PartnersData[] = [
 	{
-		image: 'src/assets/fpg.svg',
+		image: '/assets/fpg.svg',
 		alt: {
 			en: 'The Presidential Grants Found',
 			ru: 'Фонд президентских грантов'
@@ -17,7 +17,7 @@ export const partnersData: PartnersData[] = [
 		}
 	},
 	{
-		image: 'src/assets/mrsu.svg',
+		image: '/assets/mrsu.svg',
 		alt: {
 			en: 'National Research Mordovia State University',
 			ru: 'МГУ им. Н.П. Огарёва'
@@ -28,7 +28,7 @@ export const partnersData: PartnersData[] = [
 		}
 	},
 	{
-		image: 'src/assets/sck.svg',
+		image: '/assets/sck.svg',
 		alt: { en: 'SSC "Pathophysiology"', ru: 'СНК "Патофизиология"' },
 		text: { en: 'SSC "Pathophysiology"', ru: 'СНК "Патофизиология"' }
 	}

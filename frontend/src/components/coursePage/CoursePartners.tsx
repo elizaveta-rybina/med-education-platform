@@ -15,7 +15,7 @@ export const CoursePartners = () => {
 	}
 
 	return (
-		<div className='mt-25 bg-[url(@/assets/partnership_background.svg)] bg-no-repeat bg-[center_-160px] bg-[length:100%]'>
+		<div className='mt-25 bg-[url(/assets/partnership_background.svg)] bg-no-repeat bg-[center_-160px] bg-[length:100%]'>
 			<motion.h2
 				className='bg-gradient-to-r from-[#6C3F99] to-[#BE1B86] bg-clip-text text-transparent text-center justify-start text-6xl/tight italic font-bold mb-25 mt-50'
 				style={{ originY: 0.5 }}
