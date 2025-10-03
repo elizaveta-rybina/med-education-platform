@@ -22,7 +22,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will learn the basics of pathophysiology as a science that studies the causes, mechanisms of development, and consequences of human diseases, and you will have the opportunity to model a pathological process for the first time.',
 			ru: 'В этом модуле вы познакомитесь с основами патофизиологии как науки, изучающей причины, механизмы развития и последствия заболеваний у человека и, конечно, получите возможность впервые смоделировать патологический процесс.'
 		},
-		image: 'src/assets/semester_one_card/module_1.png',
+		image: '/assets/semester_one_card/module_1.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -42,7 +42,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'This module is devoted to the influence of pathogenic factors on the human body. In addition, in the experiment you will see the effect of electric current on the human body.',
 			ru: 'Данный модуль посвящен влиянию болезнетворных факторов на организм человека. Кроме того, в этом эксперименте вы увидите, действие электрического тока на организм.'
 		},
-		image: 'src/assets/semester_one_card/module_2.png',
+		image: '/assets/semester_one_card/module_2.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -62,7 +62,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will study on the mechanisms of cell damage. As the practical part, you will master the methods of analyzing the signaling cascade in the cell and learn the importance of teratogenic effects in the embryonic period.',
 			ru: 'В этом модуле вы познакомитесь с механизмами повреждения клетки. В практической части вам предстоит освоить методики анализа сигнального каскада в клетке и усвоить значимость тератогенных влияний в эмбриональном периоде.'
 		},
-		image: 'src/assets/semester_one_card/module_3.png',
+		image: '/assets/semester_one_card/module_3.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -82,7 +82,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will study on the mechanisms of cell damage. As the practical part, you will master the methods of analyzing the signaling cascade in the cell and learn the importance of teratogenic effects in the embryonic period.',
 			ru: 'Данный модуль посвящен подробному рассмотрению нарушений микроциркуляции и механизмов, лежащих в основе артериальной и венозной гиперемии, а также научитесь моделировать эти процессы.'
 		},
-		image: 'src/assets/semester_one_card/module_4.png',
+		image: '/assets/semester_one_card/module_4.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -102,7 +102,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'This module is dedicated to a detailed analysis of peripheral circulation disorders: ischemia, stasis, embolism and thrombosis. You will learn the features of hemodynamics and the consequences of thrombosis, as well as the causes of thrombus formation.',
 			ru: 'Данный модуль посвящен детальному разбору нарушений периферического кровообращения: ишемия, стаз, эмболия и тромбоз. Узнаете особенности гемодинамики и последствия тромбоза, а также причины тромбообразования.'
 		},
-		image: 'src/assets/semester_one_card/module_5.png',
+		image: '/assets/semester_one_card/module_5.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -122,7 +122,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will study such typical pathological process  as inflammation and learn its biological role, understand the causes and mechanisms of inflammation development.',
 			ru: 'В этом модуле вы познакомитесь с воспалением как типовым патологическим процессом и узнаете его биологическую роль, научитесь понимать причины и механизмы развития воспаления.'
 		},
-		image: 'src/assets/semester_one_card/module_6.png',
+		image: '/assets/semester_one_card/module_6.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -142,7 +142,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'This module explains in detail the disturbances of the body`s thermal balance, including the concept of fever, its mechanisms of occurrence and biological role.',
 			ru: 'Данный модуль подробно рассматривает нарушения теплового баланса организма, включая понятие лихорадки, её механизмы возникновения и биологическую роль.'
 		},
-		image: 'src/assets/semester_one_card/module_7.png',
+		image: '/assets/semester_one_card/module_7.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -162,7 +162,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will study such a key element of the body`s defense as immunity and study its main function - maintaining antigen homeostasis, and also understand of disturbances in the immune system occurrence and them effect to the health.',
 			ru: 'В этом модуле вы познакомитесь с иммунитетомключевым элементом защиты организма и изучите как он поддерживает антигенный гомеостаз, а также поймете, как происходят нарушения в работе иммуннитета, и как они влияют на организм.'
 		},
-		image: 'src/assets/semester_one_card/module_8.png',
+		image: '/assets/semester_one_card/module_8.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -182,7 +182,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will learn hypersensitivity developing and it’s effect to the defenses, gain an understanding of the pathogenesis of type 1 allergic reactions (anaphylactic) and the importance of laboratory experiments in the study of allergies.',
 			ru: 'В данном модуле вы узнаете, почему развивается гиперчувствительность и как она влияет на защитные реакции организма, получите представление о патогенезе аллергических реакций первого типа (анафилактического).'
 		},
-		image: 'src/assets/semester_one_card/module_9.png',
+		image: '/assets/semester_one_card/module_9.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -202,7 +202,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will study the concept of tumor growth and the main characteristics of tumors, and gain an understanding of modern methods of experimental study of tumor growth.',
 			ru: 'В данном модуле вы ознакомитесь с понятием опухолевого роста и основными характеристиками опухолей, получите представление о современных методах экспериментального изучения опухолевого роста.'
 		},
-		image: 'src/assets/semester_one_card/module_10.png',
+		image: '/assets/semester_one_card/module_10.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -222,7 +222,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module you will study the concepts of water balance and dyshydria, the causes and mechanisms of hyperhydration and dehydration.',
 			ru: 'В этом модуле вы познакомитесь с понятиями водного баланса и дисгидрии, причинами и механизмами развития гипергидратации и дегидратации. '
 		},
-		image: 'src/assets/semester_one_card/module_11.png',
+		image: '/assets/semester_one_card/module_11.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -242,7 +242,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'This module is dedicated to the acid-base balance of the body and the mechanisms of its maintenance. You will study the classification of acidbase balance disorders, their causes and mechanisms of development, as well as the principles of correction.',
 			ru: 'Данный модуль посвящен кислотноосновному состоянию организма и механизмам его поддержания, вы изучите классификацию нарушений КОС, их причины и механизмы развития, а также принципы коррекции. '
 		},
-		image: 'src/assets/semester_one_card/module_12.png',
+		image: '/assets/semester_one_card/module_12.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -262,7 +262,7 @@ export const modules_fisrt_semester: Module[] = [
 			en: 'In this module, you will learn hypoxia as a typical pathological process associated with a lack of oxidative metabolism in tissues, the classification of hypoxia, its causes and consequences for the body.',
 			ru: 'В этом модуле вы узнаете о гипоксии как о типичном патологическом процессе, связанном с нарушением окислительного метаболизма в тканях, о классификации гипоксии, ее причинах и последствиях для организма.'
 		},
-		image: 'src/assets/semester_one_card/module_13.png',
+		image: '/assets/semester_one_card/module_13.png',
 		time: {
 			en: 'Average time of implementation is 25 minutes',
 			ru: 'Среднее время прохождения 25 мин.'
@@ -286,8 +286,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Узнаешь, как развивается гиповентиляция и почему нарушается газообмен.'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -309,8 +309,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Сердечная недостаточность\nРазберёшь, как инфаркт, перегрузка и сосудистые нарушения приводят к коллапсу сердца'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -332,8 +332,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Нарушения сосудистого тонуса\nУвидишь, как патология почек вызывает стойкое повышение давления'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -355,8 +355,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Наглядно проследишь, что происходит в организме при массивной кровопотере.'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -378,8 +378,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Под микроскопом увидишь, как клетки иммунитета не справляются с захватом и уничтожением чужеродных частиц'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -401,8 +401,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Узнаешь, как неконтролируемое свёртывание крови приводит к тяжёлым осложнениям.'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -424,8 +424,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Увидишь, как стресс и НПВС запускают образование язв'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -447,8 +447,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Разберёшь, как нарушения в кишечнике мешают усвоению питательных веществ'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -470,8 +470,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Проследишь, как перекрытие желчных протоков приводит к желтухе и нарушению работы печени.'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -493,8 +493,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Узнаешь, как токсические препараты повреждают почки и снижают их функцию'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -516,8 +516,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Увидишь, как возникают судорожные приступы и как диазепам снимает конвульсии.'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -539,8 +539,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Проследишь, как падение сахара в крови приводит к судорогам и коме, и как глюкоза спасает организм'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',
@@ -562,8 +562,8 @@ export const modules_second_semester: Module[] = [
 			ru: 'Узнаешь, какие стадии проходит организм при стрессе и как надпочечники влияют на выносливость'
 		},
 		image: {
-			en: 'src/assets/semester_two_card/module_en.png',
-			ru: 'src/assets/semester_two_card/module_ru.png'
+			en: '/assets/semester_two_card/module_en.png',
+			ru: '/assets/semester_two_card/module_ru.png'
 		},
 		time: {
 			en: 'Average time of implementation is 25 minutes',

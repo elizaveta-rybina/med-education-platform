@@ -1,9 +1,9 @@
-import logo from '@/assets/logo.png'
 import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
 import { LoginButton, LoginModal } from '@/features/auth-modal'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import logo from '/assets/logo.png'
 
 interface HeaderProps {
 	backgroundColor?: string

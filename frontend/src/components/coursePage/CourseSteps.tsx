@@ -14,7 +14,7 @@ export const CourseSteps = () => {
 	}
 
 	return (
-		<div className='mt-25 bg-[url(@/assets/howItWorkBack.svg)] bg-no-repeat bg-contain bg-[center_100px]'>
+		<div className='mt-25 bg-[url(/assets/howItWorkBack.svg)] bg-no-repeat bg-contain bg-[center_100px]'>
 			<motion.h2
 				className='bg-gradient-to-r from-[#6C3F99] to-[#BE1B86] bg-clip-text text-transparent text-center justify-start text-6xl/tight italic font-bold mb-25'
 				style={{ originY: 0.5 }}

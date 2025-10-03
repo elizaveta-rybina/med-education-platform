@@ -1,5 +1,5 @@
-import arrow from '@/assets/icons/arrow.svg'
 import React from 'react'
+import arrow from '/assets/icons/arrow.svg'
 
 interface UpButtonProps {
 	text?: string

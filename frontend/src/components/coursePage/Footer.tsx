@@ -1,8 +1,8 @@
-import mail from '@/assets/icons/mail.svg'
-import telegram from '@/assets/icons/telegram.svg'
-import vk from '@/assets/icons/vk.svg'
 import { FooterItem, UpButton } from '@/entities/footer'
 import { useTranslation } from 'react-i18next'
+import mail from '/assets/icons/mail.svg'
+import telegram from '/assets/icons/telegram.svg'
+import vk from '/assets/icons/vk.svg'
 
 export const Footer = () => {
 	const { t } = useTranslation('coursePage')
