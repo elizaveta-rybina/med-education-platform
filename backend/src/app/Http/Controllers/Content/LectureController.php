@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Content;
 use App\Http\Controllers\Controller;
 use App\Models\Content\Lecture;
 use App\Services\Content\LectureService;
+use App\Services\Content\LectureUploadService;
 use Illuminate\Http\Request;
 class LectureController extends Controller
 {
     public function __construct(
         protected LectureService $lectureService,
+        protected LectureUploadService $uploadService,
+
     ) {}
 
     public function store(Request $request)
@@ -69,35 +72,36 @@ class LectureController extends Controller
         ]);
     }
 
-//    public function upload(Request $request, $id)
-//    {
-//        try {
-//            $lecture = Lecture::findOrFail($id);
-//        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-//            return response()->json([
-//                'message' => 'Лекция не найдена',
-//                'error' => $e->getMessage(),
-//            ], 404);
-//        }
-//
-//        $validated = $request->validate([
-//            'doc_file' => 'required|file|mimes:doc,docx|max:10240', // добавляем max размер (10MB)
-//        ]);
-//
-//        try {
-//            $lecture = $this->uploadService->processDocFile($lecture, $validated['doc_file']);
-//
-//            return response()->json([
-//                'message' => 'Текст успешно добавлен к лекции',
-//                'lecture' => $lecture,
-//            ], 200);
-//        } catch (\Throwable $e) {
-//            return response()->json([
-//                'message' => 'Ошибка при обработке файла',
-//                'error' => $e->getMessage(),
-//            ], 500);
-//        }
-//    }
+    public function upload(Request $request, $id)
+    {
+        try {
+            $lecture = Lecture::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'message' => 'Лекция не найдена',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
+
+        $validated = $request->validate([
+            'doc_file' => 'required|file|mimes:doc,docx|max:10240', // добавляем max размер (10MB)
+        ]);
+
+        try {
+            $lecture = $this->uploadService->processDocFile($lecture, $validated['doc_file']);
+
+            return response()->json([
+                'message' => 'Текст успешно добавлен к лекции',
+                'lecture' => $lecture,
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Ошибка при обработке файла',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
 
 }

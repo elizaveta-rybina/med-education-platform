@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\JsonResponse;
 
@@ -17,8 +18,16 @@ class AuthService
         protected UserRepository $userRepo,
         protected TokenService $tokenService,
     ) {
-        $this->accessTTL = config('jwt.ttl', 60) * 60; // Добавлен default
-        $this->refreshTTL = config('jwt.refresh_ttl', 7 * 24 * 60 * 60); // Используем конфиг
+        $this->accessTTL = config('jwt.ttl' );
+        $this->refreshTTL = config('jwt.refresh_ttl');
+    }
+
+    protected function generateRefreshToken($user): string
+    {
+        return JWTAuth::customClaims([
+            'refresh' => true,
+            'exp' => now()->addMinutes($this->refreshTTL)->timestamp,
+        ])->fromUser($user);
     }
 
     public function login(array $credentials): JsonResponse
@@ -33,8 +42,7 @@ class AuthService
                 return response()->json(['error' => 'Пользователь не найден'], 401);
             }
 
-            $refreshToken = JWTAuth::customClaims(['refresh' => true])
-                ->fromUser($user);
+            $refreshToken = $this->generateRefreshToken($user);
 
             $this->tokenService->storeAccessToken($accessToken, $this->accessTTL, $user->id);
             $this->tokenService->storeRefreshToken($refreshToken, $this->refreshTTL, $user->id);
@@ -42,9 +50,10 @@ class AuthService
             return response()->json([
                 'token' => $accessToken,
                 'token_type' => 'bearer',
-                'expires_in' => $this->accessTTL,
-            ])->cookie('refresh_token', $refreshToken, $this->refreshTTL / 60, null, null, true, true, false, 'Strict');
+                'expires_in' => $this->accessTTL * 60,
+            ])->cookie('refresh_token', $refreshToken, $this->refreshTTL, null, null, true, true, false, 'Strict');
         } catch (\Exception $e) {
+            Log::error('Ошибка авторизации: ' . $e->getMessage());
             return response()->json(['error' => 'Ошибка авторизации'], 500);
         }
     }
@@ -55,35 +64,40 @@ class AuthService
             if (!$refreshToken || !$this->tokenService->hasRefreshToken($refreshToken)) {
                 return response()->json(['error' => 'Недействительный или отозванный refresh token'], 401);
             }
+            Log::debug($refreshToken);
 
             JWTAuth::setToken($refreshToken);
-
             try {
+                Log::debug('Проверки всякие');
                 $payload = JWTAuth::getPayload();
+                Log::debug('payload ok');
                 if (!$payload->get('refresh')) {
                     return response()->json(['error' => 'Недействительный refresh token'], 401);
                 }
 
                 $user = JWTAuth::authenticate();
-                if (!$user) {
-                    return response()->json(['error' => 'Пользователь не найден'], 401);
-                }
+                Log::debug('user ok: '.($user->id ?? 'null'));
             } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+                Log::error('TokenInvalid: '.$e->getMessage());
                 return response()->json(['error' => 'Недействительный refresh token'], 401);
+            } catch (\Exception $e) {
+                Log::error('Другой эксепшен: '.$e->getMessage());
+                return response()->json(['error' => 'Ошибка обновления токена'], 500);
             }
-
+            Log::debug('Попытка отозвать');
             $oldAccessToken = request()->bearerToken();
             if ($oldAccessToken) {
                 $this->tokenService->revokeAccessToken($oldAccessToken);
             }
-
+            Log::debug('Старый отозван');
             $newAccessToken = JWTAuth::fromUser($user);
             $this->tokenService->storeAccessToken($newAccessToken, $this->accessTTL, $user->id);
+            Log::debug('Новый поставлен');
 
             return response()->json([
                 'token' => $newAccessToken,
                 'token_type' => 'bearer',
-                'expires_in' => $this->accessTTL,
+                'expires_in' => $this->accessTTL * 60,
             ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Ошибка обновления токена'], 500);

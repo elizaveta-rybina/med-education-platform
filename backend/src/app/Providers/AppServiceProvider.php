@@ -16,6 +16,7 @@ use App\Services\Contracts\QuestionServiceInterface;
 use App\Services\Content\Assessments\QuestionOptionService;
 use App\Services\Contracts\QuestionOptionServiceInterface;
 use App\Services\TokenService;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -56,6 +57,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Relation::morphMap([
+            'module' => \App\Models\Content\Module::class,
+            'topic' => \App\Models\Content\Topic::class,
+            'lecture' => \App\Models\Content\Lecture::class,
+            'assignment' => \App\Models\Content\Assignment::class
+        ]);
     }
 }

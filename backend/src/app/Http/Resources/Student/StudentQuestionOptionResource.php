@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Resources;
+namespace
+
+App\Http\Resources\Student;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,9 +20,7 @@ class StudentQuestionOptionResource extends JsonResource
             'id' => $this->id,
             'question_id' => $this->question_id,
             'text' => $this->text,
-            'order' => $this->order,
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
+            'order' => $this->order
         ];
     }
 }

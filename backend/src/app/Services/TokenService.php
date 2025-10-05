@@ -14,7 +14,7 @@ class TokenService
                 'token' => $token,
                 'type' => 'access',
                 'user_id' => $userId,
-                'expires_at' => now()->addSeconds($ttl),
+                'expires_at' => now()->addMinutes($ttl),
             ]);
         } catch (\Exception $e) {
             Log::error('Ошибка сохранения access token: ' . $e->getMessage());
@@ -29,7 +29,7 @@ class TokenService
                 'token' => $token,
                 'type' => 'refresh',
                 'user_id' => $userId,
-                'expires_at' => now()->addSeconds($ttl),
+                'expires_at' => now()->addMinutes($ttl),
             ]);
         } catch (\Exception $e) {
             Log::error('Ошибка сохранения refresh token: ' . $e->getMessage());
