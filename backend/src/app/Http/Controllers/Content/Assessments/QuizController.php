@@ -8,15 +8,14 @@ use App\Http\Requests\Content\Assessments\Question\UpdateQuestionRequest;
 use App\Http\Requests\Content\Assessments\Quiz\StoreQuizRequest;
 use App\Http\Requests\Content\Assessments\Quiz\UpdateQuizRequest;
 use App\Http\Requests\Content\Assessments\UserAnswer\StoreAnswerRequest;
+use App\Http\Resources\AnswerResource;
 use App\Http\Resources\QuestionResource;
 use App\Http\Resources\QuizResource;
-use App\Http\Resources\StudentQuizResource;
-use App\Http\Resources\AnswerResource;
 use App\Models\Content\Assessments\Quiz;
 use App\Services\Contracts\QuizServiceInterface;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Gate;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\Student\StudentQuizResource;
 
 class QuizController extends Controller
 {

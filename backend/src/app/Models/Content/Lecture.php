@@ -28,4 +28,6 @@ class Lecture extends Model
     {
         return $this->hasMany(LectureAttachment::class);
     }
+
+
 }

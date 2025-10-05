@@ -1,5 +1,7 @@
 {
     "require": {
-        "reliese/laravel": "*"
+        "reliese/laravel": "*",
+        "ext-dom": "*",
+        "ext-fileinfo": "*"
     }
 }

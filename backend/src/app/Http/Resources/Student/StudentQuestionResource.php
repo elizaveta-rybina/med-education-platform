@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Student;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,8 +33,6 @@ class StudentQuestionResource extends JsonResource
             'metadata' => $metadata,
             'points' => $this->points,
             'options' => StudentQuestionOptionResource::collection($this->whenLoaded('options')),
-            'created_at' => $this->created_at->toISOString(),
-            'updated_at' => $this->updated_at->toISOString(),
         ];
     }
 }
