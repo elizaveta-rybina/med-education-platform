@@ -1,5 +1,6 @@
 gdjs._1057_1090_1086_1083_1080_1082_1080Code = {};
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.localVariables = [];
+gdjs._1057_1090_1086_1083_1080_1082_1080Code.idToCallbackMap = new Map();
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951057_951090_951086_951083_9595_951073_951086_951083_951100_951096_951086_951081Objects1= [];
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951057_951090_951086_951083_9595_951073_951086_951083_951100_951096_951086_951081Objects2= [];
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1= [];
@@ -50,16 +51,20 @@ gdjs.copyArray(runtimeScene.getObjects("крыса3"), gdjs._1057_1090_1086_1083
 {for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510721Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510721Objects1[i].getBehavior("Animation").setAnimationName("без электродов");
 }
-}{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510722Objects1.length ;i < len;++i) {
+}
+{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510722Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510722Objects1[i].getBehavior("Animation").setAnimationName("без электродов");
 }
-}{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510723Objects1.length ;i < len;++i) {
+}
+{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510723Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951082_951088_951099_951089_9510723Objects1[i].getBehavior("Animation").setAnimationName("без электродов");
 }
-}{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length ;i < len;++i) {
+}
+{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[i].hide();
 }
-}}
+}
+}
 
 }
 
@@ -71,7 +76,7 @@ gdjs.copyArray(runtimeScene.getObjects("ПодсчитатьЧДД"), gdjs._1057
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
 for (var i = 0, k = 0, l = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1.length;i<l;++i) {
-    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1[i].IsClicked((typeof eventsFunctionContext !== 'undefined' ? eventsFunctionContext : undefined)) ) {
+    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1[i].IsClicked(null) ) {
         isConditionTrue_0 = true;
         gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1[k] = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951055_951086_951076_951089_951095_951080_951090_951072_951090_951100_951063_951044_951044Objects1[i];
         ++k;
@@ -84,10 +89,12 @@ gdjs.copyArray(runtimeScene.getObjects("ЧДД_текст"), gdjs._1057_1090_108
 {for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951063_951044_951044_9595_951090_951077_951082_951089_951090Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951063_951044_951044_9595_951090_951077_951082_951089_951090Objects1[i].getBehavior("Text").setText("ЧДД: 95");
 }
-}{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length ;i < len;++i) {
+}
+{for(var i = 0, len = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length ;i < len;++i) {
     gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[i].hide(false);
 }
-}}
+}
+}
 
 }
 
@@ -99,7 +106,7 @@ gdjs.copyArray(runtimeScene.getObjects("Далее"), gdjs._1057_1090_1086_1083_
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
 for (var i = 0, k = 0, l = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length;i<l;++i) {
-    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[i].IsClicked((typeof eventsFunctionContext !== 'undefined' ? eventsFunctionContext : undefined)) ) {
+    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[i].IsClicked(null) ) {
         isConditionTrue_0 = true;
         gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[k] = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1[i];
         ++k;
@@ -108,7 +115,8 @@ for (var i = 0, k = 0, l = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_95104
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951044_951072_951083_951077_951077Objects1.length = k;
 if (isConditionTrue_0) {
 {gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, "Электроды_фиксация", false);
-}}
+}
+}
 
 }
 
@@ -120,7 +128,7 @@ gdjs.copyArray(runtimeScene.getObjects("Назад"), gdjs._1057_1090_1086_1083_
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
 for (var i = 0, k = 0, l = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1.length;i<l;++i) {
-    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1[i].IsClicked((typeof eventsFunctionContext !== 'undefined' ? eventsFunctionContext : undefined)) ) {
+    if ( gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1[i].IsClicked(null) ) {
         isConditionTrue_0 = true;
         gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1[k] = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1[i];
         ++k;
@@ -129,7 +137,8 @@ for (var i = 0, k = 0, l = gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_95105
 gdjs._1057_1090_1086_1083_1080_1082_1080Code.GD_951053_951072_951079_951072_951076Objects1.length = k;
 if (isConditionTrue_0) {
 {gdjs.evtTools.runtimeScene.replaceScene(runtimeScene, "Привязать", false);
-}}
+}
+}
 
 }
 

@@ -1,0 +1,12 @@
+{
+  "name": "4. Артериальная и венозная гиперемии (артериальная гиперемия)",
+  "short_name": "4. Артериальная и венозная гиперемии (артериальная гиперемия)",
+  "id": "com.example.gamename",
+  "description": "",
+  "orientation": "any",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "black",
+  "categories": ["games", "entertainment"],
+  "icons": []
+}

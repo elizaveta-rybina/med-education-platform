@@ -87,6 +87,54 @@ export const TheorySection: React.FC<TheorySectionProps> = ({
 				</HeadingTag>
 			)
 		}
+		if (node.type === 'table') {
+			return (
+				<div className='overflow-x-auto mb-4'>
+					<table className='table-auto w-full border-collapse border border-gray-300'>
+						<thead>
+							{node.content
+								?.find((child: any) => child.type === 'tableHeader')
+								?.content?.map((row: any, rowIndex: number) => (
+									<tr key={rowIndex}>
+										{row.content?.map((cell: any, cellIndex: number) => (
+											<th
+												key={cellIndex}
+												className='border border-gray-300 px-4 py-2 bg-gray-100 font-semibold text-left'
+											>
+												{cell.content?.map((child: any, index: number) => (
+													<React.Fragment key={index}>
+														{renderNode(child)}
+													</React.Fragment>
+												))}
+											</th>
+										))}
+									</tr>
+								))}
+						</thead>
+						<tbody>
+							{node.content
+								?.find((child: any) => child.type === 'tableBody')
+								?.content?.map((row: any, rowIndex: number) => (
+									<tr key={rowIndex}>
+										{row.content?.map((cell: any, cellIndex: number) => (
+											<td
+												key={cellIndex}
+												className='border border-gray-300 px-4 py-2'
+											>
+												{cell.content?.map((child: any, index: number) => (
+													<React.Fragment key={index}>
+														{renderNode(child)}
+													</React.Fragment>
+												))}
+											</td>
+										))}
+									</tr>
+								))}
+						</tbody>
+					</table>
+				</div>
+			)
+		}
 		if (node.content) {
 			return (
 				<>
@@ -104,11 +152,14 @@ export const TheorySection: React.FC<TheorySectionProps> = ({
 			{theoryBlocks.map(block => {
 				if ('url' in block && block.url) {
 					return (
-						<figure key={block.id} className='w-full max-w-lg mx-auto mb-4'>
+						<figure
+							key={block.id}
+							className='inline-flex flex-col items-center mx-2 mb-4'
+						>
 							<img
 								src={block.url}
 								alt={block.alt || ''}
-								className='w-full rounded-lg shadow-md'
+								className='w-full h-full object-cover rounded-lg shadow-md'
 							/>
 							{block.caption && (
 								<figcaption className='text-center text-sm text-gray-600 mt-2'>

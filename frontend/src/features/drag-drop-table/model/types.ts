@@ -17,7 +17,7 @@ export interface DragDropTableBlock {
 		id: string
 		content: string | React.ReactNode
 	}[]
-	correctAnswers: Record<string, string[]> // Формат: { [rowId_columnId]: answerId[] }
+	correctAnswers: Record<string, string[] | { anyOf: string[] }>
 }
 
 export interface DraggableAnswerProps {

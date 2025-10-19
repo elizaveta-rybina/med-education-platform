@@ -3,7 +3,7 @@ import {
 	DropdownTableComponent
 } from '@/features/dropdown-table'
 import { useCourse } from '@/hooks/useCourse'
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 interface GameBlockProps {
@@ -12,6 +12,7 @@ interface GameBlockProps {
 		type: 'game'
 		title?: string
 		gameUrl: string
+		gameUrlEn?: string
 		width?: string
 		height?: string
 	}
@@ -68,10 +69,13 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		loadTableData()
 	}, [courseId, i18n.language, t])
 
-	// Handle messages from the game iframe
 	useEffect(() => {
+		const gameUrl = i18n.language === 'en' ? block.gameUrlEn : block.gameUrl
+
+		if (!gameUrl) return
+
 		const handleMessage = (event: MessageEvent) => {
-			if (event.origin !== new URL(block.gameUrl).origin) return
+			if (event.origin !== new URL(gameUrl).origin) return
 			if (event.data === 'GAME_COMPLETED') {
 				memoizedOnComplete(true)
 			}
@@ -79,7 +83,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 
 		window.addEventListener('message', handleMessage)
 		return () => window.removeEventListener('message', handleMessage)
-	}, [block.gameUrl, memoizedOnComplete])
+	}, [block.gameUrl, block.gameUrlEn, i18n.language, memoizedOnComplete])
 
 	// Handle iframe load/error
 	const handleIframeLoad = () => {
