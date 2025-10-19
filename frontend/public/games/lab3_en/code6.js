@@ -114,7 +114,7 @@ gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_957Code.eventsList0 = functio
 
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10802380);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20357068);
 }
 if (isConditionTrue_0) {
 gdjs.copyArray(gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_957Code.GD_951042_951086_951076_951072Objects3, gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_957Code.GD_951042_951086_951076_951072Objects4);
@@ -194,7 +194,7 @@ isConditionTrue_0 = false;
 isConditionTrue_0 = gdjs.evtTools.input.isMouseButtonReleased(runtimeScene, "Left");
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(11026844);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20329628);
 }
 }
 if (isConditionTrue_0) {
@@ -477,7 +477,7 @@ for (var i = 0, k = 0, l = gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_95
 gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_957Code.GD_951055_951086_951074_951090_951086_951088_951103_951090_951100_9595_951076_951086_959521_9595_951075_951086_9595_951076_951085_951103_9595_951073_951077_951088_951077_951084_951077_951085_951085_951086_951089_951090_951080Objects1.length = k;
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10637884);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(17812420);
 }
 }
 if (isConditionTrue_0) {
@@ -504,7 +504,7 @@ for (var i = 0, k = 0, l = gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_95
 gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_957Code.GD_951057_951090_951088_951077_951083_951082_951072_9595_951085_951072_951079_951072_951076Objects1.length = k;
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10639436);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(17813972);
 }
 }
 if (isConditionTrue_0) {

@@ -82,7 +82,7 @@ gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.eventsList0 = functio
 
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20357068);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10802380);
 }
 if (isConditionTrue_0) {
 gdjs.copyArray(gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.GD_951061_951083_951086_951088_951075_951080_951076_951088_951072_951090Objects3, gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.GD_951061_951083_951086_951088_951075_951080_951076_951088_951072_951090Objects4);
@@ -146,7 +146,7 @@ isConditionTrue_0 = false;
 isConditionTrue_0 = gdjs.evtTools.input.isMouseButtonReleased(runtimeScene, "Left");
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20329628);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(11026844);
 }
 }
 if (isConditionTrue_0) {
@@ -372,7 +372,7 @@ for (var i = 0, k = 0, l = gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_95
 gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.GD_951064_951087_951088_951080_951094Objects1.length = k;
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(17754940);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10746252);
 }
 }
 }
@@ -403,7 +403,7 @@ for (var i = 0, k = 0, l = gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_95
 gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.GD_951053_951072_951088_951082_951086_951079_951080_951088_951086_951074_951072_951090_951100Objects1.length = k;
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(17756316);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10747556);
 }
 }
 if (isConditionTrue_0) {
@@ -430,7 +430,7 @@ for (var i = 0, k = 0, l = gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_95
 gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_958Code.GD_951057_951090_951088_951077_951083_951082_951072_9595_951085_951072_951079_951072_951076Objects1.length = k;
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(17757860);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10749100);
 }
 }
 if (isConditionTrue_0) {

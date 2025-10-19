@@ -80,7 +80,7 @@ export const TheorySection: React.FC<TheorySectionProps> = ({
 				6
 			)}` as HeadingTagType
 			return (
-				<HeadingTag className={`text-${5 - level}xl font-bold mb-2`}>
+				<HeadingTag className={`text-xl font-bold mb-2`}>
 					{node.content?.map((child: any, index: number) => (
 						<React.Fragment key={index}>{renderNode(child)}</React.Fragment>
 					))}

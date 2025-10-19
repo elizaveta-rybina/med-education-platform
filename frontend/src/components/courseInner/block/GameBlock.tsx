@@ -69,10 +69,20 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 		loadTableData()
 	}, [courseId, i18n.language, t])
 
+	// Handle game URL and message listener
 	useEffect(() => {
-		const gameUrl = i18n.language === 'en' ? block.gameUrlEn : block.gameUrl
+		const gameUrl =
+			i18n.language === 'en' ? block.gameUrlEn || block.gameUrl : block.gameUrl
 
-		if (!gameUrl) return
+		if (!gameUrl) {
+			setIframeLoadError(t('gameUrlMissing'))
+			setIsIframeLoading(false)
+			return
+		}
+
+		console.log('gameUrl:', block.gameUrl)
+		console.log('gameUrlEn:', block.gameUrlEn)
+		console.log('Selected gameUrl:', gameUrl)
 
 		const handleMessage = (event: MessageEvent) => {
 			if (event.origin !== new URL(gameUrl).origin) return
@@ -83,7 +93,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 
 		window.addEventListener('message', handleMessage)
 		return () => window.removeEventListener('message', handleMessage)
-	}, [block.gameUrl, block.gameUrlEn, i18n.language, memoizedOnComplete])
+	}, [block.gameUrl, block.gameUrlEn, i18n.language, memoizedOnComplete, t])
 
 	// Handle iframe load/error
 	const handleIframeLoad = () => {
@@ -118,7 +128,11 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 					</div>
 				)}
 				<iframe
-					src={block.gameUrl}
+					src={
+						i18n.language === 'en'
+							? block.gameUrlEn || block.gameUrl
+							: block.gameUrl
+					}
 					width='100%'
 					height='100%'
 					frameBorder='0'
@@ -145,7 +159,7 @@ export const GameBlock: React.FC<GameBlockProps> = ({
 					<DropdownTableComponent
 						block={gameTableData}
 						onComplete={memoizedOnComplete}
-						chapterHash={chapterHash} // Pass chapterHash
+						chapterHash={chapterHash}
 					/>
 				)}
 			</div>

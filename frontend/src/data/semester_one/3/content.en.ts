@@ -2,17 +2,17 @@ import { Course } from '@/data/types'
 
 export const courseData: Course = {
 	id: 'course-1',
-	title: 'General Nosology',
-	description: 'General Nosology',
+	title: 'Cell damage',
+	description: 'Cell damage',
 	modules: [
 		{
-			id: 'module-1',
-			title: 'Subject, Goal, and Objectives of Pathophysiology',
+			id: 'module-3',
+			title: 'Cell damage',
 			chapters: [
 				{
-					id: 'chapter-1-1',
-					title: 'Subject, Goal, and Objectives of Pathophysiology',
-					hash: 'what-is',
+					id: 'chapter-3-1',
+					title: 'Mechanisms of Cell Energy Supply Damage',
+					hash: 'mechanisms-of-cell-damage',
 					isRead: false,
 					blocks: [
 						{
@@ -26,228 +26,8 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Pathophysiology is an integrative fundamental biomedical science that studies the vital activity of a diseased human organism, exploring the causes, general patterns, and mechanisms of the onset, development, and outcomes of diseases, as well as the principles of their correction and mechanisms of recovery.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The subject of pathophysiology research is the study of the causes and general patterns of impaired functions of cells and organs in a diseased organism, as well as the mechanisms of recovery. Accordingly, pathophysiology addresses the following objectives: obtaining fundamental knowledge about the essence of disease, the laws of its development, and recovery mechanisms; understanding pathological processes common to many diseases.'
-											},
-											{
-												type: 'text',
-												text: 'Pathophysiology examines the general patterns of the onset, development, and resolution of diseases and pathological processes at various levels of organization: molecular, cellular, tissue, organ, systemic, and organismal.',
-												marks: [{ type: 'italic' }]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Medical sciences (disciplines) study changes in the human body resulting from disease, focusing on specific aspects of the pathological process and its interaction with the organism. The object of study in clinical sciences is a specific patient with specific manifestations of a disease. The task of pathophysiology is to integrate a vast array of disparate facts and knowledge obtained from clinical observations and validated through animal experiments.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The task of pathophysiology includes not only analyzing the functional aspects of disease but also creating a unified system of concepts about the patterns and mechanisms of dysregulation of functions underlying the development of both typical pathological processes and specific disease forms. This system of concepts forms a logical model that clinicians subsequently use in their therapeutic practice.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Pathophysiological analysis of a disease encompasses a multitude of processes occurring in various organs and tissues at different structural and functional levels. This includes assessing the biological significance of pathogenic factors, their interrelationships, cause-and-effect relationships between internal and external factors, stages of observed phenomena, their qualitative and quantitative characteristics, and more.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Since some elements of pathological processes recur to varying degrees in different combinations across various diseases, pathophysiology studies typical pathological processes: edema, inflammation, impaired microcirculation, hypoxia, energy deficiency, degeneration, impaired membrane and receptor function, dystrophic changes, altered genome activity, and other processes.'
-											}
-										]
-									}
-								]
-							}
-						},
-						{
-							id: 'question-1',
-							type: 'question',
-							question:
-								'What is the primary object of study in pathophysiology?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) A specific patient with a specific disease',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Impaired functions at various structural and functional levels of the organism',
-									isCorrect: true
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Clinical symptoms of individual diseases',
-									isCorrect: false
-								},
-								{
-									id: 'opt-4',
-									text: 'D) The psychosomatic state of the patient',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-2',
-							type: 'question',
-							question:
-								'Which levels of organism organization does pathophysiology consider?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Only the cellular level',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Molecular, cellular, tissue, organ, systemic, and organismal',
-									isCorrect: true
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Only organ and systemic',
-									isCorrect: false
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Only molecular and cellular',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-3',
-							type: 'question',
-							question: 'What is one of the key objectives of pathophysiology?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Diagnosis of specific diseases',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Prevention of infectious diseases',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Creating a general model of the laws of disease development and recovery mechanisms',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Prescribing medications to patients',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-4',
-							type: 'question',
-							question:
-								'Why is pathophysiology considered an integrative science?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Because it integrates knowledge from multiple medical fields',
-									isCorrect: true
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Because it focuses exclusively on cell studies',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Because it focuses on mental health',
-									isCorrect: false
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Because it ignores clinical observations',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-5',
-							type: 'question',
-							question:
-								'Which process is considered a typical pathological process studied by pathophysiology?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Antibody production by the immune system',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Muscle tissue growth after exercise',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Tissue inflammation',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Normal breathing of the organism',
-									isCorrect: false
-								}
-							]
-						}
-					]
-				},
-				{
-					id: 'chapter-1-2',
-					title:
-						'Main Methods of Pathophysiology. Requirements for Disease Models',
-					hash: 'types-vosn',
-					isRead: false,
-					blocks: [
-						{
-							id: 'text-3',
-							type: 'text',
-							content: {
-								type: 'doc',
-								content: [
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Experimental Modeling',
+												text: 'Mechanisms of Cell Damage.',
 												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ' – modeling that typically reproduces, in a simplified form, pathological processes and key disease syndromes in animals, enabling the study of their etiology and pathogenesis, the development of scientifically grounded methods for prevention and therapy, and the evaluation of their effectiveness. The choice of animal species and age plays a crucial role in reproducing pathological processes and human diseases.'
 											}
 										]
 									},
@@ -256,7 +36,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Experimental modeling consists of several stages:'
+												text: 'Despite the variety of causes leading to cell damage, the most common mechanisms of damage can be identified:'
 											}
 										]
 									},
@@ -271,7 +51,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Studying vital activity parameters within normal limits'
+																text: "Mechanisms of damage to the cell's energy supply;"
 															}
 														]
 													}
@@ -285,7 +65,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Modeling the disease (pathological process)'
+																text: 'Mechanisms of damage to cell membranes and intracellular structures;'
 															}
 														]
 													}
@@ -299,7 +79,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Studying the disease (pathological process) dynamically'
+																text: 'Imbalance of ions and fluids;'
 															}
 														]
 													}
@@ -313,7 +93,21 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Developing methods for pathogenetic therapy (or prevention) with subsequent transfer of the obtained data to clinical practice (clinical validation)'
+																text: "Mechanisms of damage to the cell's receptor apparatus and intracellular regulatory mechanisms;"
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: "Mechanisms of damage to processes controlling the cell's plastic supply and nuclear activity."
 															}
 														]
 													}
@@ -326,16 +120,8 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Modeling pathological processes and syndromes in animals aims to reproduce the most important and characteristic features of human diseases. Fully replicating a human disease through an experimental model '
-											},
-											{
-												type: 'text',
-												text: 'is not possible',
+												text: "Mechanisms of Damage to the Cell's Energy Supply",
 												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ', as the human organism is significantly more complex than that of animals. Additionally, human vitality is influenced not only by natural but also by social factors, including those acting through the psyche.'
 											}
 										]
 									},
@@ -344,12 +130,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Translational Medicine',
-												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ' – an interdisciplinary field aimed at accelerating the implementation of scientific discoveries and technological advancements into clinical practice to improve patient health. It involves both transferring research results from the laboratory to the clinic (from science to patient) and feedback from practice to research for further improvement.'
+												text: "The cell's energy supply is provided by ATP, which is primarily produced through oxidative phosphorylation in mitochondria and, to a lesser extent, through glycolysis in the cytosol."
 											}
 										]
 									},
@@ -358,7 +139,218 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Experimental modeling is conducted at different levels of animal organism integration:'
+												text: "The cell's energy supply can be disrupted at any stage: ATP resynthesis, transport, or utilization. Disruptions in ATP resynthesis may result from a deficiency of oxygen and/or metabolic substrates, reduced activity of tissue respiration and glycolysis enzymes, or damage and destruction of mitochondria, where the Krebs cycle reactions and electron transfer to molecular oxygen, coupled with ADP phosphorylation, occur. Energy supply issues may also stem from impaired energy transport. The energy stored in ATP's high-energy phosphate bonds is normally delivered from synthesis sites—mitochondria and cytosol—to effector structures (myofibrils, membrane ion pumps, etc.) via ADP-ATP translocase (adenine nucleotide translocase) and creatine kinase (CK). Adenine nucleotide translocase facilitates the transport of ATP's high-energy phosphate bond from the mitochondrial matrix through the inner membrane, while CK transfers it further to creatine, forming creatine phosphate, which enters the cytosol. CK in effector cellular structures transfers the phosphate group from creatine phosphate to ADP, forming ATP, which is used in the cell's vital processes. Energy transport systems can be damaged by various pathogenic agents, leading to an ATP deficit in energy-consuming structures even when overall ATP levels in the cell are high. Impaired energy utilization may occur due to damage to energy utilization mechanisms, primarily through reduced activity of ATPases [myosin ATPase, Na+,K+-ATPase of the plasma membrane, proton and potassium ATPase, Ca2+-ATPase (Ca2+ pump), etc.]. Consequently, cell dysfunction can develop even with normal or elevated ATP levels in the cell. Disruption of the energy supply, in turn, can contribute to disorders in the cell's membrane apparatus, enzyme systems, ion and water transport processes, and regulatory mechanisms."
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: "Disruption of the energy supply, in turn, can contribute to disorders in the cell's membrane apparatus, enzyme systems, ion and water transport processes, and regulatory mechanisms."
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'question-1',
+							type: 'question',
+							question: 'The main reserve of ATP in the cell is located:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Primarily in mitochondria',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Primarily in the cytosol',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Evenly distributed between mitochondria and cytosol',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Produced outside the cell',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question:
+								'The transport of ATP energy from the site of synthesis to the site of consumption is facilitated by:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Only the intramitochondrial system',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Glycolysis enzymes',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Adenine nucleotide translocase and creatine kinase',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Independently via diffusion',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question: 'Causes of ATP resynthesis disruption may include:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Increased oxygen levels',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Deficiency of oxygen and metabolic substrates',
+									isCorrect: true
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Increased activity of glycolysis enzymes',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) All of the above are correct',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question: 'The function of adenine nucleotide translocase is to:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Transfer ATP from mitochondria to the cytosol',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Catalyze glucose synthesis',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Participate in the Krebs cycle',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Participate in the transport of ATP energy through the inner mitochondrial membrane',
+									isCorrect: true
+								}
+							]
+						},
+						{
+							id: 'question-5',
+							type: 'question',
+							question:
+								'Possible consequences of disrupted cell energy supply include:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Disruption of membrane functions and transport processes',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Increased ATP production',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Activation of growth signaling pathways',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Enhanced antioxidant defense',
+									isCorrect: false
+								}
+							]
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-2',
+					title:
+						'Mechanisms of Damage to Cell Membranes and Intracellular Structures',
+					hash: 'cell-membrane-damage',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Damage to cell membranes and enzymes plays a significant role in disrupting cellular function and, most importantly, in the transition from reversible to irreversible cellular changes. The primary mechanisms of cell membrane damage directly or indirectly lead to damage, conformational changes, and/or alterations in the kinetic properties of enzymes, many of which are membrane-associated.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Free Radical Reactions. ',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: 'Free radical (FR) reactions are essential for vital processes such as electron transport in the respiratory enzyme chain, synthesis of prostaglandins and leukotrienes, cell proliferation and differentiation, phagocytosis, catecholamine metabolism, and more. FR reactions may involve proteins, nucleic acids, and lipids, particularly phospholipids. Lipid peroxidation is crucial for regulating the lipid composition of biomembranes and enzyme activity. The latter results from both the direct effects of lipid peroxidation products on enzymes and indirect effects through changes in the state of the membranes with which many enzyme molecules are associated.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Intensity of FR Reactions',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' is regulated by the balance between factors that activate (pro-oxidants) and suppress (antioxidants) this process. Among the most active pro-oxidants are easily oxidized compounds that induce the formation of free radicals, such as naphthoquinones, vitamins A and D, reducing agents like NADPH2, NADH2, lipoic acid, and products of prostaglandin and catecholamine metabolism.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'The lipid peroxidation process can be conditionally divided into three stages:'
 											}
 										]
 									},
@@ -373,7 +365,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'The whole-organism level allows modeling conditions closest to human diseases, such as neurosis in dogs and monkeys, diabetes mellitus, renal arterial hypertension, and immunodeficiency states.'
+																text: "Oxygen initiation (the 'oxygen' stage — formation of reactive oxygen species)"
 															}
 														]
 													}
@@ -387,7 +379,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'The organ level focuses on establishing functional, biochemical, and structural impairments in isolated organs maintained in a special environment to sustain viability. Using the "exclusion" method, specific structures are severed, destroyed, or removed in acute and chronic animal experiments. For example, removing parathyroid glands in rats leads to severe impairment of mineralization in continuously growing teeth (enamel hypoplasia).'
+																text: 'Generation of free radicals of organic and inorganic substances (free radical stage)'
 															}
 														]
 													}
@@ -401,7 +393,772 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'The tissue level is used to isolate the "pure tissue component" of organ pathology and exclude local regulatory influences. For this purpose, a tissue section (or suspension, e.g., bone marrow) from an animal organ exposed to a pathogenic agent is placed in a culture medium that supports basic vital processes and undergoes comprehensive investigation.'
+																text: 'Production of lipid peroxides and hydroperoxides (peroxide stage)'
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Reactive Oxygen Species. ',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: 'The initial step in lipid peroxidation during cell damage is typically the formation of so-called reactive oxygen species: singlet oxygen (O2), superoxide radical (O2–), hydrogen peroxide (H2O2), and hydroxyl radical (OH–).'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Superoxide Radical O2–',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' is generated by leukocytes (especially intensely during phagocytosis), mitochondria during oxidative reactions, and various tissues during the metabolic transformation of catecholamines, prostaglandin synthesis, and other compounds.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Hydrogen Peroxide H2O2',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' is formed during the interaction (dismutation) of O2– radicals in the cytosol of cells and the mitochondrial matrix. The O2– radical and H2O2 exert direct damaging effects. Additionally, under the influence of iron ions present in both the cytosol and biological fluids, O2– and H2O2 can transform (with the participation of catalase) into the highly aggressive and pathogenic hydroxyl radical OH–.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Hydroxyl Radicals OH–',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' actively react with organic compounds, primarily lipids, as well as nucleic acids and proteins. This results in the formation of other active radicals and peroxides. The reaction can acquire a chain-like, avalanche character. However, this does not always occur, as excessive activation of free radical and peroxide reactions is prevented by cellular antioxidant defense mechanisms.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Cellular Antioxidant Defense (CAD).',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: " Cells have processes and factors that limit or even terminate free radical and peroxide reactions, providing an antioxidant effect. One such process is the interaction of radicals and lipid hydroperoxides with each other, leading to the formation of 'non-radical' compounds. The primary role in the CAD system is played by enzymatic and non-enzymatic mechanisms."
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Activation of Hydrolases.',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' The composition and state of membranes can be modified not only by free radical and lipid peroxidation processes but also by membrane-bound, free, and lysosomal lipases, phospholipases, and proteases.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Under the influence of pathogenic factors, the activity and/or content of these enzymes in the cell can significantly increase (e.g., during acidosis, which promotes the release of enzymes from lysosomes and their subsequent activation).'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'As a result, phospholipids and proteins in membranes, as well as enzymes, undergo hydrolysis. This is accompanied by a significant increase in membrane permeability and a reduction in the kinetic properties of enzymes.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Detergent Effects of Amphiphiles.',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' As a result of the activation of lipid peroxidation reactions and hydrolases (mainly lipases and phospholipases), lipid hydroperoxides, free fatty acids, and phospholipids (e.g., glycerophospholipids, phosphatidylcholines, phosphatidylethanolamines, phosphatidylserines) accumulate in the cell. These compounds are termed amphiphilic due to their ability to penetrate and anchor in both hydrophobic and hydrophilic membrane zones. The accumulation of large amounts of amphiphiles in the cell leads to their massive incorporation into membranes, causing the formation of extensive clusters and micro-tears.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Disruption of Membrane Repair Processes',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' is associated with the suppression of reparative resynthesis of altered or lost lipid, protein, lipoprotein, glycoprotein, and other membrane molecules, as well as their de novo synthesis, under the influence of damaging factors. The efficiency of membrane restoration becomes insufficient, which exacerbates the extent and scale of damage to the cellular membrane apparatus.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Disruption of Molecular Conformation',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' (spatial structure, shape) of macromolecules such as proteins, lipoproteins, glycoproteins, and other compounds leads to significant changes in the physicochemical state of cell membranes and their receptors. Causes include disruptions in cellular energy supply and deviations in the physicochemical parameters of the cell from the norm (e.g., acidosis, hyper- or hypo-osmolarity). This alters the tertiary and quaternary structures of macromolecules, impairing their conformation and function, including reducing the activity of biologically active substances (enzymes, hormones, cytokines, etc.).'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Overstretching and Rupture of Membranes',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' in swollen cells due to hyperhydration is a critical mechanism of damage and death of both organelles and the cell as a whole. Hyperhydration results from a significant increase in osmotic and oncotic pressure within cells. This is caused by an excess of hydrophilic organic molecules (e.g., lactic and pyruvic acids, albumins, glucose) and ions accumulated due to metabolic disruptions.'
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'image-1',
+							type: 'image',
+							url: '/images/content/module-2-3-2.png',
+							alt: 'Membrane Damage'
+						},
+						{
+							id: 'question-1',
+							type: 'question',
+							question:
+								'What is the initial step in free radical reactions during cell damage?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Formation of lipid peroxides',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Formation of reactive oxygen species',
+									isCorrect: true
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Generation of free radicals of organic substances',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Production of lipid hydroperoxides',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question:
+								'Which of the following statements is true regarding cellular antioxidant defense?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Cellular antioxidant defense plays no role in regulating free radical reactions',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Cellular antioxidant defense promotes excessive activation of free radical reactions',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Cellular antioxidant defense limits or terminates free radical and peroxide reactions',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Cellular antioxidant defense does not affect the state of cell membranes',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question:
+								'Why does increased membrane permeability lead to cell swelling, overstretching, and membrane rupture?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Due to an increase in osmotic and oncotic pressure in cells',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Due to a decrease in osmotic and oncotic pressure in cells',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Due to a reduction in the number of hydrophilic molecules in cells',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Due to an increase in ion concentration in cells without changes in osmotic pressure',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question: 'What happens when amphiphiles accumulate in the cell?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Membrane permeability decreases',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Enzyme activity increases',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Extensive clusters and micro-tears form in membranes',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) The level of free fatty acids decreases',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-5',
+							type: 'question',
+							question: 'Which compounds are considered active pro-oxidants?',
+							options: [
+								{ id: 'opt-1', text: 'A) Vitamins A and D', isCorrect: true },
+								{ id: 'opt-2', text: 'B) Vitamins C and E', isCorrect: false },
+								{ id: 'opt-3', text: 'C) Vitamins B and K', isCorrect: false },
+								{ id: 'opt-4', text: 'D) Vitamins F and G', isCorrect: false }
+							]
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-3',
+					title: 'Ion and Fluid Imbalance',
+					hash: 'ion-fluid-imbalance',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Ion and Fluid Imbalance',
+												marks: [{ type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: 'Ion and water imbalance in cells typically develops following or concurrently with disruptions in energy supply and damage to membranes and enzymes. As a result, transmembrane transport of many ions is significantly altered. This primarily affects K+, Na+, Ca2+, Mg2+, and Cl–, ions that participate in critical processes such as excitation, action potential conduction, electromechanical coupling, and others. Ion imbalance is characterized by changes in the ratios of specific ions in the cytosol and disruptions in the transmembrane distribution of ions across both the plasma membrane and intracellular membranes. The manifestations of ion imbalance are diverse. The most significant changes for cell function and survival are alterations in ion composition, driven by various membrane ATPases and membrane defects. Due to impaired function of the Na+,K+-ATPase in the plasma membrane, excess Na+ accumulates in the cytosol, while K+ levels decrease. Disruption of the Na+-Ca2+ ion exchange mechanism (exchange of two Na+ entering the cell for one Ca2+ exiting) and Ca2+-ATPase leads to a significant increase in cytosolic Ca2+. Alterations in transmembrane cation distribution are accompanied by changes in cellular anion content, including Cl–, OH–, HCO3–, and others.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Cellular Hyperhydration',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: '. The primary cause of hyperhydration is an increase in Na+ and Ca2+ levels, as well as organic substances, in damaged cells. This leads to elevated osmotic pressure and water accumulation in the cells. As a result, cells swell, their volume increases, which is often accompanied by stretching and sometimes micro-tears in the plasma membrane and organelle membranes.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Cellular Hypohydration',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: '. Cellular hypohydration is observed, for example, during fever, hyperthermia, polyuria, and infectious diseases (cholera, typhoid fever, dysentery). These conditions lead to water loss from the body, accompanied by the loss of fluid from cells, along with dissolved proteins (including enzymes) and other organic and inorganic water-soluble compounds.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Electrogenesis Disorders',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' in the form of changes in membrane potential (MP) and action potential (AP) characteristics are significant, as they are often key indicators of the presence and nature of cellular damage. Examples include changes in ECG due to damage to myocardial cells, electroencephalogram changes due to disruptions in the structure and function of brain neurons, and electromyogram changes due to alterations in muscle cells.'
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'question-1',
+							type: 'question',
+							question: 'What is the primary cause of cellular hyperhydration?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Increased levels of Na+ and Ca2+',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Decreased levels of Na+ and Ca2+',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Increased levels of K+',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Decreased levels of K+',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question:
+								'Which ions are most affected by changes in transmembrane transport?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) K+, Na+, Ca2+, Mg2+, Cl–',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Fe2+, Cu2+, Zn2+, Mn2+',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) H+, OH–, HCO3–',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Li+, Rb+, Cs+',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question:
+								'What happens in the cytosol of a cell when the Na+-K+-ATPase in the plasma membrane is impaired?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Accumulation of excess Na+ and reduction of K+',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Accumulation of excess K+ and reduction of Na+',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Increased levels of Ca2+',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Increased levels of Mg2+',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question:
+								'Which electrogenesis disorders may be observed in cellular damage?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) ECG changes due to myocardial cell damage',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Electroencephalogram changes due to disruptions in brain neuron structure and function',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Electromyogram changes due to alterations in muscle cells',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) All of the above',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-5',
+							type: 'question',
+							question:
+								'The consequence of excess Ca2+ accumulation in the cytosol is:',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Normalization of membrane function',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Increased ATP production',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Disruption of the Na+-Ca2+ ion exchange mechanism',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Activation of nucleic acid synthesis',
+									isCorrect: true
+								}
+							]
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-4',
+					title:
+						'Mechanisms of Damage to the Cellular Receptor Apparatus and Intracellular Regulatory Mechanisms',
+					hash: 'cell-receptor-damage',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Disruptions in cellular function may result from impairments at one or more levels of regulatory mechanisms. Intercellular signals, mediated by biologically active substances (BAS) of an informational nature (hormones, neurotransmitters, cytokines, chemokines, etc.), exert regulatory effects after the BAS interact with cellular receptors.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'The causes of distortion in regulatory signals are diverse.',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' The most significant changes include: 1) receptor sensitivity; 2) receptor quantity; 3) conformation of receptor macromolecules; 4) lipid environment of membrane receptors.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'These deviations can significantly alter the nature of the cellular response to a regulatory stimulus. For instance, the accumulation of toxic free radical oxidation products during myocardial ischemia alters the physicochemical properties of membranes. This leads to impaired cardiac responses to norepinephrine and acetylcholine, which are perceived by corresponding receptors on the plasma membrane of cardiomyocytes.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Disruptions at the level of secondary messengers inside cells',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' (messengers) — cyclic nucleotides such as adenosine monophosphate (cAMP) and guanosine monophosphate (cGMP), and others formed in response to primary messengers like hormones and neurotransmitters — can lead to numerous disorders. An example is the impaired formation of membrane potential in cardiomyocytes due to an excess of cAMP, which is one possible cause of cardiac arrhythmias.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Disruption of the response to a signal.',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' At the level of metabolic processes regulated by secondary messengers or other intracellular factors, numerous disorders are also possible. For example, impaired activation of cellular enzymes due to a deficiency in cAMP or cGMP can significantly alter the intensity of metabolic reactions, consequently leading to disruptions in cellular function.'
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'question-1',
+							type: 'question',
+							question:
+								'Which biologically active substances (BAS) of an informational nature exert regulatory effects after interacting with cellular receptors?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Hormones, neurotransmitters, cytokines, chemokines',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Vitamins, minerals, amino acids',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Enzymes, hormones, cytokines',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Hormones, neurotransmitters, vitamins',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question:
+								'Which changes can significantly modify the nature of the cellular response to a regulatory stimulus?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Changes in receptor sensitivity',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Changes in receptor quantity',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Changes in the conformation of receptor macromolecules',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) All of the above',
+									isCorrect: true
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question:
+								'What can occur due to the accumulation of toxic free radical oxidation products during myocardial ischemia?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Impaired myocardial responses to norepinephrine and acetylcholine',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Increased concentration of active protein kinase C',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Reduced gene expression',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Changes in the conformation of receptor macromolecules',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question:
+								'Which secondary messengers inside cells may be involved in transduction disorders?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Adenosine monophosphate (cAMP) and guanosine monophosphate (cGMP)',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Glucose and glycogen',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Vitamins and minerals',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Enzymes and hormones',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-5',
+							type: 'question',
+							question:
+								'What can occur due to impaired activation of cellular enzymes caused by a deficiency in cAMP or cGMP?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Altered intensity of metabolic reactions',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Increased receptor sensitivity',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Reduced receptor quantity',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Improved conformation of receptor macromolecules',
+									isCorrect: false
+								}
+							]
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-5',
+					title:
+						'Mechanisms of Damage to Processes Controlling Cellular Plasticity and Nuclear Activity',
+					hash: 'genome-damage-mechanisms',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Damage to the genome and/or mechanisms of gene expression, DNA replication, and repair, as well as the cell cycle, are significant mechanisms of cellular alteration with fatal consequences. These damages play a crucial role in cell malignization and oncogenesis processes. The causes of cell genome damage and cell death can include direct or indirect effects of pathogenic agents of various natures on the genetic apparatus. Disruptions in DNA structure and/or its degradation often serve as the trigger for cell death. The most significant causes of DNA damage include:'
+											}
+										]
+									},
+									{
+										type: 'bulletList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'fragmentation of DNA due to exposure to highly potent pathogenic agents, most often of a chemical or physical nature (e.g., high doses of ionizing radiation, alkylating agents, free radicals, lipid hydroperoxides);'
 															}
 														]
 													}
@@ -415,163 +1172,16 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'At the cellular and intracellular levels, numerous indicators are studied, including membrane potential, excitability, endo- and exocytosis, and intracellular processes related to membrane and organelle activity.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Molecular-level modeling involves isolating and studying changes in the activity and properties of enzymes, proteins, and other compounds, as well as the cellular receptor apparatus under the influence of pathogenic factors.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Modeling at the cellular genome level aims to study the mechanisms by which pathogenic factors influence cell mutations, widely applied to investigate the etiology and pathogenesis of hereditary and congenital diseases, tumor growth, "storage diseases," and others. Molecular and genetic levels of modeling pathological processes are closely interconnected.'
+																text: 'cleavage of DNA due to significant activation of nucleases (pre-existing or synthesized '
 															},
 															{
 																type: 'text',
-																text: 'CRISPR/Cas9',
+																text: 'de novo',
 																marks: [{ type: 'italic' }]
 															},
 															{
 																type: 'text',
-																text: ' – a revolutionary genome-editing technology based on the bacterial immune defense system, enabling precise DNA modifications in the cells of living organisms, including plants, animals, and humans. This tool, often called "genetic scissors," opens vast opportunities for research and treatment of genetic diseases.'
-															}
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Each modeling method has its limitations, advantages, and disadvantages. However, the overall task of experimental modeling of pathological processes at different levels of organism integration is to achieve the primary goal of pathophysiology – studying the etiology, pathogenesis, and outcomes of human diseases.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Natural Experiments Involving Humans.',
-												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ' It should be emphasized that the human organism is far more complex than even the most highly organized animals, such as anthropoid apes. Therefore, fully modeling human diseases in animals is impossible.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The goal of natural experiments involving humans (non-invasive study of pathological process dynamics directly at the patient’s bedside) is to study the human organism’s condition under the influence of external potentially pathogenic factors when this goal cannot be achieved through animal experiments.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Based on bedside studies of diseases, new data on the fundamental mechanisms of oncological, allergic, hematological, and many other human diseases have been obtained.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Typically, natural experiments are conducted after preliminary animal studies and predictions to ensure the maximum safety of potential human reactions to the studied impact.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'All known scientific methodologies are used in model studies: physical, chemical, physiological, electrophysiological, hematological, biophysical, biochemical, morphological, electron-microscopic, isotopic, immunological, and others.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The Method of Comparative-Evolutionary Pathology Research.',
-												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ' The founder of this method is I.I. Mechnikov (1845–1916), who first linked the comparative method with evolutionary theory. By applying the comparative pathology method to study inflammation, Mechnikov demonstrated its significance for understanding the structure and mechanisms of physiological and pathological reactions and processes in higher organisms and humans, formed through evolution.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Methods of Mathematical and Cybernetic Modeling, Creation of Artificial Biological Systems.',
-												marks: [{ type: 'bold' }]
-											},
-											{
-												type: 'text',
-												text: ' Mathematical and cybernetic modeling methods allow the study of complex biological systems and organs, predicting their behavior under various conditions. These methods rely on information technologies, computational algorithms, and specialized computer programs.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The creation of electronic models of biological objects has become a vital tool for solving practical medical and biological tasks.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [{ type: 'text', text: 'Such models enable:' }]
-									},
-									{
-										type: 'bulletList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Modeling the operation of critical organs and systems (heart, vessels, liver, kidneys, etc.)'
+																text: ');'
 															}
 														]
 													}
@@ -585,7 +1195,54 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Predicting changes in physiological parameters and their deviations in diseases'
+																text: 'DNA degradation by activated transferases, accompanied by breaks in internucleotide bonds.'
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'These and other factors trigger various mechanisms of genetic information disruption, its implementation, or activation of the cell death program.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'The most significant ',
+												marks: [{ type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: 'mechanisms of disruption of cellular genetic information',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ' include:'
+											}
+										]
+									},
+									{
+										type: 'orderedList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'mutations;'
 															}
 														]
 													}
@@ -599,7 +1256,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Testing possible treatment options and evaluating their effectiveness before real-world application'
+																text: 'uncontrolled derepression of genes (e.g., oncogenes or apoptosis genes);'
 															}
 														]
 													}
@@ -613,7 +1270,35 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Using acquired experience to develop new prostheses, artificial organs, and innovative technologies'
+																text: 'suppression of vital gene activity (e.g., genes programming enzyme synthesis);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'transfection (introduction of foreign DNA into the genome, e.g., herpes virus or tumor DNA);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'disruptions in DNA repair.'
 															}
 														]
 													}
@@ -626,48 +1311,17 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'For example, electronic models of cardiac activity allow predicting the effects of drug administration, the body’s response to stress or physical exertion, thereby ensuring optimal treatment of cardiac diseases.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Electronic models are built based on a large volume of empirical data obtained from experimental studies at various levels of organism integration (molecular, cellular, tissue, organ, and systemic). These models account for real physiological parameter values and their changes depending on environmental conditions, age, sex, and other factors.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Thanks to supercomputers, specialists can analyze vast amounts of data and quickly obtain forecasts needed by doctors and biologists for decision-making.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Thus, mathematics and cybernetics open unique opportunities for deep understanding of the human organism and optimizing preventive and therapeutic efforts in healthcare.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Main Requirements for Disease Models',
-												marks: [{ type: 'bold' }]
+												text: 'The most significant in human pathology are ',
+												marks: [{ type: 'italic' }]
 											},
 											{
 												type: 'text',
-												text: ', when modeling with animals: identity of pathogenic factors, conditions of onset, and stages of pathology and disease development; similarity of functional and morphological changes at various levels of organism integration (systemic, organ, cellular, subcellular, and molecular); effectiveness of the same medications for treatment in both clinical and experimental settings. The choice of animals is particularly important. They must respond to the pathogenic factor in the same way as humans, depending on the animal’s immune reactivity, metabolic rate, basal metabolism, permeability of external and internal barriers, age, and lifespan.'
+												text: 'specific consequences of genome damage',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ':'
 											}
 										]
 									},
@@ -676,7 +1330,12 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Permissible differences between the experimental model and the original, i.e., the nosological form of human disease: varying durations of disease stages, intensity, and prevalence of pathological processes in experimental animals.'
+												text: 'Enzymopathies',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ' (disruptions in enzyme structure and function and enzymatic catalysis. This has a fatal impact on all aspects of cellular activity (e.g., many of the thousands of monogenic diseases result from defects in genes encoding enzyme structures).'
 											}
 										]
 									},
@@ -685,7 +1344,12 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'It should be acknowledged that the primary method of modeling in pathophysiology is organismal, as it allows identifying the main patterns of the origin, course, and outcome of human diseases, while other modeling levels primarily treat the organism as a biological object.'
+												text: 'Cell cycle disruptions',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ' (defects in even one of the hundreds of factors regulating the cell cycle inevitably lead to impaired cell proliferation, including uncontrolled proliferation of damaged cells and the formation of malignant clones; a process associated with the suppression of cell cycle genes is cellular senescence, where senescent cells remain regulatorily active, altering the microenvironment for other cells and changing their functions).'
 											}
 										]
 									},
@@ -694,7 +1358,26 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Modeling requires a clear definition of the real goal and specific research objectives, justification of informative methodologies appropriate to the goal and objectives, and objective analysis and synthesis of obtained data. Every experimental modeling method has its boundaries and limitations, as fully replicating a human disease in animals is impossible. When conducting experiments, adherence to "Rules" of humane treatment of animals is essential.'
+												text: 'Oncogene activation',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ' — a key component of carcinogenesis.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Uncontrolled apoptosis activation',
+												marks: [{ type: 'italic' }, { type: 'bold' }]
+											},
+											{
+												type: 'text',
+												text: ' (leading, for example, to immunodeficient states or tissue and organ hypotrophy).'
 											}
 										]
 									}
@@ -704,26 +1387,27 @@ export const courseData: Course = {
 						{
 							id: 'question-1',
 							type: 'question',
-							question: 'What is experimental modeling in pathophysiology?',
+							question:
+								'What is a consequence of suppressing the activity of vital genes?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) A model fully replicating a human disease in animals.',
+									text: 'A) Enhancement of cellular regenerative abilities',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Simplified reproduction of pathological processes and disease syndromes in animals to study their causes and mechanisms.',
+									text: 'B) Cellular senescence and formation of malignant clones',
 									isCorrect: true
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Modeling the effects of environmental factors on a population.',
+									text: 'C) Activation of body detoxification',
 									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Conducting experiments on humans to study diseases.',
+									text: 'D) Stimulation of the immune system',
 									isCorrect: false
 								}
 							]
@@ -731,55 +1415,55 @@ export const courseData: Course = {
 						{
 							id: 'question-2',
 							type: 'question',
-							question:
-								'Which stage is absent in the scheme of experimental modeling of pathological processes?',
+							question: 'What causes can lead to cell genome damage?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) Studying vital activity parameters within normal limits.',
+									text: 'A) High doses of ionizing radiation',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Modeling the disease.',
+									text: 'B) Alkylating agents',
 									isCorrect: false
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Treatment and restoration of the organism.',
-									isCorrect: true
+									text: 'C) Free radicals and lipid hydroperoxides',
+									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Developing methods for pathogenetic therapy and subsequent clinical validation.',
-									isCorrect: false
+									text: 'D) All of the above',
+									isCorrect: true
 								}
 							]
 						},
 						{
 							id: 'question-3',
 							type: 'question',
-							question: 'What is the pathogenesis of a disease?',
+							question:
+								'Which mechanisms of disruption of cellular genetic information are the most significant?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) A set of factors leading to the onset of a disease.',
+									text: 'A) Mutations',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) The sequence of stages in disease development.',
-									isCorrect: true
+									text: 'B) Uncontrolled derepression of apoptosis genes',
+									isCorrect: false
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Hereditary predisposition to a disease.',
+									text: 'C) Suppression of oncogene suppressor activity',
 									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) The result of an erroneous lifestyle.',
-									isCorrect: false
+									text: 'D) All of the above',
+									isCorrect: true
 								}
 							]
 						},
@@ -787,27 +1471,27 @@ export const courseData: Course = {
 							id: 'question-4',
 							type: 'question',
 							question:
-								'What does the concept of a "holistic" model mean in experimental research?',
+								'Which consequences of genome damage are most significant in human pathology?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) Complete replication of a human disease in animals.',
+									text: 'A) Enzymopathies',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Recreating a disease in a single isolated organ.',
+									text: 'B) Cell cycle disruptions',
 									isCorrect: false
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Attempting to simulate a disease in its entirety using the whole animal organism.',
-									isCorrect: true
+									text: 'C) Oncogene activation',
+									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Replacing affected tissues with synthetic materials.',
-									isCorrect: false
+									text: 'D) All of the above',
+									isCorrect: true
 								}
 							]
 						},
@@ -815,36 +1499,37 @@ export const courseData: Course = {
 							id: 'question-5',
 							type: 'question',
 							question:
-								'What limitations are inherent in experimental modeling of diseases in animals?',
+								'What can occur due to uncontrolled apoptosis activation?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) Inability to conduct the modeling procedure.',
-									isCorrect: false
+									text: 'A) Immunodeficient states',
+									isCorrect: true
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Difficulties in selecting the appropriate animal type.',
+									text: 'B) Tissue and organ hypertrophy',
 									isCorrect: false
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Lack of ethical constraints.',
+									text: 'C) Increased cell proliferation',
 									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Inability to accurately reproduce the social component and full complexity of human disease.',
-									isCorrect: true
+									text: 'D) Improved metabolism',
+									isCorrect: false
 								}
 							]
 						}
 					]
 				},
+
 				{
-					id: 'chapter-1-3',
-					title: 'Modern Concepts of Disease',
-					hash: 'endogenous-types',
+					id: 'chapter-3-6',
+					title: 'Effects of Teratogens on DNA Synthesis and Repair',
+					hash: 'teratogen-effects',
 					isRead: false,
 					blocks: [
 						{
@@ -858,7 +1543,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Nosology is the general study of disease, examining disease as a condition of a person that impairs their social functions due to a pathological process.'
+												text: 'Teratogenic action refers to the disruption of embryonic development due to teratogenic factors, leading to morphological abnormalities and developmental defects. The most significant teratogenic factors for humans include maternal endocrine disorders (e.g., diabetes mellitus), physical factors (e.g., temperature, ionizing radiation), chemical substances, including certain medications (e.g., retinoids, thalidomide) and alcohol, and biological factors (e.g., toxoplasmosis, rubella).'
 											}
 										]
 									},
@@ -867,7 +1552,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Nosology, as a general theoretical study of disease, does not address specific pathological processes, their forms, or progression. Its subject of study includes: the essence of disease as a particular human condition; the causes and conditions of its onset; stages of disease development; and the classification of diseases and their elements.'
+												text: "Specific periods during pregnancy are identified when the fetus is particularly sensitive to damaging factors. These periods are called 'critical periods of embryogenesis.' The likelihood of developmental abnormalities is highest during these critical periods."
 											}
 										]
 									},
@@ -876,16 +1561,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'A disease is a complex general reaction of the organism to the damaging effects of environmental factors; it is a qualitatively new life process accompanied by destructive and adaptive structural, metabolic, and functional changes in organs and tissues, leading to reduced adaptability to continuously changing environmental conditions and restricted work capacity.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Key criteria for a disease include:'
+												text: 'The following critical periods of embryogenesis are distinguished:'
 											}
 										]
 									},
@@ -900,7 +1576,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Patient complaints (subjective criterion)'
+																text: 'Development of germ cells: oogenesis, spermatogenesis;'
 															}
 														]
 													}
@@ -914,7 +1590,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Results of objective patient examination (objective criterion)'
+																text: 'Fertilization;'
 															}
 														]
 													}
@@ -928,7 +1604,63 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Reduced adaptability and work capacity'
+																text: 'Implantation (7th-8th day of embryogenesis);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Development of axial organ primordia and placenta formation (3rd-8th weeks of development);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Stage of rapid brain growth (15th-20th week);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Formation of major functional systems and differentiation of the reproductive system (20th-24th weeks);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Birth.'
 															}
 														]
 													}
@@ -941,7 +1673,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'A pathological reaction is a short-term unusual response of the organism to a specific impact. For example, a temporary increase in blood pressure due to negative emotions, allergic reactions, pathological reflexes involving the central nervous system (Babinski, Rossolimo symptoms, etc.), phagocytosis during inflammation, or centralization of blood circulation during shock.'
+												text: 'In human development, the most vulnerable periods are the first and second critical periods of ontogenesis—the end of the first week and the beginning of the second week after fertilization, as well as weeks 3 to 6 of pregnancy. Exposure to harmful factors during the second period results in the highest number of developmental defects.'
 											}
 										]
 									},
@@ -950,7 +1682,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Often, various pathological processes and individual pathological reactions of cells and tissues in humans and animals occur as constant combinations or patterns established through evolution. These are typical pathological processes.'
+												text: 'In addition to critical periods, termination periods of teratogen action must be considered—the latest stage of pregnancy during which an adverse factor can induce developmental anomalies. This period depends on the completion of organ formation and varies for different organs and tissues.'
 											}
 										]
 									},
@@ -959,7 +1691,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'A typical (standard) pathological process is a genetically programmed pathological process formed through evolution, occurring as constant combinations or patterns (regardless of the animal species or the cause triggering it). These include inflammation, edema, tumors, fever, hypoxia, stasis, hyperemia, ischemia, dystrophy, and others.'
+												text: "Congenital and hereditary diseases of the embryonic period are distinguished. It is important to differentiate these concepts. Congenital diseases are those identified at birth and may be hereditary or embryotoxic. Embryotoxic congenital diseases develop due to the influence of teratogens on the pregnant woman's body. Hereditary diseases are caused by mutations in genetic material and may manifest at birth (e.g., Down syndrome) or later in life (e.g., storage diseases)."
 											}
 										]
 									},
@@ -968,7 +1700,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'A pathological condition is a slow-progressing pathological process. It may result from a previously experienced disease or impaired intrauterine development. It is the outcome of a completed pathological process that has permanently altered an organ’s structure or caused atypical substitutions in specific tissues. A pathological condition is characterized by reduced organism resistance, which may contribute to the transition to a disease.'
+												text: 'Hereditary diseases should be distinguished from phenocopies. Phenocopies are diseases that phenotypically resemble hereditary diseases but are not associated with genotype changes. Phenocopies develop under the influence of harmful environmental factors during pregnancy. For example, alcohol consumption during pregnancy can lead to a complex of disorders that may partially mimic Down syndrome symptoms.'
 											}
 										]
 									},
@@ -977,282 +1709,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Disease classification is a system for categorizing diseases, symptom complexes, pathological conditions, and symptoms into classes and groups based on accepted medical and pathological criteria. Various classification approaches exist:'
-											}
-										]
-									},
-									{
-										type: 'bulletList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Etiological – by cause: infectious, traumatic, nutritional, etc.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Pathogenetic – based on pathogenesis characteristics: inflammatory, allergic, oncological, etc.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Organ-based – based on the predominantly affected organ: brain, heart, lung, stomach, liver, kidney, skin diseases, etc.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Age-based – diseases of newborns, children, the elderly, etc.'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Gender-based – male and female diseases'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Social – substance abuse, drug addiction, alcoholism, tobacco use'
-															}
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Forms and stages of disease development:'
-											}
-										]
-									},
-									{
-										type: 'bulletList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{ type: 'text', text: 'Acute – up to 4 days' }
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{ type: 'text', text: 'Acute – about 5–14 days' }
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{ type: 'text', text: 'Subacute – 15–40 days' }
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Chronic – lasting months or years'
-															}
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [{ type: 'text', text: 'Stages of disease:' }]
-									},
-									{
-										type: 'bulletList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Latent (hidden) – the onset of the disease, a covert transition from normal to pathological'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Prodromal – initial non-specific signs of the disease followed by the development of clinical manifestations'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Actual disease – the stage of clinical manifestations with characteristic symptoms'
-															}
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [{ type: 'text', text: 'Disease outcomes:' }]
-									},
-									{
-										type: 'bulletList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Recovery (complete, incomplete)'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Transition to a chronic form'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [{ type: 'text', text: 'Death' }]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Clinical death – absence of external signs of life, but metabolic processes in tissues persist at a low level'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Biological death – irreversible cessation of the organism’s vital activity'
-															}
-														]
-													}
-												]
+												text: 'The development of embryotoxic congenital diseases is driven by teratogens such as medications, chemical substances, ionizing radiation, infections, metabolic disorders, and harmful habits in pregnant women.'
 											}
 										]
 									}
@@ -1260,55 +1717,70 @@ export const courseData: Course = {
 							}
 						},
 						{
+							id: 'image-2',
+							type: 'image',
+							url: '/images/content/module-3-3-6_1.png',
+							alt: 'Fetal Alcohol Syndrome',
+							caption: 'Fetal Alcohol Syndrome'
+						},
+						{
+							id: 'image-3',
+							type: 'image',
+							url: '/images/content/module-3-3-6_2.png',
+							alt: 'Fetal Alcohol Syndrome',
+							caption: 'Fetal Alcohol Syndrome'
+						},
+						{
 							id: 'question-1',
 							type: 'question',
-							question: 'What does nosology study?',
+							question: 'What is teratogenic action?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) Specific diseases and their treatment.',
+									text: 'A) Beneficial effect on the fetus',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Human social functions.',
+									text: 'B) Deviations in adult tooth formation',
 									isCorrect: false
 								},
 								{
 									id: 'opt-3',
-									text: 'C) General theoretical foundations of the concept of "disease": causes, stages, classification.',
-									isCorrect: true
+									text: 'C) Formation of benign tumors',
+									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Biochemical processes in cells.',
-									isCorrect: false
+									text: 'D) Disruption of embryonic development due to external factors',
+									isCorrect: true
 								}
 							]
 						},
 						{
 							id: 'question-2',
 							type: 'question',
-							question: 'What criteria determine the presence of a disease?',
+							question:
+								'Which factors are considered the most significant teratogens for humans?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) Presence of patient complaints, objective examination abnormalities, reduced work capacity.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-2',
-									text: 'B) External well-being of the patient.',
+									text: 'A) Ultraviolet radiation',
 									isCorrect: false
 								},
 								{
+									id: 'opt-2',
+									text: 'B) Ionizing radiation, medications',
+									isCorrect: true
+								},
+								{
 									id: 'opt-3',
-									text: 'C) Physical activity and positive attitude.',
+									text: 'C) Diet high in vitamins',
 									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Prolonged elevated temperature.',
+									text: 'D) Physical exercise by pregnant women',
 									isCorrect: false
 								}
 							]
@@ -1316,26 +1788,27 @@ export const courseData: Course = {
 						{
 							id: 'question-3',
 							type: 'question',
-							question: 'What is a typical pathological process?',
+							question:
+								'Which pregnancy periods are critical for embryogenesis?',
 							options: [
 								{
 									id: 'opt-1',
-									text: 'A) A process unique to each individual disease case.',
+									text: 'A) The entire pregnancy',
 									isCorrect: false
 								},
 								{
 									id: 'opt-2',
-									text: 'B) Constant combinations and patterns of pathological reactions formed through evolution.',
+									text: 'B) First trimester of pregnancy',
 									isCorrect: true
 								},
 								{
 									id: 'opt-3',
-									text: 'C) Localized painful changes in a single organ.',
+									text: 'C) Last month of pregnancy',
 									isCorrect: false
 								},
 								{
 									id: 'opt-4',
-									text: 'D) Processes occurring only in the elderly.',
+									text: 'D) After birth',
 									isCorrect: false
 								}
 							]
@@ -1343,40 +1816,65 @@ export const courseData: Course = {
 						{
 							id: 'question-4',
 							type: 'question',
-							question:
-								'What are diseases that develop slowly and persist for a long time called?',
+							question: 'How do congenital and hereditary diseases differ?',
 							options: [
-								{ id: 'opt-1', text: 'A) Acute.', isCorrect: false },
-								{ id: 'opt-2', text: 'B) Chronic.', isCorrect: true },
-								{ id: 'opt-3', text: 'C) Acute-onset.', isCorrect: false },
-								{ id: 'opt-4', text: 'D) Latent.', isCorrect: false }
+								{
+									id: 'opt-1',
+									text: 'A) Congenital are detected at birth, hereditary manifest later',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Congenital are related to childbirth, hereditary to embryogenesis',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Congenital are caused by external factors, hereditary by genetic disorders',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) No difference, both terms mean the same',
+									isCorrect: false
+								}
 							]
 						},
 						{
 							id: 'question-5',
 							type: 'question',
-							question: 'Which of the following is a possible disease outcome?',
+							question: 'What are phenocopies?',
 							options: [
-								{ id: 'opt-1', text: 'A) Complete recovery.', isCorrect: true },
 								{
-									id: 'opt-2',
-									text: 'B) Sharp improvement in well-being.',
+									id: 'opt-1',
+									text: 'A) Genetic copies of parents',
 									isCorrect: false
 								},
-								{ id: 'opt-3', text: 'C) Weight gain.', isCorrect: false },
+								{
+									id: 'opt-2',
+									text: 'B) Inherited physical traits',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Diseases resembling hereditary ones but caused by environmental factors',
+									isCorrect: true
+								},
 								{
 									id: 'opt-4',
-									text: 'D) Temporary symptom relief.',
+									text: 'D) Diseases transmitted from animals to humans',
 									isCorrect: false
 								}
 							]
 						}
 					]
 				},
+
 				{
-					id: 'chapter-1-4',
-					title: 'General Etiology',
-					hash: 'biochemical-mechanisms',
+					id: 'chapter-3-7',
+					title:
+						'The Role of Folic Acid in Preventing Congenital Neural Tube Defects',
+					hash: 'folic-acid-role',
 					isRead: false,
 					blocks: [
 						{
@@ -1390,7 +1888,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Etiology is a section of nosology concerning the causes and conditions of the onset and development of diseases.'
+												text: 'Folic acid (vitamin B9) is involved in metabolism, DNA production, plays a key role in the production of immune blood cells, and normalizes digestive tract function. Once in the body, vitamin B9 is converted into tetrahydrofolate, which is a component of many enzymes and participates in various biochemical reactions, such as protein metabolism. Vitamin B9 is actively involved in DNA replication. Additionally, it plays a significant role in RNA synthesis, amino acid production, and improves iron absorption. Therefore, a deficiency of folic acid is particularly dangerous for rapidly dividing cells.'
 											}
 										]
 									},
@@ -1399,7 +1897,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'The cause of a disease is the factor (primary etiological, triggering, specific) that induces the disease and imparts its specific characteristics.'
+												text: 'Maintaining adequate levels of folic acid daily for several months before pregnancy helps reduce the risk of congenital fetal malformations. The daily requirement for pregnant women is 0.4 mg per day. During breastfeeding, the need increases to 0.6 mg per day. It is especially important to maintain the necessary level of folic acid in the first trimester, when the fetal nervous system is developing.'
 											}
 										]
 									},
@@ -1408,7 +1906,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'For example, the cause of radiation sickness is ionizing radiation, and the cause of an infectious disease is pathogenic microorganisms. Each disease has its own specific cause.'
+												text: 'The most critical role of vitamin B9 is the development of the fetal neural tube. During the formation and differentiation of the neural primordium (days 18–21 of human embryo development), the neural plate folds, transforming first into a neural groove (with raised edges—neural folds), which then (on day 22) closes to form the neural tube and separates from the ectoderm.'
 											}
 										]
 									},
@@ -1417,7 +1915,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'The cause of a disease is not an isolated factor but the interaction of an external (or internal) pathogenic (etiological) factor with the organism under specific external and internal environmental conditions, leading to cellular and tissue damage and eliciting pathological and protective-compensatory-adaptive reactions.'
+												text: 'Derivatives of the neural tube include neurons and glial cells of the central nervous system organs—the brain and spinal cord—as well as several structures of the peripheral nervous system.'
 											}
 										]
 									},
@@ -1426,7 +1924,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Causes of disease can include various environmental and internal factors. Each cause has its qualitative characteristics, determining the specificity of its impact on the organism. For instance, mechanical factors cause structural damage to the affected body parts, high temperatures cause protein coagulation, and ionizing radiation causes ionization of atoms and molecules. Thus, each cause leads to specific primary changes in the organism, laying the foundation for the quality of the organism’s response in the form of a specific nosological disease form.'
+												text: 'The conversion of folic acid into tetrahydrofolic acid is catalyzed by the enzyme dihydrofolate reductase. Tetrahydrofolic acid performs numerous functions in the body. It acts as a coenzyme for many enzymes, a carrier of various groups (including single-carbon fragments), and is involved in the synthesis of amino acids and nucleotides.'
 											}
 										]
 									},
@@ -1435,7 +1933,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'However, identifying the cause of a disease can sometimes be challenging (e.g., certain tumors, mental illnesses). For instance, it has been proven that gastric ulcers develop due to both poor diet and dysfunctions of the autonomic nervous system or endocrine disorders.'
+												text: 'The drug methotrexate inhibits the enzyme dihydrofolate reductase, thereby blocking the formation of tetrahydrofolic acid.'
 											}
 										]
 									},
@@ -1444,194 +1942,207 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Studying and considering the role of pathogenic factors in the onset and development of a disease is essential, as the form and specific manifestations of the pathology depend on the pathogenic factor.'
+												text: 'A deficiency of folic acid in the body of a pregnant woman can lead to a range of disorders:'
 											}
 										]
 									},
 									{
-										type: 'paragraph',
+										type: 'bulletList',
 										content: [
 											{
-												type: 'text',
-												text: 'Conditions of disease onset and development'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Fetal loss;'
+															}
+														]
+													}
+												]
+											},
 											{
-												type: 'text',
-												text: 'Unlike causes, conditions are not mandatory for disease development. They determine the quantitative, not qualitative, characteristics of a disease.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Placental abruption;'
+															}
+														]
+													}
+												]
+											},
 											{
-												type: 'text',
-												text: 'Disease conditions are factors influencing the onset and development of diseases. In the presence of a cause, a disease may develop without certain conditions. For example, lobar pneumonia caused by highly virulent pneumococcus can develop without hypothermia or nutritional deficiencies. Conditions are divided into those predisposing to or facilitating disease development and those preventing disease onset and progression. Both types can be internal or external.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Spontaneous pregnancy termination;'
+															}
+														]
+													}
+												]
+											},
 											{
-												type: 'text',
-												text: 'Conditions often act as a trigger, realizing the pathogenic effect of the etiological factor on the organism.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Congenital malformations;'
+															}
+														]
+													}
+												]
+											},
 											{
-												type: 'text',
-												text: 'Identifying the primary, specific etiological factor, as well as conditions predisposing to or facilitating disease development and those preventing it, is absolutely necessary for developing effective disease prevention measures, reducing morbidity, and improving public health.'
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Intellectual disability;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Neural tube defects;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Hydrocephalus;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Anencephaly;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Meningocele;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Spina bifida;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Cardiovascular system defects;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Cleft lip, cleft palate;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Anemia, etc.'
+															}
+														]
+													}
+												]
 											}
 										]
 									}
 								]
 							}
-						},
-						{
-							id: 'question-1',
-							type: 'question',
-							question: 'What is etiology in medicine?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) The study of disease diagnosis.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) The science of disease treatment.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) The study of the causes and conditions of disease onset.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) The theory of preventing relapses.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-2',
-							type: 'question',
-							question: 'What is meant by the cause of a disease?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) The external environment of human habitation.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Any circumstances leading to health deterioration.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Factors causing the disease and defining its characteristic features.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Internal resources of the organism aimed at protection against infection.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-3',
-							type: 'question',
-							question:
-								'Provide an example of a cause of an infectious disease.',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Smoking cigarettes.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Bacteria or viruses.',
-									isCorrect: true
-								},
-								{ id: 'opt-3', text: 'C) Poor nutrition.', isCorrect: false },
-								{
-									id: 'opt-4',
-									text: 'D) Alcohol dependence.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-4',
-							type: 'question',
-							question:
-								'Is it true that conditions of a disease are factors necessarily present for its development?',
-							options: [
-								{ id: 'opt-1', text: 'A) Yes, true.', isCorrect: false },
-								{
-									id: 'opt-2',
-									text: 'B) No, false. Conditions only facilitate disease development but are not mandatory.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Partially true. Some conditions are mandatory, others are secondary.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-4',
-									text: 'D) There are no conditions for disease development.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-5',
-							type: 'question',
-							question:
-								'How does high temperature affect the organism according to etiological principles?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Leads to normalization of bodily functions.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Enhances resistance to viruses.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Causes protein denaturation (coagulation), leading to tissue damage.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Improves tissue blood supply.',
-									isCorrect: false
-								}
-							]
 						}
 					]
 				},
+
 				{
-					id: 'chapter-1-5',
-					title: 'General Pathogenesis',
-					hash: 'acute-adaptation',
+					id: 'chapter-3-8',
+					title: 'Compensatory and Protective Mechanisms in Cell Damage',
+					hash: 'compensatory-protective-mechanisms',
 					isRead: false,
 					blocks: [
 						{
@@ -1645,7 +2156,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'The general study of pathogenesis is a section of pathophysiology that examines the most general patterns (mechanisms of development) of the onset, progression, and outcomes of diseases, regardless of their etiology.'
+												text: 'At any given moment, cells are exposed to a wide range of external and internal environmental factors (microenvironment), including pathogenic ones. To maintain optimal functioning in a constantly changing environment, cells continuously monitor these influences, responding by activating various compensatory and protective processes that promote adaptation. Some of the most common cellular responses include changes in the activity of energy and synthetic processes within the cell, alterations in functional activity, and hypertrophy of the cell or its individual organelles.'
 											}
 										]
 									},
@@ -1654,7 +2165,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'The study of pathogenesis involves analyzing so-called pathogenetic factors of diseases, i.e., the cause-and-effect relationships that arise in response to a cause and contribute to further disease development.'
+												text: 'To implement these changes and protect the cell from pathogenic influences and ultrastructural damage, the following protective and compensatory mechanisms exist within the cell:'
 											}
 										]
 									},
@@ -1663,338 +2174,646 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'The pathogenesis of a disease, or the mechanism of disease development, is a set of interconnected and interdependent, continuously evolving functional (physiological), structural, biochemical, and biophysical changes.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Disease pathogenesis begins with some primary damage (R. Virchow) to cells in a specific part of the body (a first-order pathogenetic factor). In some cases, the initial damage may be gross and visible to the naked eye (trauma, injury, abrasions, wounds). In other cases, damage may be undetectable without special methods (molecular-level damage). The products of tissue damage become sources of new damage during disease progression, i.e., second-, third-, and fourth-order pathogenetic factors.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Determining the sequential chain of cause-and-effect relationships in a disease is crucial for conducting rational pathogenetic therapy.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'In the development of diseases and pathological processes, identifying the primary link of disruptions in the organism is extremely important — a change (one of the pathogenetic factors) that determines the development of subsequent disease stages. Eliminating the primary link of pathogenesis leads to organism recovery.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'The primary link of pathogenesis is a change that is absolutely necessary for the unfolding of other pathogenetic links and precedes them.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Without identifying the primary link, pathogenetic therapy — a set of measures aimed at interrupting the cause-and-effect relationships between various structural, metabolic, and functional disruptions in the organism — is impossible. For example, bleeding and reduced blood volume (hypoxia) in acute blood loss determine the development of subsequent disruptions: impaired cardiovascular function (decreased blood pressure, weakened heart contractions), impaired respiration (respiratory insufficiency, hypoxia), and metabolic disorders (deepening hypoxia). Restoring circulating blood volume (CBV) through transfusion of blood or blood substitutes can eliminate all these disorders characteristic of blood loss. Reduced CBV and associated hypoxia (hypoxemia) are the primary link in blood loss.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'A vicious cycle is a closed chain of cause-and-effect relationships where a sequentially arising effect becomes the cause of new disruptions, exacerbating the initial pathological changes, thereby worsening the disease course.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'A disruption in organ or system function that arises during a pathological process often becomes a factor contributing to damage progression through the "vicious cycle" principle. For example, a sharp reduction in oxygen transport during blood loss leads to heart insufficiency, which further impairs oxygen transport.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Protective-compensatory processes are reactive changes in the organism under the influence of pathogenic factors, aimed at maintaining its homeostasis.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'In the early stages of a disease, protective-compensatory processes develop at molecular and cellular levels. With mild and short-term exposure to a cause (e.g., contact with low-virulence microorganisms, small doses of poisons, low-dose ionizing radiation, or minor injuries), a disease may not develop. Significant damage triggers stronger responses from organs and their regulating systems.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Sanogenesis is a dynamic complex of protective-adaptive physiological and pathophysiological mechanisms that develop under the influence of a pathogenic factor on the organism, aimed at restoring disrupted self-regulation.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Sanogenesis mechanisms function throughout the morbid process (from the pre-disease period to recovery) and are oriented toward restoring organism self-regulation.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'A key aspect of this process is the assertion that sanogenesis (recovery mechanisms) is a dialectical counterpoint to pathogenesis (disease mechanisms) and that sanogenesis mechanisms begin operating at the onset of a disease, not only during a clinically designated period of disease involution.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'While general disease mechanisms aim at organism disintegration as a biological unit, sanogenesis mechanisms are directed toward preserving homeostasis and organism integrity.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Primary and secondary sanogenesis mechanisms are distinguished.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Primary sanogenetic mechanisms include adaptive, protective, and compensatory reactions. These mechanisms activate before damage occurs and aim to support the organism under the influence of a pathogenic factor, thereby preventing disease onset and development.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Secondary sanogenetic mechanisms include protective, compensatory, and terminal mechanisms. These are the same processes observed in the premorbid period but now operate during an established pathological process to slow its progression.'
-											}
-										]
-									}
-								]
-							}
-						},
-						{
-							id: 'question-1',
-							type: 'question',
-							question: 'What does general pathogenesis study?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) The medical history of a specific patient.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Specific causes of disease onset.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) The most general patterns of disease development, regardless of their cause.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Diagnostic procedures and disease treatment methods.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-2',
-							type: 'question',
-							question: 'What is a vicious cycle in pathogenesis?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) A favorable disease resolution.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Activation of the organism’s self-recovery mechanism.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) A self-sustaining chain of disruptions exacerbating the disease course.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Positive dynamics in the patient’s condition.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-3',
-							type: 'question',
-							question: 'What is the primary link of pathogenesis?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Tissue damage in the organism.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Impairment of the organism’s protective forces.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Initial damage triggering subsequent disruptions in the organism.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Gradual disappearance of disease symptoms.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-4',
-							type: 'question',
-							question: 'What is meant by the term "sanogenesis"?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) A period of chronic disease exacerbation.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) A complex of protective and adaptive mechanisms aimed at recovery.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-3',
-									text: 'C) A new phase of disease development.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-4',
-									text: 'D) Unsuccessful attempts by the organism to combat a disease.',
-									isCorrect: false
-								}
-							]
-						},
-						{
-							id: 'question-5',
-							type: 'question',
-							question:
-								'Which mechanisms participate in organism recovery during a disease?',
-							options: [
-								{
-									id: 'opt-1',
-									text: 'A) Only primary sanogenesis mechanisms.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-2',
-									text: 'B) Exclusively medical interventions by a doctor.',
-									isCorrect: false
-								},
-								{
-									id: 'opt-3',
-									text: 'C) Joint interaction of primary and secondary sanogenesis mechanisms.',
-									isCorrect: true
-								},
-								{
-									id: 'opt-4',
-									text: 'D) The sole mechanism is immune system activation.',
-									isCorrect: false
-								}
-							]
-						}
-					]
-				},
-				{
-					id: 'chapter-1-6',
-					title: 'Experiment Procedure',
-					hash: 'experiment-1',
-					isRead: false,
-					blocks: [
-						{
-							id: 'text-1',
-							type: 'text',
-							content: {
-								type: 'doc',
-								content: [
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Experiment 1',
+												text: 'Genome Protection Mechanisms',
 												marks: [{ type: 'bold' }]
 											}
 										]
 									},
 									{
+										type: 'bulletList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Tumor suppression (activity of antiproliferative genes and apoptosis genes);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'RNA interference (a biological process in which short RNA molecules can suppress the expression of viral genes);'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'DNA repair (restoration of the native structure of one strand using the complementary strand as a template).'
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
 										type: 'paragraph',
 										content: [
 											{
 												type: 'text',
-												text: '“Pathogenic effect of reduced oxygen in inhaled air on the organism under hypothermic conditions”',
+												text: 'Metabolism Maintenance Mechanisms',
 												marks: [{ type: 'bold' }]
 											}
 										]
 									},
+									{
+										type: 'bulletList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of glycolysis and cellular respiration;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Increased activity of membrane ATPases (Ca2+, Na+, K+, Mg2+, etc.).'
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Intracellular Detoxification Systems',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'bulletList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Increased activity of cytochrome P450 system enzymes in the endoplasmic reticulum;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Enhanced activity of antioxidant systems.'
+															}
+														]
+													}
+												]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Mechanisms for Compensating Regulatory Disruptions',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'bulletList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Alteration of receptor sensitivity;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Changes in the activity of secondary messenger proteins;'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Production of heat shock proteins (chaperones) – proteins that regulate the formation of the spatial structure of various cellular proteins, including enzymes.'
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'question-1',
+							type: 'question',
+							question: 'What is included in genome protection mechanisms?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) DNA repair',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Lipid synthesis',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Mitochondrial activity',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Ion channel function',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question: 'Which mechanisms support cellular metabolism?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) RNA interference',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Adaptation to iron deficiency',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Activation of glycolysis and cellular respiration',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Change in nuclear shape',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question:
+								'What is involved in maintaining cellular ionic metabolism?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Cytochrome P450 system function',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Chaperone function',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Membrane ATPase activity',
+									isCorrect: true
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Lysosome activity',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question:
+								'Which systems are responsible for intracellular detoxification?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Cytochrome P450 system in the endoplasmic reticulum',
+									isCorrect: true
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Amino acid active transport system',
+									isCorrect: false
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Mitochondria',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Ribosomes',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-5',
+							type: 'question',
+							question: 'What are heat shock proteins?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'A) Proteins that protect cells during fever',
+									isCorrect: false
+								},
+								{
+									id: 'opt-2',
+									text: 'B) Proteins involved in protecting and restoring the structure of cellular proteins',
+									isCorrect: true
+								},
+								{
+									id: 'opt-3',
+									text: 'C) Antibodies',
+									isCorrect: false
+								},
+								{
+									id: 'opt-4',
+									text: 'D) Proteins that promote tumor growth',
+									isCorrect: false
+								}
+							]
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-9',
+					title:
+						'Signal Transduction System Mediated by Membrane Receptors: Acetylcholine Muscarinic Receptor Pathway',
+					hash: 'acetylcholine-muscarinic-pathway',
+					isRead: false,
+					blocks: [
+						{
+							id: 'image-1',
+							type: 'image',
+							url: '/images/content/module-3-3-9.png',
+							alt: 'Acetylcholine Muscarinic Receptor Signal Transduction',
+							caption: 'Acetylcholine Muscarinic Receptor Signal Transduction'
+						},
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Study the diagram of signal transduction by membrane receptors shown above.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'The signal transduction pathway of acetylcholine interaction with the muscarinic receptor proceeds as follows:'
+											}
+										]
+									},
+									{
+										type: 'orderedList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Binding of acetylcholine to the muscarinic receptor: Acetylcholine, acting as a signaling molecule (primary messenger), binds to the muscarinic receptor located on the postsynaptic cell membrane.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of G-protein: The binding of acetylcholine induces a conformational change in the muscarinic receptor, leading to the activation of the associated G-protein. The G-protein consists of three subunits: α, β, and γ.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Dissociation of G-protein: The activated G-protein dissociates into two parts: the α-subunit and the βγ-complex.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of effector molecules: The α-subunit of the G-protein activates effector molecules such as adenylate cyclase, phospholipase C, or phosphodiesterase. In this case, activation of adenylate cyclase leads to the formation of the secondary messenger, cyclic adenosine monophosphate (cAMP).'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of protein kinase A: cAMP binds to protein kinase A, causing its activation.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Phosphorylation of target proteins: Activated protein kinase A phosphorylates various target proteins, including those involved in the activation of calcium channels.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Increase in calcium concentration: Phosphorylation of proteins leads to the opening of calcium channels, increasing the concentration of calcium ions (Ca2+) in the cell cytoplasm.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of calmodulin: Calcium ions bind to calmodulin, activating it.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of calmodulin-dependent enzymes: Activated calmodulin binds to calmodulin-dependent enzymes, causing their activation.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Activation of myosin light chains: Calmodulin-dependent enzymes phosphorylate myosin light chains, leading to their activation.'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Muscle cell contraction: Activated myosin light chains interact with actin filaments, leading to sarcomere shortening and muscle cell contraction.'
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-10',
+					title:
+						'Task: Signal Transduction System Mediated by Membrane Receptors',
+					hash: 'dnd-blocks',
+					isRead: false,
+					blocks: [
+						{
+							id: 'dnd-2',
+							type: 'drag-drop-table',
+							title:
+								'Signal Transduction System Mediated by Membrane Receptors',
+							tableTitle:
+								"Complete the task described earlier. Fill in one flowchart chain for the 'Acetylcholine Signal Transduction System.' The correct sequence is the main goal of the task. Fill the table from bottom to top, assuming the first row is the start of the chain and the last row is the end. In each row, select one or more answer options from those provided.",
+							columns: [
+								{
+									id: 'type',
+									title:
+										'Signal Transduction System Mediated by Membrane Receptors',
+									width: '100%'
+								}
+							],
+							rows: [
+								{ id: 'row1' },
+								{ id: 'row2' },
+								{ id: 'row3' },
+								{ id: 'row4' },
+								{ id: 'row5' },
+								{ id: 'row6' },
+								{ id: 'row7' },
+								{ id: 'row8' },
+								{ id: 'row9' },
+								{ id: 'row10' },
+								{ id: 'row11' }
+							],
+							answers: [
+								{ id: 'ans8', content: 'Activation of calcium channels' },
+								{
+									id: 'ans1',
+									content: 'Binding of acetylcholine to the receptor'
+								},
+								{
+									id: 'ans3',
+									content:
+										'Inactivation of G-protein (dissociation into subunits)'
+								},
+								{ id: 'ans4', content: 'Activation of effector molecules' },
+								{ id: 'ans2', content: 'Activation of G-protein' },
+								{ id: 'ans6', content: 'Activation of protein kinase A' },
+								{ id: 'ans7', content: 'Phosphorylation of proteins' },
+								{ id: 'ans9', content: 'Activation of calmodulin' },
+								{
+									id: 'ans5',
+									content: 'Intracellular effects (cAMP synthesis)'
+								},
+								{ id: 'ans10', content: 'Activation of myosin light chains' },
+								{ id: 'ans11', content: 'Muscle cell contraction' }
+							],
+							correctAnswers: {
+								row1_effects: ['ans1'],
+								row2_effects: ['ans2'],
+								row3_effects: ['ans3'],
+								row4_effects: ['ans4'],
+								row5_effects: ['ans5'],
+								row6_effects: ['ans6'],
+								row7_effects: ['ans7'],
+								row8_effects: ['ans8'],
+								row9_effects: ['ans9'],
+								row10_effects: ['ans10'],
+								row11_effects: ['ans11']
+							}
+						}
+					]
+				},
+
+				{
+					id: 'chapter-3-11',
+					title:
+						'Experiment: Damaging Effects of Electric Current on the Organism',
+					hash: 'electric-current-damage',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
 									{
 										type: 'paragraph',
 										content: [
 											{
 												type: 'text',
 												text: 'Objective:',
-												marks: [{ type: 'bold' }, { type: 'italic' }]
+												marks: [{ type: 'bold' }]
 											},
 											{
 												type: 'text',
-												text: ' based on a comparative analysis of the damaging effects of various pathogenic factors, learn to identify the causal one among them.'
+												text: ' To study the damaging effects of electric current on the organism using an experimental model.'
 											}
 										]
 									},
@@ -2004,11 +2823,11 @@ export const courseData: Course = {
 											{
 												type: 'text',
 												text: 'Equipment:',
-												marks: [{ type: 'bold' }, { type: 'italic' }]
+												marks: [{ type: 'bold' }]
 											},
 											{
 												type: 'text',
-												text: ' 3 white mice, 3 identical glass jars, 1 lid with a hole, 2 lids without holes, an electric thermometer, and 2 plates with ice.'
+												text: ' 3 white rats of the same sex and weight, anesthetic mixture for injection (Sol. Ketamini hydrochloridi 5% + Sol. Xylazini 2% + Sol. Droperidoli 0.25% + Sol. Atropini sulfatis 0.1%), 2 ml syringe, 3 dissection tables, scalpel, scissors, 2 tweezers, electrical circuit with a 220-volt AC power source, push-button switch, and needle electrodes, electrocardiograph with needle electrodes.'
 											}
 										]
 									},
@@ -2017,8 +2836,8 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Experiment procedure',
-												marks: [{ type: 'bold' }, { type: 'italic' }]
+												text: 'Experimental Procedure',
+												marks: [{ type: 'bold' }]
 											}
 										]
 									},
@@ -2027,75 +2846,12 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Prepare the equipment.'
+												text: 'Prepare the equipment. Anesthetize three rats of the same sex and weight with the anesthetic mixture via intramuscular injection. Then, secure them separately on dissection tables using ligatures. Assess their general condition and measure respiratory rate by observing abdominal movements. Attach electrodes as follows:'
 											}
 										]
 									},
 									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'For each animal, count the respiratory rate, observe behavior and skin color, and measure oral temperature (normal level is 37°C).'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Place all mice into jars of equal volume.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Place plates with ice under the first and third jars. Close all jars simultaneously. Use the lid with a hole for the first jar.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'At three time points (after 15, 27, and 42 minutes), record the respiratory rate, behavior, and skin color of all mice.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Then remove the mice from the jars and assess their reflex activity, measuring oral temperature again.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Record all obtained data in the table below.'
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'When preparing the report, explain the following:'
-											}
-										]
-									},
-									{
-										type: 'orderedList',
+										type: 'bulletList',
 										content: [
 											{
 												type: 'listItem',
@@ -2105,7 +2861,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Why was there an 11°C temperature difference between the experimental mouse and the control mouse under hypothermia?'
+																text: 'For the 1st rat – to the hind limbs;'
 															}
 														]
 													}
@@ -2119,7 +2875,7 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Why did one of the two mice exposed to hypoxia die, while the other survived?'
+																text: 'For the 2nd rat – to the ear pinnae;'
 															}
 														]
 													}
@@ -2133,85 +2889,83 @@ export const courseData: Course = {
 														content: [
 															{
 																type: 'text',
-																text: 'Analyze the etiological factors. Differentiate hypothermia: in which case does it act as a cause, and in which as a condition — and why?'
+																text: 'For the 3rd rat – to the left front and right hind limbs. Additionally, connect needle electrodes for ECG to this rat (recall the standard lead placement scheme).'
 															}
 														]
 													}
 												]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Sequentially pass an electric current of 220 volts through the organism of each experimental animal for 1-2 seconds (strictly controlling the duration using the push-button switch). For the 3rd rat, immediately after the electric current exposure, connect the ECG and record the heart rhythm. Assess the general condition of the animals, changes in respiratory rate (based on abdominal movements), and ECG data. Record all obtained data in the table below.'
 											}
 										]
 									}
 								]
 							}
-						}
-					]
-				},
-				{
-					id: 'chapter-1-7',
-					title: 'Assignment: "Disease Outcomes and Stages of Organism Dying"',
-					hash: 'dnd-blocks',
-					isRead: false,
-					blocks: [
-						{
-							id: 'dnd-2',
-							type: 'drag-drop-table',
-							title: 'Disease Outcomes',
-							tableTitle: 'Assignment: "List possible disease outcomes"',
-							columns: [
-								{ id: 'type', title: 'Disease Outcomes', width: '100%' }
-							],
-							rows: [
-								{ id: 'row1' }, // Статический заголовок строки (было column1: '1')
-								{ id: 'row2' },
-								{ id: 'row3' },
-								{ id: 'row4' }
-							],
-							answers: [
-								{ id: 'ans1', content: 'Complete recovery' },
-								{ id: 'ans6', content: 'Death' },
-								{ id: 'ans3', content: 'Relapse' },
-								{ id: 'ans4', content: 'Remission' },
-								{ id: 'ans2', content: 'Incomplete recovery' },
-								{ id: 'ans5', content: 'Transition to chronic form' }
-							],
-							correctAnswers: {
-								row1_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
-								row2_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
-								row3_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
-								row4_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] }
-							}
 						},
 						{
-							id: 'dnd-3',
-							type: 'drag-drop-table',
-							title: 'Stages of Dying',
-							tableTitle: 'Assignment: "List the stages of organism dying"',
-							columns: [
-								{ id: 'type', title: 'Stages of Dying', width: '100%' }
-							],
-							rows: [
-								{ id: 'row1' },
-								{ id: 'row2' },
-								{ id: 'row3' },
-								{ id: 'row4' }
-							],
-							answers: [
-								{ id: 'ans1', content: 'Pre-agony' },
-								{ id: 'ans3', content: 'Clinical death' },
-								{ id: 'ans4', content: 'Biological death' },
-								{ id: 'ans2', content: 'Agony' }
-							],
-							correctAnswers: {
-								row1_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
-								row2_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
-								row3_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
-								row4_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] }
-							}
+							id: 'question-1',
+							type: 'question',
+							question:
+								'Why are vegetative symptoms minimal when electric current passes through the hind limbs?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'Answer not provided',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-2',
+							type: 'question',
+							question:
+								"Why might the following disorders be observed when electric current passes through the brain: temporary cessation of breathing, subsequent tachypnea, generalized tonic then clonic seizures, 'running in place,' followed by lethargy?",
+							options: [
+								{
+									id: 'opt-1',
+									text: 'Answer not provided',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-3',
+							type: 'question',
+							question:
+								'Indicate the cause of animal death when electric current passes through the heart.',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'Answer not provided',
+									isCorrect: false
+								}
+							]
+						},
+						{
+							id: 'question-4',
+							type: 'question',
+							question:
+								'Which path of electric current through the organism is most dangerous and why?',
+							options: [
+								{
+									id: 'opt-1',
+									text: 'Answer not provided',
+									isCorrect: false
+								}
+							]
 						}
 					]
 				},
+
 				{
-					id: 'chapter-1-8',
+					id: 'chapter-3-12',
 					title: 'Interactive Experience',
 					hash: 'game-case',
 					isRead: false,
@@ -2220,18 +2974,19 @@ export const courseData: Course = {
 							id: 'game-1',
 							type: 'game',
 							title:
-								'Pathogenic Effects of Reduced Oxygen in Inhaled Air Under Hypothermic Conditions',
-							gameUrl: '/games/lab1/index.html',
-							gameUrlEn: '/games/lab1_en/index.html',
+								'Pathogenic Effects on the Body of Reduced Oxygen in Inhaled Air Under Hypothermia Conditions',
+							gameUrl: '/games/lab3/index.html',
+							gameUrlEn: '/games/lab3_en/index.html',
 							width: '100%',
 							height: 'auto'
 						}
 					]
 				},
+
 				{
-					id: 'chapter-1-9',
-					title: 'Clinical Case: Altitude Sickness',
-					hash: 'altitude-case',
+					id: 'chapter-3-13',
+					title: 'Cell Pathology: Cyanide Poisoning',
+					hash: 'clinical-death',
 					isRead: false,
 					blocks: [
 						{
@@ -2242,14 +2997,10 @@ export const courseData: Course = {
 								content: [
 									{
 										type: 'paragraph',
-										content: [{ type: 'text', text: 'Clinical Case:' }]
-									},
-									{
-										type: 'paragraph',
 										content: [
 											{
 												type: 'text',
-												text: 'A 46-year-old woman was admitted to the emergency department with an acute altered mental state that developed during a mountain hike. The patient had traveled from a coastal region (~20 m above sea level) with a group of wilderness enthusiasts. After ascending to a base camp station (~3500 m above sea level), the patient began complaining of worsening malaise, nausea, chest tightness, and headache. Her symptoms worsened during a short hike to a campsite (~4000 m). Shortly after arriving, the patient experienced vomiting, shortness of breath, acrocyanosis, and facial pallor, prompting the team leader to call emergency services. During descent, the patient’s consciousness became more confused, and she required assistance to move. In the emergency department: blood pressure 132/86 mmHg, heart rate 84 beats per minute, respiratory rate 21 breaths per minute, oxygen saturation 93%, carbon dioxide 18 mmol/L (20–32 mmol/L). Physical examination noted tachypnea, incoherent muttering, eye-opening only in response to voice, and withdrawal from pain. She did not respond to questions or follow commands, was periodically aggressive, and attempted to get out of bed. A chest X-ray showed diffuse pulmonary vascular congestion without signs of pneumothorax, cardiomegaly, or consolidation.'
+												text: 'A 36-year-old woman with a history of three suicide attempts and no reported drug use presented to the emergency department of a regional hospital with a primary complaint of vomiting. She had consumed approximately 40 bitter almonds in a suicide attempt one hour prior to admission. Within 20 minutes, she experienced repeated vomiting without blood.'
 											}
 										]
 									},
@@ -2258,135 +3009,7 @@ export const courseData: Course = {
 										content: [
 											{
 												type: 'text',
-												text: 'Instructions for Completing the Assignment:'
-											}
-										]
-									},
-									{
-										type: 'orderedList',
-										content: [
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Carefully analyze all provided data'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Answer the questions using medical terminology'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'For each question, provide:'
-															}
-														]
-													},
-													{
-														type: 'bulletList',
-														content: [
-															{
-																type: 'listItem',
-																content: [
-																	{
-																		type: 'paragraph',
-																		content: [
-																			{
-																				type: 'text',
-																				text: 'Clear diagnosis/answer'
-																			}
-																		]
-																	}
-																]
-															},
-															{
-																type: 'listItem',
-																content: [
-																	{
-																		type: 'paragraph',
-																		content: [
-																			{
-																				type: 'text',
-																				text: 'Pathophysiological justification'
-																			}
-																		]
-																	}
-																]
-															},
-															{
-																type: 'listItem',
-																content: [
-																	{
-																		type: 'paragraph',
-																		content: [
-																			{
-																				type: 'text',
-																				text: 'Supporting data from the case'
-																			}
-																		]
-																	}
-																]
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{
-																type: 'text',
-																text: 'Response length: 200–300 words per question'
-															}
-														]
-													}
-												]
-											},
-											{
-												type: 'listItem',
-												content: [
-													{
-														type: 'paragraph',
-														content: [
-															{ type: 'text', text: 'Time limit: 30 minutes' }
-														]
-													}
-												]
-											}
-										]
-									},
-									{
-										type: 'paragraph',
-										content: [
-											{
-												type: 'text',
-												text: 'Questions will be available after reviewing the theoretical material.'
+												text: 'On admission: The patient was confused, with a Glasgow Coma Scale (GCS) score of 9 out of 15. Vital signs included heart rate and respiratory rate. Physical examination revealed pink skin and mucous membranes. The cardiovascular and respiratory systems were normal. Bilateral pupil dilation was noted. Two hours after admission, the patient developed hypotension, as shown in Table 1. Four hours after admission, the patient lost consciousness. Concurrently, blood pressure and pulse rate decreased, as indicated in Table 1. Due to this, intubation was performed. Norepinephrine was administered due to low blood pressure, leading to a subsequent increase in blood pressure and pulse rate within 30 minutes. Venous blood gas analysis revealed severe metabolic acidosis (pH = 6.92, pO2 = 43 mmHg, HCO3 = 8.6 mmol/L, pCO2 = 42.7 mmHg, BE = −25.9 mmol/L). Due to the lack of necessary reagents, cyanide levels in the blood could not be measured. Nevertheless, based on clinical and laboratory findings, as well as the confirmed consumption of bitter almonds, a diagnosis of acute cyanide poisoning due to oral ingestion of amygdalin-containing products was established. An electrocardiogram (ECG) showed sinus tachycardia. Gastric lavage was performed, and a single dose of 60 g of activated charcoal (1 g/kg body weight) was administered. Additionally, to address the metabolic acidosis, an infusion of three vials of sodium bicarbonate (150 mEq) was initiated. Unfortunately, the regional hospital lacked the specific antidote for cyanide poisoning, so the patient was transferred to a poison control center for further treatment.'
 											}
 										]
 									}
@@ -2394,28 +3017,2051 @@ export const courseData: Course = {
 							}
 						},
 						{
-							id: 'clinical-case-1',
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'heading',
+										attrs: { level: 2 },
+										content: [
+											{
+												type: 'text',
+												text: 'Table 1. Key Patient Condition Indicators Over Time (Part 1)',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'table',
+										content: [
+											{
+												type: 'tableHeader',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Time After Bitter Almond Consumption',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Level of Consciousness, GCS',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Intubation',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Respiratory Rate',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'SpO2',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Pulse Rate (beats/min)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Blood Pressure (mmHg)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'tableBody',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '1 hour'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Confused, 9/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '16'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '95%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '117'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '160/85'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '3 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Confused, 9/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '22'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '95%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '110'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '99/60'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '5 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Unconscious, 6/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Intubated'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '95%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '104'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '60/30'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '5 hours 30 minutes'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Unconscious, 6/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Intubated'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '95%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '105'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '80/60'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '8 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Unconscious, 6/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Intubated'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '97%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '80'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '90/60'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '12 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Unconscious, 6/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Intubated'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '95%'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '73'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '97/59'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '25 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Conscious, 12/15'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Extubated'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '22'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '100% with mask'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '86'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '102/62'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'text-2',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'heading',
+										attrs: { level: 2 },
+										content: [
+											{
+												type: 'text',
+												text: 'Table 1. Key Patient Condition Indicators Over Time (Part 2)',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'table',
+										content: [
+											{
+												type: 'tableHeader',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Time After Bitter Almond Consumption',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'pH (7.31–7.41)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'pCO2 mmHg (41–51)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'pO2 mmHg (30–40)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'HCO3 mmol/L (23–29)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'BE mmol/L (−3 to +3)',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'tableBody',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '1 hour'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '6.92'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '42.7'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '43'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '8.3'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '−25.9'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '3 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '5 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '5 hours 30 minutes'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '–'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '8 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '7.20'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '33'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '36'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '45'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '−5.1'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '12 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '7.39'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '43.7'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '75.2'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '26.4'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '1.3'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '25 hours'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '7.46'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '23.9'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '38'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '27.9'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '3.9'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'text-3',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'heading',
+										attrs: { level: 2 },
+										content: [
+											{
+												type: 'text',
+												text: 'Table 2. Laboratory Tests',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'table',
+										content: [
+											{
+												type: 'tableHeader',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Parameter',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Results',
+																				marks: [{ type: 'bold' }]
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'tableBody',
+												content: [
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Leukocytes'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '7×10⁹/L'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Erythrocytes'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '4.3×10⁹/L'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Hb'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '142 g/L'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'pH'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '6.92 (7.31–7.41)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'pCO2'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '42.7 mmHg (41–51)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'LDH (Lactate Dehydrogenase)'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '574 IU/L (100–480)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Hematocrit'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '49% (35–45)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'HCO3⁻'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '8.3 mmol/L (23–29)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'BE'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '−25.9 mmol/L (N −3 to +3)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													},
+													{
+														type: 'tableRow',
+														content: [
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: 'Anion Gap'
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																type: 'tableCell',
+																content: [
+																	{
+																		type: 'paragraph',
+																		content: [
+																			{
+																				type: 'text',
+																				text: '30.7 mmol/L (N 4–12)'
+																			}
+																		]
+																	}
+																]
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							id: 'clinical-case-3',
 							type: 'free-input',
-							title: 'Clinical Case: Altitude Sickness',
+							title: 'Cell Pathology: Cyanide Poisoning',
 							questions: [
 								{
 									id: 'q1-patho',
-									text: 'What pathological processes developed in the patient at an altitude of 4000 m? Justify your answer with data from the case.',
-									maxLength: 1000,
-									placeholder: 'Specify key pathophysiological processes'
+									text: 'What is the primary pathological process that developed in the patient after consuming bitter almonds? Justify your answer with clinical and laboratory data.',
+									maxLength: 1000
 								},
 								{
 									id: 'q2-therapy',
-									text: 'Can it be assumed that the patient developed hypoxia? If so, what type(s)? Justify your answers.',
-									maxLength: 800
+									text: "What is the mechanism of cyanide's toxic action at the cellular level, and why does it lead to the development of severe metabolic acidosis?",
+									maxLength: 1000
 								},
 								{
 									id: 'q3-therapy',
-									text: 'Which mechanisms of adaptation to hypoxia (short-term and/or long-term) were insufficient in the patient? Justify your answer.',
-									maxLength: 800
+									text: 'Why can the skin and mucous membranes remain pink in cyanide poisoning despite severe tissue hypoxia?',
+									maxLength: 1000
+								},
+								{
+									id: 'q3-therapy',
+									text: 'Explain why the patient experienced a gradual restoration of consciousness and vital signs with the normalization of blood pH.',
+									maxLength: 1000
 								}
 							],
-							timeLimit: 1800, // 45 minutes
+							timeLimit: 1800,
 							submissionText: 'Response sent for instructor review'
 						}
 					]

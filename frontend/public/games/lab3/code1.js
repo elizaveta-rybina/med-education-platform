@@ -95,7 +95,7 @@ gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_952Code.eventsList0 = functio
 
 let isConditionTrue_0 = false;
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20357068);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(10802380);
 }
 if (isConditionTrue_0) {
 gdjs.copyArray(gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_952Code.GD_951042_951077_951089_951099Objects3, gdjs._1055_1072_1090_1086_1083_1086_1075_1080_1103_952Code.GD_951042_951077_951089_951099Objects4);
@@ -143,7 +143,7 @@ isConditionTrue_0 = false;
 isConditionTrue_0 = gdjs.evtTools.input.isMouseButtonReleased(runtimeScene, "Left");
 if (isConditionTrue_0) {
 isConditionTrue_0 = false;
-{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(20329628);
+{isConditionTrue_0 = runtimeScene.getOnceTriggers().triggerOnce(11026844);
 }
 }
 if (isConditionTrue_0) {
