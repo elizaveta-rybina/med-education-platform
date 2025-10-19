@@ -7,7 +7,7 @@ export const courseData: Course = {
 	modules: [
 		{
 			id: 'module-3',
-			title: 'Предмет, цель и задачи патофизиологии ',
+			title: 'Повреждение клетки',
 			chapters: [
 				{
 					id: 'chapter-3-1',
@@ -294,6 +294,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-2',
 					title:
@@ -691,6 +692,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-3',
 					title: 'Дисбаланс ионов и жидкости',
@@ -904,6 +906,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-4',
 					title:
@@ -1122,6 +1125,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-5',
 					title:
@@ -1523,6 +1527,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-6',
 					title: 'Влияние тератогенов на синтез и репарацию ДНК',
@@ -1867,6 +1872,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-7',
 					title:
@@ -2135,6 +2141,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-8',
 					title: 'Компенсаторные и защитные механизмы при повреждении клетки',
@@ -2507,6 +2514,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-9',
 					title:
@@ -2710,6 +2718,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-10',
 					title:
@@ -2786,6 +2795,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-11',
 					title:
@@ -2959,6 +2969,7 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-12',
 					title: 'Интерактивный опыт',
@@ -2977,9 +2988,10 @@ export const courseData: Course = {
 						}
 					]
 				},
+
 				{
 					id: 'chapter-3-13',
-					title: 'Клинический случай: клиническая смерть',
+					title: 'Патология клетки. Отравление цианидами',
 					hash: 'clinical-death',
 					isRead: false,
 					blocks: [
@@ -5030,24 +5042,29 @@ export const courseData: Course = {
 							}
 						},
 						{
-							id: 'clinical-case-1-1',
+							id: 'clinical-case-3',
 							type: 'free-input',
-							title: 'Клинический случай: высотная болезнь',
+							title: 'Патология клетки. Отравление цианидами',
 							questions: [
 								{
 									id: 'q1-patho',
-									text: 'Какие основные патологические процессы развились у пациента в результате теплового удара? Обоснуйте ответ данными из истории болезни.',
+									text: 'Какой основной патологический процесс развился у пациентки после употребления горького миндаля? Обоснуйте свой ответ клиническими и лабораторными данными.',
 									maxLength: 1000
 								},
 								{
 									id: 'q2-therapy',
-									text: 'Какие компенсаторные (адаптационные) механизмы организма при перегревании и обезвоживании оказались недостаточными или истощёнными? Объясните, почему.',
-									maxLength: 800
+									text: 'Каков механизм токсического действия цианида на клеточном уровне и почему его действие приводит к развитию тяжёлого метаболического ацидоза?',
+									maxLength: 1000
 								},
 								{
 									id: 'q3-therapy',
-									text: 'Какие профилактические и ранние лечебные мероприятия могли бы предотвратить развитие тяжёлого течения и летального исхода в данном случае?',
-									maxLength: 800
+									text: 'Почему при цианидном отравлении кожа и слизистые могут оставаться розовыми, несмотря на тяжёлую тканевую гипоксию?',
+									maxLength: 1000
+								},
+								{
+									id: 'q3-therapy',
+									text: 'Объясните, почему у пациентки наблюдалось постепенное восстановление сознания и жизненных показателей при нормализации pH крови.',
+									maxLength: 1000
 								}
 							],
 							timeLimit: 1800,
