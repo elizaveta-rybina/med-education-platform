@@ -32,11 +32,7 @@ export const TheoryBlock = ({ block }: TheoryBlockProps) => {
 
 	return (
 		<div className='my-6'>
-			<img
-				src={block.url}
-				alt={block.alt || ''}
-				className='max-w-full h-auto'
-			/>
+			<img src={block.url} alt={block.alt || ''} className='w-auto h-auto' />
 		</div>
 	)
 }

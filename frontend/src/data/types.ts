@@ -95,7 +95,7 @@ export interface DragDropTableBlock {
 		id: string
 		content: string | React.ReactNode
 	}[]
-	correctAnswers: Record<string, string[]> // Ключи: 'rowId_columnId' (например, 'row1_type')
+	correctAnswers: Record<string, string[] | { anyOf: string[] }> // Ключи: 'rowId_columnId' (например, 'row1_type')
 }
 
 export interface FreeInputBlock {
@@ -118,6 +118,7 @@ export interface GameBlock {
 	type: 'game'
 	title?: string
 	gameUrl: string
+	gameUrlEn?: string
 	width?: string
 	height?: string
 }

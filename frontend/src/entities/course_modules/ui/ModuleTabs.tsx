@@ -39,7 +39,7 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 						<button
 							key={m.id}
 							onClick={() => setActive(m.id)}
-							className={`relative -ml-2 first:ml-0 transition-all duration-200
+							className={`relative -ml-2 first:ml-0 transition-all duration-600
                 ${
 									m.id === active
 										? 'z-20 px-6 bg-white text-[#8C3192] text-base font-medium border-2 border-b-[#fff] border-[#8C3192] rounded-tl-[20px] rounded-tr-[20px] overflow-hidden -mb-0.5'

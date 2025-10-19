@@ -10,38 +10,38 @@ const en = {
 		},
 		info: {
 			title: 'Doctor VR:',
-			subtitle: 'Virtual Physiology Lab',
+			subtitle: 'Virtual laboratory of Physiology',
 			description:
-				'Clinical cases, visual experiments and visual materials — everything to improve clinical thinking and pass the exam confidently!',
+				'Clinical cases, visual experiments and visual materials - everything\n to improve your clinical thinking and pass the exam with confidence!',
 			imageAlt: 'Lightning',
 			goToModules: 'Go to modules',
 			modules: {
 				top: '26 modules',
-				bottom: 'Available to complete'
+				bottom: 'Available for implementation'
 			},
 			time: {
 				top: '25 minutes',
-				bottom: 'And the topic is mastered'
+				bottom: 'And the topic is learned'
 			},
 			course: {
-				top: '2nd–3rd year',
-				bottom: 'For those ready to move\nfrom cramming to practice'
+				top: '2-3 year of education',
+				bottom: 'For those who need to move from grind\n to practice'
 			}
 		},
 		steps: {
 			title: 'How does it work?',
-			step1: 'Read the theory and\n reinforce the material with a test',
-			step2: 'Solve a clinical case',
-			step3: 'Simulate pathological\n processes in real time'
+			step1: 'You read the theory and consolidate the material\n with a test',
+			step2: 'Model pathological processes in\n real time',
+			step3: 'Solving a clinical case'
 		},
 		card_modules: {
 			title: 'Modules',
 			first_semester_title: '1st Semester',
 			second_semester_title: '2nd Semester',
 			first_semester_description:
-				'In the first semester, you will study the basics of pathological physiology: you will learn how cells are damaged, why do inflammation, hypoxia, allergies, tumor growth and other typical processes occur.This knowledge will help you understand diseases development.',
+				'In the first semester, you will study the basics of pathological physiology: you will learn how cells are damaged, why do inflammation, hypoxia, allergies, tumor growth and other typical processes occur. This knowledge will help you understand diseases development.',
 			second_semester_description:
-				'In the second semester, you will study pathophysiology of organs. You will understand way of diseases manifest in different body systems: respiratory, cardiovascular, digestive, nervous, endocrine and others.You will see general mechanisms becoming specific clinical situations.'
+				'In the second semester, you will study pathophysiology of organs. You will understand way of diseases manifest in different body systems: respiratory, cardiovascular, digestive, nervous, endocrine and others. You will see general mechanisms becoming specific clinical situations.'
 		},
 		partners: {
 			title: 'Our Partners'

@@ -2019,6 +2019,200 @@ export const courseData: Course = {
 				},
 				{
 					id: 'chapter-1-6',
+					title: 'Ход эксперимента',
+					hash: 'experiment-1',
+					isRead: false,
+					blocks: [
+						{
+							id: 'text-1',
+							type: 'text',
+							content: {
+								type: 'doc',
+								content: [
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Эксперимент 1',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: '«Патогенное действие на организм уменьшения кислорода во вдыхаемом воздухе в условиях гипотермии»',
+												marks: [{ type: 'bold' }]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Цель работы:',
+												marks: [{ type: 'bold' }, { type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' на основе сравнительной характеристики повреждающего действия различных патогенных факторов научиться выделять среди них причинный.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Оборудование:',
+												marks: [{ type: 'bold' }, { type: 'italic' }]
+											},
+											{
+												type: 'text',
+												text: ' 3 белых мыши, 3 одинаковые стеклянные банки, 1 крышка с отверстием, 2 крышки без отверстия, электротермометр, 2 тарелки со льдом.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Ход эксперимента',
+												marks: [{ type: 'bold' }, { type: 'italic' }]
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Подготавливаем оборудование.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'У животных подсчитываем частоту дыхания, отмечаем характер поведения, окраску кожных покровов, измеряем температуру в полости рта (нормальный уровень 37° Цельсия).'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Всех мышей помещаем в банки одинакового объема.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Под первую и третью банки устанавливаем тарелки со льдом. Крышки банок закрываем одновременно. Для первой банки используем крышку с отверстием.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'В трех временных точках (через 15, 27, 42 минут) у всех мышей подсчитываем частоту дыхания, отмечаем характер поведения, окраску кожных покровов.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'После изымаем мышей из банок и оцениваем их рефлекторную деятельность, измеряем температуру в полости рта.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'Все полученные данные вносим в таблицу, расположенную ниже.'
+											}
+										]
+									},
+									{
+										type: 'paragraph',
+										content: [
+											{
+												type: 'text',
+												text: 'При составлении протокола необходимо объяснить:'
+											}
+										]
+									},
+									{
+										type: 'orderedList',
+										content: [
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Почему разница температур у опытной мыши и мыши, контрольной на гипотермию, составила 11°?'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Почему из двух мышей, находящихся в условиях гипоксии, одна погибла, а вторая нет?'
+															}
+														]
+													}
+												]
+											},
+											{
+												type: 'listItem',
+												content: [
+													{
+														type: 'paragraph',
+														content: [
+															{
+																type: 'text',
+																text: 'Провести анализ этиологических факторов. Дифференцировать гипотермию: в каком случае гипотермия выступает как причина, а в каком как условие, и почему?'
+															}
+														]
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				},
+				{
+					id: 'chapter-1-7',
 					title: 'Задание. «Исходы заболеваний и стадии умирания организма»',
 					hash: 'dnd-blocks',
 					isRead: false,
@@ -2035,9 +2229,7 @@ export const courseData: Course = {
 								{ id: 'row1' }, // Статический заголовок строки (было column1: '1')
 								{ id: 'row2' },
 								{ id: 'row3' },
-								{ id: 'row4' },
-								{ id: 'row5' },
-								{ id: 'row6' }
+								{ id: 'row4' }
 							],
 							answers: [
 								{ id: 'ans2', content: 'Выздоровление неполное' },
@@ -2048,12 +2240,10 @@ export const courseData: Course = {
 								{ id: 'ans6', content: 'Смерть' }
 							],
 							correctAnswers: {
-								row1_effects: ['ans1'], // Формат: rowId_columnId
-								row2_effects: ['ans2'],
-								row3_effects: ['ans3'],
-								row4_effects: ['ans4'],
-								row5_effects: ['ans5'],
-								row6_effects: ['ans6']
+								row1_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
+								row2_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
+								row3_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] },
+								row4_effects: { anyOf: ['ans1', 'ans2', 'ans5', 'ans6'] }
 							}
 						},
 						{
@@ -2077,16 +2267,16 @@ export const courseData: Course = {
 								{ id: 'ans4', content: 'Биологическая смерть' }
 							],
 							correctAnswers: {
-								row1_effects: ['ans1'],
-								row2_effects: ['ans2'],
-								row3_effects: ['ans3'],
-								row4_effects: ['ans4']
+								row1_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
+								row2_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
+								row3_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] },
+								row4_effects: { anyOf: ['ans1', 'ans2', 'ans4', 'ans5'] }
 							}
 						}
 					]
 				},
 				{
-					id: 'chapter-1-9',
+					id: 'chapter-1-8',
 					title: 'Интерактивный опыт',
 					hash: 'game-case',
 					isRead: false,
@@ -2097,13 +2287,14 @@ export const courseData: Course = {
 							title:
 								'Патогенное действие на организм уменьшения кислорода во вдыхаемом воздухе в условиях гипотермии',
 							gameUrl: '/games/lab1/index.html',
+							gameUrlEn: '/games/lab1_en/index.html',
 							width: '100%',
 							height: 'auto'
 						}
 					]
 				},
 				{
-					id: 'chapter-1-8',
+					id: 'chapter-1-9',
 					title: 'Клинический случай: клиническая смерть',
 					hash: 'clinical-death',
 					isRead: false,
@@ -2233,7 +2424,7 @@ export const courseData: Course = {
 								{
 									id: 'q1-patho',
 									text: 'Какие основные патологические процессы развились у пациента в результате теплового удара? Обоснуйте ответ данными из истории болезни.',
-									maxLength: 1000,
+									maxLength: 1000
 								},
 								{
 									id: 'q2-therapy',

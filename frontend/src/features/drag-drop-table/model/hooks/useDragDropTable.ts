@@ -106,14 +106,19 @@ export const useDragDropTable = (
 		block.rows.forEach(row => {
 			const cellId = `${row.id}_effects`
 			const userAnswers = (assigned[cellId] || []).map(String)
-			const correctAnswers = (block.correctAnswers[cellId] || []).map(String)
+			const correctValue = block.correctAnswers[cellId]
 
 			let isCorrect = false
-			if (correctAnswers.length > 0) {
-				isCorrect =
-					userAnswers.length === correctAnswers.length &&
-					correctAnswers.every(id => userAnswers.includes(id)) &&
-					userAnswers.every(id => correctAnswers.includes(id))
+
+			if (correctValue) {
+				if (Array.isArray(correctValue)) {
+					isCorrect =
+						userAnswers.length === correctValue.length &&
+						correctValue.every(id => userAnswers.includes(id)) &&
+						userAnswers.every(id => correctValue.includes(id))
+				} else if ('anyOf' in correctValue) {
+					isCorrect = correctValue.anyOf.some(id => userAnswers.includes(id))
+				}
 			}
 
 			newErrors[cellId] = !isCorrect

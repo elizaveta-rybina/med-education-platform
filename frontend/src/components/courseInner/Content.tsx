@@ -194,7 +194,7 @@ export const Content: React.FC = () => {
 					/>
 				) : (
 					<div className='flex flex-col lg:flex-row gap-6'>
-						{isChapterRead ? (
+						{isChapterRead && testBlocks?.length ? (
 							<TestSection
 								testBlocks={testBlocks}
 								currentQuestionIndex={currentQuestionIndex}
@@ -213,15 +213,17 @@ export const Content: React.FC = () => {
 										onMarkAsRead={handleMarkAsRead}
 									/>
 								</div>
-								<TestSection
-									testBlocks={testBlocks}
-									currentQuestionIndex={currentQuestionIndex}
-									moduleId={currentModule.id}
-									chapterId={currentChapter.id}
-									showTest={showTest}
-									isRead={isChapterRead}
-									onComplete={handleQuestionComplete}
-								/>
+								{testBlocks?.length > 0 && (
+									<TestSection
+										testBlocks={testBlocks}
+										currentQuestionIndex={currentQuestionIndex}
+										moduleId={currentModule.id}
+										chapterId={currentChapter.id}
+										showTest={showTest}
+										isRead={isChapterRead}
+										onComplete={handleQuestionComplete}
+									/>
+								)}
 							</>
 						)}
 					</div>
