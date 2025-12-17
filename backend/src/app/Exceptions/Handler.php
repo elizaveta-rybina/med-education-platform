@@ -46,6 +46,32 @@ class Handler extends ExceptionHandler
             ], 405);
         }
 
+        if ($e instanceof ModelNotFoundException) {
+            $modelName = class_basename($e->getModel());
+            $ids = $e->getIds();
+
+            // Формируем понятное сообщение
+            $message = match ($modelName) {
+                'Lecture' => 'Лекция не найдена',
+                'LectureAttachment' => 'Изображение не найдено',
+                default => 'Запрашиваемая запись не найдена',
+            };
+
+            if ($ids) {
+                $message .= ' (ID: ' . implode(', ', (array)$ids) . ')';
+            }
+
+            // Если запрос ожидает JSON (API) — возвращаем JSON-ответ
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $message,
+                ], 404);
+            }
+
+            // Для обычных веб-запросов — стандартная 404 страница или abort
+            abort(404, $message);
+        }
         return parent::render($request, $e);
     }
 
