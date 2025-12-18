@@ -1,7 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Content\{Assessments\QuizController,
+use App\Http\Controllers\Content\{Assessments\QuizAttemptController,
+    Assessments\QuizController,
     CourseController,
     LectureController,
     LectureImageController,
@@ -64,7 +65,14 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::delete('{questionId}', [QuizController::class, 'destroyQuestion']);
         });
 
-        // Оценка ответов студентов
-        //Route::put('user-answers/{userAnswerId}/score', [\App\Http\Controllers\Content\AdminUserAnswerController::class, 'updateScore']);
+
+        Route::prefix('quizzes')->group(function () {
+            Route::get('{quiz}', [QuizController::class, 'showForStudent']);
+
+            Route::post('{quiz}/attempts', [QuizAttemptController::class, 'start']);
+
+            Route::post('{quiz}/submit-answers', [QuizAttemptController::class, 'submitAnswers']);
+
+        });
     });
 });

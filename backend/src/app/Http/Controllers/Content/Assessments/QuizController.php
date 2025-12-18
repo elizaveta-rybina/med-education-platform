@@ -173,21 +173,4 @@ class QuizController extends Controller
             return response()->json(['error' => 'Failed to delete question: ' . $e->getMessage()], $e->getCode() ?: 500);
         }
     }
-
-    /**
-     * Store a student's answer for a quiz question.
-     *
-     * @param StoreAnswerRequest $request
-     * @param Quiz $quiz
-     * @return JsonResponse
-     */
-    public function storeAnswer(StoreAnswerRequest $request, Quiz $quiz): JsonResponse
-    {
-        try {
-            $answer = $this->quizService->storeStudentAnswer($quiz, auth()->user(), $request->validated());
-            return (new AnswerResource($answer))->response()->setStatusCode(201);
-        } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to store answer: ' . $e->getMessage()], $e->getCode() ?: 500);
-        }
-    }
 }

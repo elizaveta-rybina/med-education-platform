@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers\Content\Assessments;
 
+use App\Models\Content\Assessments\UserAnswer;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\Content\Assessments\Question;
 use App\Models\Content\Assessments\Quiz;
 use App\Models\Content\Assessments\QuizAttempt;
-use App\Models\Content\Assessments\UserAnswer;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Repositories\UserAnswerRepository;
 use Carbon\Carbon;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuizAttemptController extends Controller
 {
+    protected UserAnswerRepository $userAnswerRepository;
+
+    public function __construct(UserAnswerRepository $userAnswerRepository)
+    {
+        $this->userAnswerRepository = $userAnswerRepository;
+    }
+
     /**
      * Запуск новой попытки прохождения теста
      */
@@ -36,62 +46,6 @@ class QuizAttemptController extends Controller
         ]);
 
         return response()->json($attempt, 201);
-    }
-
-    /**
-     * Сохранение ответа пользователя на вопрос
-     */
-    public function saveAnswer(Request $request, Quiz $quiz, QuizAttempt $attempt, Question $question)
-    {
-        $user = Auth::user();
-
-        // Проверяем, что попытка принадлежит пользователю и тесту
-        if ($attempt->user_id !== $user->id || $attempt->quiz_id !== $quiz->id || $question->quiz_id !== $quiz->id) {
-            return response()->json(['error' => 'Invalid attempt or question'], 403);
-        }
-
-        // Проверяем, что попытка еще не завершена
-        if ($attempt->status !== 'in_progress') {
-            return response()->json(['error' => 'Attempt is already completed'], 403);
-        }
-
-        // Проверяем ограничение по времени, если есть
-        if ($quiz->time_limit_minutes) {
-            $timeElapsed = Carbon::now()->diffInMinutes($attempt->started_at);
-            if ($timeElapsed > $quiz->time_limit_minutes) {
-                $attempt->update(['status' => 'failed', 'completed_at' => Carbon::now()]);
-                return response()->json(['error' => 'Time limit exceeded'], 403);
-            }
-        }
-
-        $validated = $request->validate([
-            'answer_data' => 'required|json',
-        ]);
-
-        $answerData = json_decode($validated['answer_data'], true);
-        $isCorrect = null;
-        $pointsEarned = null;
-
-        // Автоматическая проверка для вопросов с автопроверкой
-        if ($question->is_auto_graded) {
-            $isCorrect = $this->autoGradeAnswer($question, $answerData);
-            $pointsEarned = $isCorrect ? $question->points : 0;
-        }
-
-        // Сохраняем ответ пользователя
-        $userAnswer = UserAnswer::updateOrCreate(
-            [
-                'quiz_attempt_id' => $attempt->id,
-                'question_id' => $question->id,
-            ],
-            [
-                'answer_data' => $validated['answer_data'],
-                'is_correct' => $isCorrect,
-                'points_earned' => $pointsEarned,
-            ]
-        );
-
-        return response()->json($userAnswer, 200);
     }
 
     /**
@@ -142,58 +96,114 @@ class QuizAttemptController extends Controller
     }
 
     /**
-     * Автоматическая проверка ответа
+     * Массовая отправка всех ответов и завершение попытки
      */
-    protected function autoGradeAnswer(Question $question, array $answerData): bool
+
+    public function submitAnswers(Request $request, Quiz $quiz)
     {
-        switch ($question->question_type) {
-            case 'single_choice':
-                $correctOption = $question->options()->where('is_correct', true)->first();
-                return $correctOption && isset($answerData['option_id']) && $correctOption->id == $answerData['option_id'];
+        $user = Auth::user();
 
-            case 'multiple_choice':
-                $correctOptionIds = $question->options()->where('is_correct', true)->pluck('id')->toArray();
-                $selectedOptionIds = $answerData['option_ids'] ?? [];
-                return !array_diff($correctOptionIds, $selectedOptionIds) && !array_diff($selectedOptionIds, $correctOptionIds);
+        // Находим текущую активную попытку пользователя
+        $attempt = $quiz->attempts()
+            ->where('user_id', $user->id)
+            ->where('status', 'in_progress')
+            ->first();
 
-            case 'text_input':
-                $answerKey = $question->answerKeys()->first();
-                if (!$answerKey) {
-                    return false;
+        if (!$attempt) {
+            return response()->json([
+                'error' => 'No active attempt found. Please start the quiz first.'
+            ], 404);
+        }
+
+        // Проверка времени
+        if ($quiz->time_limit_minutes) {
+            $timeElapsed = Carbon::now()->diffInMinutes($attempt->started_at);
+            if ($timeElapsed > $quiz->time_limit_minutes) {
+                $attempt->update([
+                    'status' => 'failed',
+                    'score' => 0,
+                    'completed_at' => Carbon::now(),
+                ]);
+
+                return response()->json([
+                    'error' => 'Time limit exceeded. Attempt has been failed.'
+                ], 403);
+            }
+        }
+
+        $validated = $request->validate([
+            'answers' => 'required|array|min:1',
+            'answers.*.question_id' => 'required|integer|exists:questions,id',
+            'answers.*.question_type' => 'required|string',
+            'answers.*.answer' => 'required', // array или mixed в зависимости от типа
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $totalEarned = 0;
+            $summary = [];
+
+            foreach ($validated['answers'] as $answerData) {
+                $question = Question::findOrFail($answerData['question_id']);
+
+                // Проверка: вопрос принадлежит квизу
+                if ($question->quiz_id !== $quiz->id) {
+                    throw new \Exception("Question {$question->id} does not belong to this quiz");
                 }
-                $userAnswer = $answerData['text'] ?? '';
-                if ($answerKey->is_case_sensitive) {
-                    return $userAnswer === $answerKey->correct_answer;
+
+                // Проверка: ответ уже был (опционально — можно разрешить перезапись)
+                $existing = UserAnswer::where('quiz_attempt_id', $attempt->id)
+                    ->where('question_id', $question->id)
+                    ->first();
+
+                if ($existing) {
+                    // Перезаписываем (или можно запретить — на ваш выбор)
+                    $existing->delete();
                 }
-                return strtolower($userAnswer) === strtolower($answerKey->correct_answer);
 
-            case 'matching':
-                $correctMatches = $question->options()->pluck('matching_data', 'id')->toArray();
-                $userMatches = $answerData['matches'] ?? [];
-                foreach ($correctMatches as $optionId => $correctMatch) {
-                    if (!isset($userMatches[$optionId]) || $userMatches[$optionId] !== $correctMatch) {
-                        return false;
-                    }
-                }
-                return true;
+                $score = $this->userAnswerRepository->create($answerData, $attempt->id);
+                $totalEarned += $score ?? 0;
 
-            case 'ordering':
-                $correctOrder = $question->options()->orderBy('order')->pluck('id')->toArray();
-                $userOrder = $answerData['order'] ?? [];
-                return $correctOrder === $userOrder;
+                $summary[] = [
+                    'question_id' => $question->id,
+                    'points_earned' => $score,
+                    'max_points' => $question->points,
+                ];
+            }
 
-            case 'table':
-                $correctCells = json_decode($question->metadata, true)['correct_cells'] ?? [];
-                $userCells = $answerData['cells'] ?? [];
-                foreach ($correctCells as $cellId => $correctValue) {
-                    if (!isset($userCells[$cellId]) || $userCells[$cellId] !== $correctValue) {
-                        return false;
-                    }
-                }
-                return true;
+            // Подсчёт итогового результата
+            $totalPossible = $quiz->questions()->sum('points');
+            $percentage = $totalPossible > 0 ? ($totalEarned / $totalPossible) * 100 : 0;
+            $passed = $percentage >= $quiz->passing_score;
 
-            default:
-                return false;
+            // Завершаем попытку
+            $attempt->update([
+                'score' => round($percentage, 2),
+                'status' => $passed ? 'completed' : 'failed',
+                'completed_at' => Carbon::now(),
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Quiz submitted successfully',
+                'attempt_id' => $attempt->id,
+                'attempt_number' => $attempt->attempt_number,
+                'score_percentage' => round($percentage, 2),
+                'points_earned' => $totalEarned,
+                'points_possible' => $totalPossible,
+                'passed' => $passed,
+                'summary' => $summary,
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Quiz submit failed', ['error' => $e->getMessage(), 'user_id' => $user->id]);
+
+            return response()->json([
+                'error' => 'Failed to submit quiz',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }

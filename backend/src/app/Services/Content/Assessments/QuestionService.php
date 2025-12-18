@@ -38,18 +38,50 @@ class QuestionService implements QuestionServiceInterface
             try {
                 Log::info('Creating question for quiz', ['quiz_id' => $quiz->id, 'data' => $data]);
 
-                $options = $data['options'] ?? [];
+                $optionsData = $data['options'] ?? [];
+                $metadataRaw = $data['metadata'] ?? null;  // Сохраняем оригинал
+
+                // Убираем options из данных вопроса (metadata оставляем!)
                 unset($data['options']);
 
-                // Создаем вопрос
+                // 1. Создаём вопрос (с metadata, если он есть)
                 $question = $this->questionRepository->create($quiz, $data);
 
-                // Создаем опции, если они есть
-                if (!empty($options)) {
-                    $this->questionOptionService->createMultipleOptions($quiz, $question, $options);
+                $createdOptions = null;
+
+                // 2. Создаём опции, если есть
+                if (!empty($optionsData)) {
+                    $createdOptions = $this->questionOptionService->createMultipleOptions($quiz, $question, $optionsData);
                 }
 
-                return $question;
+                // 3. Специальная обработка для table: заменяем индексы на реальные ID
+                if ($metadataRaw && $question->question_type === 'table' && !empty($createdOptions)) {
+                    $metadataArray = is_string($metadataRaw) ? json_decode($metadataRaw, true) : $metadataRaw;
+
+                    if (is_array($metadataArray) && isset($metadataArray['rows'])) {
+                        foreach ($metadataArray['rows'] as &$row) {
+                            if (isset($row['correct_option_ids']) && is_array($row['correct_option_ids'])) {
+                                $realIds = [];
+                                foreach ($row['correct_option_ids'] as $index) {
+                                    // createdOptions сохраняет порядок создания
+                                    if (isset($createdOptions[$index])) {
+                                        $realIds[] = $createdOptions[$index]->id;
+                                    }
+                                }
+                                $row['correct_option_ids'] = $realIds;
+                            }
+                        }
+
+                        // Обновляем metadata с реальными ID
+                        $question->metadata = $metadataArray;
+                        $question->save();
+                    }
+                }
+
+                // Для matching и других типов — metadata уже сохранён на шаге 1, ничего не трогаем
+
+                return $question->fresh(['options']);
+
             } catch (Exception $e) {
                 Log::error('Failed to create question: ' . $e->getMessage(), [
                     'quiz_id' => $quiz->id,

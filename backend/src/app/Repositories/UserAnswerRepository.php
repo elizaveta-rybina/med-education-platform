@@ -2,13 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Models\Content\Assessments\Question;
 use App\Models\Content\Assessments\UserAnswer;
-use App\Models\Content\Assessments\UserChoiceAnswer;
-use App\Models\Content\Assessments\UserTextAnswer;
-use App\Models\Content\Assessments\UserMatchingAnswer;
-use App\Models\Content\Assessments\UserOrderingAnswer;
-use App\Models\Content\Assessments\UserOpenSchemaAnswer;
-use App\Models\Content\Assessments\UserMatchingSchemaAnswer;
 use Illuminate\Support\Facades\Log;
 
 class UserAnswerRepository
@@ -16,7 +11,7 @@ class UserAnswerRepository
     public function create(array $data, int $quizAttemptId): ?int
     {
         try {
-            $question = \App\Models\Content\Assessments\Question::findOrFail($data['question_id']);
+            $question = Question::findOrFail($data['question_id']);
 
             // Проверка соответствия question_type
             if ($question->question_type !== $data['question_type']) {
@@ -30,36 +25,34 @@ class UserAnswerRepository
                 throw new \Exception("Answer for question {$data['question_id']} already submitted");
             }
 
+            // Сохраняем ответ как JSON
+            $answerData = $data['answer'] ?? $data; // Предполагаем, что 'answer' - ключ для данных ответа
+            $userAnswer = UserAnswer::create([
+                'quiz_attempt_id' => $quizAttemptId,
+                'question_id' => $data['question_id'],
+                'answer_data' => json_encode($answerData, JSON_UNESCAPED_UNICODE),
+                'points_earned' => null,
+                'is_correct' => null,
+            ]);
+
+            // Рассчитываем баллы и правильность, если вопрос автооцениваемый
             $score = null;
-            $userAnswerable = match ($data['question_type']) {
-                'single_choice' => $this->createSingleChoiceAnswer($data),
-                'multiple_choice' => $this->createMultipleChoiceAnswer($data),
-                'open_answer', 'open_answer_reviewed' => $this->createTextAnswer($data),
-                'matching' => $this->createMatchingAnswer($data),
-                'ordering' => $this->createOrderingAnswer($data),
-                'open_schema' => $this->createOpenSchemaAnswer($data),
-                'matching_schema' => $this->createMatchingSchemaAnswer($data),
-                default => throw new \InvalidArgumentException("Unsupported question type: {$data['question_type']}"),
-            };
-
-            if ($userAnswerable) {
-                $userAnswer = UserAnswer::create([
-                    'quiz_attempt_id' => $quizAttemptId,
-                    'question_id' => $data['question_id'],
-                    'user_answerable_id' => $userAnswerable->id,
-                    'user_answerable_type' => get_class($userAnswerable),
-                    'score' => $score,
-                ]);
-
-                // Рассчитываем баллы
-                $score = $this->calculateScore($data, $userAnswer, $question);
-                $userAnswer->update(['score' => $score]);
-
-                Log::info('UserAnswerRepository: Answer created', [
-                    'question_id' => $data['question_id'],
-                    'user_answerable_type' => get_class($userAnswerable),
-                ]);
+            $isCorrect = null;
+            if ($question->is_auto_graded) {
+                $score = $this->calculateScore($question, $answerData);
+                $isCorrect = $score === $question->points;
             }
+
+            $userAnswer->update([
+                'points_earned' => $score,
+                'is_correct' => $isCorrect,
+            ]);
+
+            Log::info('UserAnswerRepository: Answer created', [
+                'question_id' => $data['question_id'],
+                'question_type' => $question->question_type,
+                'score' => $score,
+            ]);
 
             return $score;
         } catch (\Exception $e) {
@@ -68,165 +61,102 @@ class UserAnswerRepository
         }
     }
 
-    protected function createSingleChoiceAnswer(array $data): ?UserChoiceAnswer
+    protected function calculateScore(Question $question, array $userAnswerData): int
     {
-        return UserChoiceAnswer::create([
-            'choice_answer_id' => $data['choice_answer_id'],
-        ]);
-    }
+        // Исправляем: metadata может быть уже массивом (из-за casts в модели Question)
+        $metadata = $question->metadata;
 
-    protected function createMultipleChoiceAnswer(array $data): ?UserChoiceAnswer
-    {
-        $userAnswerable = null;
-        foreach ($data['choice_answer_ids'] as $choiceAnswerId) {
-            $userAnswerable = UserChoiceAnswer::create([
-                'choice_answer_id' => $choiceAnswerId,
-            ]);
+        if (is_string($metadata)) {
+            $metadata = json_decode($metadata, true) ?? [];
+        } elseif (!is_array($metadata)) {
+            $metadata = [];
         }
-        return $userAnswerable;
-    }
 
-    protected function createTextAnswer(array $data): ?UserTextAnswer
-    {
-        return UserTextAnswer::create([
-            'answer_text' => $data['answer_text'],
-        ]);
-    }
-
-    protected function createMatchingAnswer(array $data): ?UserMatchingAnswer
-    {
-        $userAnswerable = null;
-        foreach ($data['matching_answers'] as $matchingAnswer) {
-            $userAnswerable = UserMatchingAnswer::create([
-                'matching_answer_id' => $matchingAnswer['matching_answer_id'],
-                'user_match_value' => $matchingAnswer['user_match_value'],
-            ]);
-        }
-        return $userAnswerable;
-    }
-
-    protected function createOrderingAnswer(array $data): ?UserOrderingAnswer
-    {
-        $userAnswerable = null;
-        foreach ($data['ordering_answers'] as $orderingAnswer) {
-            $userAnswerable = UserOrderingAnswer::create([
-                'ordering_answer_id' => $orderingAnswer['ordering_answer_id'],
-                'user_order' => $orderingAnswer['user_order'],
-            ]);
-        }
-        return $userAnswerable;
-    }
-
-    protected function createOpenSchemaAnswer(array $data): ?UserOpenSchemaAnswer
-    {
-        return UserOpenSchemaAnswer::create([
-            'open_schema_answer_id' => $data['open_schema_answer_id'],
-            'user_schema_data' => $data['user_schema_data'],
-        ]);
-    }
-
-    protected function createMatchingSchemaAnswer(array $data): ?UserMatchingSchemaAnswer
-    {
-        $userAnswerable = null;
-        foreach ($data['matching_schema_answers'] as $matchingSchemaAnswer) {
-            $userAnswerable = UserMatchingSchemaAnswer::create([
-                'matching_schema_answer_id' => $matchingSchemaAnswer['matching_schema_answer_id'],
-                'user_schema_value' => $matchingSchemaAnswer['user_schema_value'],
-            ]);
-        }
-        return $userAnswerable;
-    }
-
-    protected function calculateScore(array $data, UserAnswer $userAnswer, $question): ?int
-    {
-        return match ($data['question_type']) {
-            'single_choice' => $this->calculateSingleChoiceScore($data, $userAnswer, $question),
-            'multiple_choice' => $this->calculateMultipleChoiceScore($data, $userAnswer, $question),
-            'open_answer', 'open_answer_reviewed' => null, // Оценка вручную
-            'matching' => $this->calculateMatchingScore($data, $userAnswer, $question),
-            'ordering' => $this->calculateOrderingScore($data, $userAnswer, $question),
-            'open_schema' => null, // Оценка вручную
-            'matching_schema' => $this->calculateMatchingSchemaScore($data, $userAnswer, $question),
+        return match ($question->question_type) {
+            'single_choice' => $this->calculateSingleChoiceScore($question, $userAnswerData, $metadata),
+            'multiple_choice' => $this->calculateMultipleChoiceScore($question, $userAnswerData, $metadata),
+            'text_input' => 0,
+            'matching' => $this->calculateMatchingScore($question, $userAnswerData, $metadata),
+            'ordering' => $this->calculateOrderingScore($question, $userAnswerData, $metadata),
+            'table' => $this->calculateTableScore($question, $userAnswerData, $metadata),
             default => 0,
         };
     }
 
-    protected function calculateSingleChoiceScore(array $data, UserAnswer $userAnswer, $question): int
+    protected function calculateSingleChoiceScore(Question $question, array $data, array $metadata): int
     {
-        $answer = \App\Models\Content\Assessments\Answer::where('answerable_id', $data['choice_answer_id'])
-            ->where('answerable_type', \App\Models\Content\Assessments\ChoiceAnswer::class)
-            ->where('question_id', $question->id)
-            ->first();
+        $selectedId = $data['option_id'] ?? null;
+        $correctOption = $question->options()->where('is_correct', true)->first();
 
-        if (!$answer) {
-            Log::warning('SingleChoice: Invalid choice_answer_id', [
-                'choice_answer_id' => $data['choice_answer_id'],
-                'question_id' => $question->id,
-            ]);
+        return ($correctOption && $correctOption->id == $selectedId) ? $question->points : 0;
+    }
+
+    protected function calculateMultipleChoiceScore(Question $question, array $data, array $metadata): int
+    {
+        $userIds = collect($data['option_ids'] ?? [])->sort()->values()->all();
+        $correctIds = $question->options()->where('is_correct', true)->pluck('id')->sort()->values()->all();
+
+        return $userIds === $correctIds ? $question->points : 0;
+    }
+
+    protected function calculateMatchingScore(Question $question, array $data, array $metadata): int
+    {
+        $pairs = $metadata['pairs'] ?? [];
+        if (empty($pairs)) {
             return 0;
         }
 
-        $choiceAnswer = $answer->answerable;
-        return $choiceAnswer && $choiceAnswer->is_correct ? $question->points : 0;
-    }
+        $userMatches = collect($data['matches'] ?? [])->keyBy(function ($match) {
+            return $match['left'];
+        });
 
-    protected function calculateMultipleChoiceScore(array $data, UserAnswer $userAnswer, $question): int
-    {
-        $correctAnswerIds = \App\Models\Content\Assessments\Answer::where('question_id', $question->id)
-            ->where('answerable_type', \App\Models\Content\Assessments\ChoiceAnswer::class)
-            ->whereHas('answerable', function ($query) {
-                $query->where('is_correct', true);
-            })
-            ->pluck('answerable_id')
-            ->toArray();
+        $correctCount = 0;
+        foreach ($pairs as $pair) {
+            $left = $pair[0];
+            $correctRight = $pair[1];
+            $userRight = $userMatches->get($left)['right'] ?? null;
 
-        Log::debug('MultipleChoice: Correct answer IDs', [
-            'question_id' => $question->id,
-            'correct_answer_ids' => $correctAnswerIds,
-            'user_answer_ids' => $data['choice_answer_ids'],
-        ]);
+            // Находим ID опции по тексту (предполагаем, что right - текст опции)
+            $correctOptionId = $question->options()->where('text', $correctRight)->value('id');
+            $userOptionId = $question->options()->where('text', $userRight)->value('id');
 
-        $userAnswerIds = $data['choice_answer_ids'];
-        $allCorrect = empty(array_diff($correctAnswerIds, $userAnswerIds)) && empty(array_diff($userAnswerIds, $correctAnswerIds));
-        return $allCorrect ? $question->points : 0;
-    }
-
-    protected function calculateMatchingScore(array $data, UserAnswer $userAnswer, $question): int
-    {
-        $allCorrect = true;
-        foreach ($data['matching_answers'] as $matchingAnswer) {
-            $correctAnswer = \App\Models\Content\Assessments\MatchingAnswer::find($matchingAnswer['matching_answer_id']);
-            if (!$correctAnswer || $correctAnswer->match_value !== $matchingAnswer['user_match_value']) {
-                $allCorrect = false;
-                break;
+            if ($correctOptionId == $userOptionId) {
+                $correctCount++;
             }
         }
-        return $allCorrect ? $question->points : 0;
+
+        // Частичные баллы
+        return (int) round(($correctCount / count($pairs)) * $question->points);
     }
 
-    protected function calculateOrderingScore(array $data, UserAnswer $userAnswer, $question): int
+    protected function calculateOrderingScore(Question $question, array $data, array $metadata): int
     {
-        $allCorrect = true;
-        foreach ($data['ordering_answers'] as $orderingAnswer) {
-            $correctAnswer = \App\Models\Content\Assessments\OrderingAnswer::find($orderingAnswer['ordering_answer_id']);
-            if (!$correctAnswer || $correctAnswer->correct_order !== $orderingAnswer['user_order']) {
-                $allCorrect = false;
-                break;
-            }
-        }
-        return $allCorrect ? $question->points : 0;
+        $userOrder = collect($data['orders'] ?? [])->sortBy('order')->pluck('option_id')->all();
+        $correctOrder = $question->options()->orderBy('order')->pluck('id')->all();
+
+        return $userOrder === $correctOrder ? $question->points : 0;
     }
 
-    protected function calculateMatchingSchemaScore(array $data, UserAnswer $userAnswer, $question): int
+    protected function calculateTableScore(Question $question, array $data, array $metadata): int
     {
-        $allCorrect = true;
-        foreach ($data['matching_schema_answers'] as $matchingSchemaAnswer) {
-            $correctAnswer = \App\Models\Content\Assessments\MatchingSchemaAnswer::find($matchingSchemaAnswer['matching_schema_answer_id']);
-            if (!$correctAnswer || $correctAnswer->schema_value !== $matchingSchemaAnswer['user_schema_value']) {
-                $allCorrect = false;
-                break;
+        $rows = $metadata['rows'] ?? [];
+        if (empty($rows)) {
+            return 0;
+        }
+
+        $userRows = collect($data ?? [])->keyBy('row');
+        $correctCount = 0;
+
+        foreach ($rows as $index => $row) {
+            $correctIds = collect($row['correct_option_ids'] ?? [])->sort()->values()->all();
+            $userIds = collect($userRows->get($index)['option_ids'] ?? [])->sort()->values()->all();
+
+            if ($correctIds === $userIds) {
+                $correctCount++;
             }
         }
-        return $allCorrect ? $question->points : 0;
+
+        // Частичные баллы
+        return (int) round(($correctCount / count($rows)) * $question->points);
     }
 }

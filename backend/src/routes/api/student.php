@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Content\{Assessments\QuizController,
+use App\Http\Controllers\Content\{Assessments\QuizAttemptController,
+    Assessments\QuizController,
     CourseController,
     LectureAttachmentController,
     LectureController,
@@ -27,19 +28,15 @@ Route::middleware('auth.api')->prefix('student')->group(function () {
         Route::get('lectures/{lectureId}/attachments', [LectureAttachmentController::class, 'index']);
         Route::get('lectures/{lectureId}/attachments/{id}', [LectureAttachmentController::class, 'show']);
 
-        // Прохождение квизов
+
         Route::prefix('quizzes')->group(function () {
             Route::get('{quiz}', [QuizController::class, 'showForStudent']);
 
             Route::post('{quiz}/attempts', [QuizAttemptController::class, 'start']);
-            Route::post('attempts/{attempt}/questions/{question}/answer', [QuizAttemptController::class, 'saveAnswer']);
-            Route::post('attempts/{attempt}/complete', [QuizAttemptController::class, 'complete']);
 
-            // Сдача ответов (если отдельно от квизов)
-            Route::post('{quiz}/submit', [UserAnswerController::class, 'store']);
+            Route::post('{quiz}/submit-answers', [QuizAttemptController::class, 'submitAnswers']);
+
         });
     });
 
-    // Задания (если студент сдаёт)
-    // Route::post('assignments/{assignment}/submit', [...]);
 });
