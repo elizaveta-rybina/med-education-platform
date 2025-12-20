@@ -34,5 +34,12 @@ export const topicsApi = {
 		ApiClient.post<TopicContentResponse>(
 			`${BASE_URL}/${topicId}/contents`,
 			payload
+		),
+
+	uploadCover: (id: number, file: File) =>
+		ApiClient.upload<{ message: string; cover_image: string; url: string }>(
+			`${BASE_URL}/${id}/cover`,
+			file,
+			'cover'
 		)
 }

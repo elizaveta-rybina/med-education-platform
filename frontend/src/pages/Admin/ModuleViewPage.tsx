@@ -4,6 +4,7 @@ import { topicsApi } from '@/app/api/topics/topics.api'
 import type { Topic } from '@/app/api/topics/topics.types'
 import { TopicForm } from '@/features/module-topics/ui/TopicForm'
 import { TopicList } from '@/features/module-topics/ui/TopicList'
+import { Modal } from '@/shared/ui/modal'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -24,6 +25,8 @@ const ModuleViewPage = () => {
 	const [topics, setTopics] = useState<Topic[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
+	const [showDeleteModal, setShowDeleteModal] = useState(false)
+	const [deletingTopicId, setDeletingTopicId] = useState<number | null>(null)
 
 	const loadAll = useCallback(async () => {
 		if (!moduleId) return
@@ -76,6 +79,7 @@ const ModuleViewPage = () => {
 		description?: string
 		order_number: number
 		is_published?: boolean
+		cover_image?: File
 	}) => {
 		if (!moduleId) return
 		setSaving(true)
@@ -87,8 +91,12 @@ const ModuleViewPage = () => {
 					order_number: values.order_number,
 					is_published: values.is_published
 				})
+				// Загружаем обложку если выбрана
+				if (values.cover_image) {
+					await topicsApi.uploadCover(editingTopic.id, values.cover_image)
+				}
 			} else {
-				await topicsApi.bulkCreate({
+				const createResult = await topicsApi.bulkCreate({
 					module_id: Number(moduleId),
 					topics: [
 						{
@@ -99,6 +107,11 @@ const ModuleViewPage = () => {
 						}
 					]
 				})
+				// Получаем ID созданной темы
+				const createdTopic = (createResult as any).data?.[0]
+				if (createdTopic?.id && values.cover_image) {
+					await topicsApi.uploadCover(createdTopic.id, values.cover_image)
+				}
 			}
 			// reload list only
 			const topicsList = await topicsApi.getByModule(Number(moduleId))
@@ -110,6 +123,7 @@ const ModuleViewPage = () => {
 					description: t.description,
 					order_number: t.order_number,
 					is_published: t.is_published,
+					cover_image: t.cover_image,
 					created_at: t.created_at,
 					updated_at: t.updated_at
 				})
@@ -123,8 +137,20 @@ const ModuleViewPage = () => {
 	}
 
 	const handleDeleteTopic = async (topicId: number) => {
-		await topicsApi.delete(topicId)
-		setTopics(prev => prev.filter(t => t.id !== topicId))
+		setDeletingTopicId(topicId)
+		setShowDeleteModal(true)
+	}
+
+	const confirmDeleteTopic = async () => {
+		if (!deletingTopicId) return
+		try {
+			await topicsApi.delete(deletingTopicId)
+			setTopics(prev => prev.filter(t => t.id !== deletingTopicId))
+			setShowDeleteModal(false)
+			setDeletingTopicId(null)
+		} catch (e) {
+			setError('Ошибка при удалении темы')
+		}
 	}
 
 	if (loading) {
@@ -254,6 +280,44 @@ const ModuleViewPage = () => {
 						isLoading={saving}
 					/>
 				</div>
+
+				{/* Модальное окно подтверждения удаления */}
+				<Modal
+					isOpen={showDeleteModal}
+					onClose={() => {
+						setShowDeleteModal(false)
+						setDeletingTopicId(null)
+					}}
+					showCloseButton={true}
+					className='max-w-sm mx-4'
+				>
+					<div className='p-6'>
+						<h3 className='text-lg font-semibold text-gray-800 dark:text-white mb-4'>
+							Удалить тему?
+						</h3>
+						<p className='text-gray-600 dark:text-gray-300 mb-6'>
+							Вы уверены, что хотите удалить выбранную тему? Это действие нельзя
+							отменить.
+						</p>
+						<div className='flex gap-3 justify-end'>
+							<button
+								onClick={() => {
+									setShowDeleteModal(false)
+									setDeletingTopicId(null)
+								}}
+								className='px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+							>
+								Отмена
+							</button>
+							<button
+								onClick={confirmDeleteTopic}
+								className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors'
+							>
+								Удалить
+							</button>
+						</div>
+					</div>
+				</Modal>
 			</div>
 		</div>
 	)

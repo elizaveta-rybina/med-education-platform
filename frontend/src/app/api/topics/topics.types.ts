@@ -5,6 +5,7 @@ export interface Topic {
 	description?: string | null
 	order_number?: number
 	is_published?: boolean | number
+	cover_image?: string | null
 	created_at?: string
 	updated_at?: string
 }
@@ -14,6 +15,7 @@ export interface TopicPayload {
 	description?: string | null
 	order_number: number
 	is_published?: boolean | number
+	cover_image?: string | null
 }
 
 export interface TopicBulkCreateRequest {

@@ -5,6 +5,7 @@ export interface TopicFormValues {
 	description?: string
 	order_number: number
 	is_published?: boolean
+	cover_image?: File
 }
 
 interface TopicFormProps {
@@ -30,6 +31,8 @@ export const TopicForm = ({
 	const [isPublished, setIsPublished] = useState<boolean>(
 		initialValues?.is_published ?? false
 	)
+	const [coverFile, setCoverFile] = useState<File | null>(null)
+	const [coverPreview, setCoverPreview] = useState<string | null>(null)
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
@@ -44,6 +47,18 @@ export const TopicForm = ({
 			setOrderNumber(String(initialValues.order_number))
 		}
 	}, [defaultOrderNumber, initialValues?.order_number])
+
+	const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0]
+		if (file) {
+			setCoverFile(file)
+			const reader = new FileReader()
+			reader.onloadend = () => {
+				setCoverPreview(reader.result as string)
+			}
+			reader.readAsDataURL(file)
+		}
+	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -63,7 +78,8 @@ export const TopicForm = ({
 				title: title.trim(),
 				description: description.trim() || undefined,
 				order_number: parsedOrder,
-				is_published: isPublished
+				is_published: isPublished,
+				cover_image: coverFile || undefined
 			})
 		} catch {
 			setError('Ошибка при сохранении темы')
@@ -133,6 +149,35 @@ export const TopicForm = ({
 					>
 						Опубликована
 					</label>
+				</div>
+			</div>
+
+			<div>
+				<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+					Обложка темы
+				</label>
+				<div className='flex gap-4'>
+					<div className='flex-1'>
+						<input
+							type='file'
+							accept='image/*'
+							onChange={handleCoverChange}
+							disabled={isLoading || saving}
+							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
+						/>
+						<p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
+							JPG, PNG, GIF или WebP до 5 МБ
+						</p>
+					</div>
+					{coverPreview && (
+						<div className='w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600'>
+							<img
+								src={coverPreview}
+								alt='Cover preview'
+								className='w-full h-full object-cover'
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 

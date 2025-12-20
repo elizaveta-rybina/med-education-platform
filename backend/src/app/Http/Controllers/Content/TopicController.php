@@ -87,4 +87,42 @@ class TopicController extends Controller
             'message' => 'Тема успешно удалена',
         ]);
     }
+
+    // Загрузить обложку темы
+    public function uploadCover(Request $request, $id)
+    {
+        $topic = Topic::findOrFail($id);
+
+        $validated = $request->validate([
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB
+        ]);
+
+        try {
+            // Удаляем старую обложку если существует
+            if ($topic->cover_image) {
+                $oldPath = storage_path('app/' . $topic->cover_image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Сохраняем новую обложку
+            $file = $validated['cover'];
+            $path = $file->store('topics/covers', 'public');
+
+            $topic->cover_image = $path;
+            $topic->save();
+
+            return response()->json([
+                'message' => 'Обложка темы успешно загружена',
+                'cover_image' => $path,
+                'url' => asset('storage/' . $path),
+            ], 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Ошибка при загрузке обложки',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }
