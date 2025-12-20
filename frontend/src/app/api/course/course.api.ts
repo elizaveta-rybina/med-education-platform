@@ -19,11 +19,9 @@ export const courseApi = {
 	getById: async (
 		id: number
 	): Promise<CourseResponse | CourseDetailResponse> => {
-		console.log('Fetching course with ID:', id)
 		const { data } = await baseApi.get<CourseResponse | CourseDetailResponse>(
 			`/admin/content/courses/${id}`
 		)
-		console.log('Course response:', data)
 		return data
 	},
 
@@ -47,16 +45,9 @@ export const courseApi = {
 	},
 
 	delete: async (id: number): Promise<{ message: string }> => {
-		console.log(
-			'Deleting course with ID:',
-			id,
-			'URL:',
-			`/admin/content/courses/${id}`
-		)
 		const { data } = await baseApi.delete<{ message: string }>(
 			`/admin/content/courses/${id}`
 		)
-		console.log('Delete response:', data)
 		return data
 	},
 

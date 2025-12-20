@@ -19,7 +19,7 @@ export const CourseAll = () => {
 			const data = await courseApi.getAll()
 			setCourses(data)
 		} catch (err: any) {
-			console.error('Ошибка загрузки курсов:', err)
+			// Ошибка при загрузке курсов
 		} finally {
 			setLoading(false)
 		}
@@ -53,7 +53,7 @@ export const CourseAll = () => {
 				</h1>
 				<button
 					onClick={() => navigate('/admin/courses/new')}
-					className='flex items-center justify-center w-12 h-12 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-lg'
+					className='flex items-center justify-center w-12 h-12 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors shadow-lg'
 					title='Добавить курс'
 				>
 					<svg
@@ -86,7 +86,7 @@ export const CourseAll = () => {
 					</p>
 					<button
 						onClick={() => navigate('/admin/courses/new')}
-						className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
+						className='px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors'
 					>
 						Создать первый курс
 					</button>
@@ -102,7 +102,7 @@ export const CourseAll = () => {
 						<div className='absolute top-4 right-4 flex gap-2'>
 							<button
 								onClick={() => navigate(`/admin/courses/${course.id}/edit`)}
-								className='p-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors'
+								className='p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors'
 								title='Редактировать'
 							>
 								<svg
@@ -152,7 +152,7 @@ export const CourseAll = () => {
 							{course.skills.map((skill, idx) => (
 								<span
 									key={idx}
-									className='px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full'
+									className='px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs rounded-full'
 								>
 									{skill}
 								</span>

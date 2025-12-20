@@ -25,10 +25,6 @@ const CourseEditPage = () => {
 			try {
 				setLoading(true)
 				const response = await courseApi.getById(Number(courseId))
-				console.log('API Response:', response)
-
-				// API может вернуть данные в разных форматах
-				let courseData: any
 
 				// Проверяем если это объект с полем 'course'
 				if (response && 'course' in response && response.course) {
@@ -54,7 +50,6 @@ const CourseEditPage = () => {
 				}
 
 				if (!courseData || (!courseData.title && !courseData.course_title)) {
-					console.error('Некорректные данные:', courseData)
 					throw new Error('Некорректные данные курса')
 				}
 
@@ -73,7 +68,6 @@ const CourseEditPage = () => {
 				})
 			} catch (err: any) {
 				setError('Не удалось загрузить курс')
-				console.error('Ошибка загрузки курса:', err)
 			} finally {
 				setLoading(false)
 			}
@@ -136,7 +130,7 @@ const CourseEditPage = () => {
 			<div className='mb-8'>
 				<button
 					onClick={() => navigate('/admin/courses')}
-					className='text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-2 mb-4'
+					className='text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 flex items-center gap-2 mb-4'
 				>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
@@ -169,7 +163,7 @@ const CourseEditPage = () => {
 							name='title'
 							value={form.title}
 							onChange={handleChange}
-							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
 							required
 						/>
 					</div>
@@ -182,7 +176,7 @@ const CourseEditPage = () => {
 							name='description'
 							value={form.description}
 							onChange={handleChange}
-							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
 							rows={4}
 							required
 						/>
@@ -196,7 +190,7 @@ const CourseEditPage = () => {
 							name='skills'
 							value={form.skills?.join(', ') || ''}
 							onChange={handleChange}
-							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
 							placeholder='Например: JavaScript, React, TypeScript'
 							required
 						/>
@@ -210,7 +204,7 @@ const CourseEditPage = () => {
 							name='description_modules'
 							value={form.description_modules}
 							onChange={handleChange}
-							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+							className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
 							rows={4}
 							required
 						/>
@@ -239,7 +233,7 @@ const CourseEditPage = () => {
 						<button
 							type='submit'
 							disabled={saving}
-							className='px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50'
+							className='px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50'
 						>
 							{saving ? 'Сохранение...' : 'Сохранить изменения'}
 						</button>

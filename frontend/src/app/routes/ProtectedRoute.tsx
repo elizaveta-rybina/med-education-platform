@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
@@ -14,7 +13,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
 	useEffect(() => {
 		if (isAdminRoute) {
-			// Добавляем meta tag для скрытия от поисковиков
 			const metaRobots = document.createElement('meta')
 			metaRobots.name = 'robots'
 			metaRobots.content = 'noindex, nofollow'
