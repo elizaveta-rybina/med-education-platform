@@ -1,0 +1,34 @@
+export interface ModuleTopicSummary {
+	id?: number
+	title?: string
+	description?: string | null
+	topics_count?: number
+}
+
+export interface Module {
+	id?: number
+	course_id?: number
+	module_title: string
+	module_description?: string | null
+	topics_count?: number
+	topics?: ModuleTopicSummary[]
+	order_number?: number
+	created_at?: string
+	updated_at?: string
+}
+
+export interface ModulePayload {
+	course_id?: number
+	module_title: string
+	module_description?: string | null
+	order_number?: number
+}
+
+export interface ModuleBulkCreateRequest {
+	modules: ModulePayload[]
+}
+
+export interface ModuleResponse {
+	message?: string
+	module?: Module
+}
