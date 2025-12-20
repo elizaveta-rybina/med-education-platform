@@ -1,48 +1,56 @@
 import { courseApi } from '@/app/api/course/course.api'
 import type { Course } from '@/app/api/course/course.types'
 import { Modal } from '@/shared/ui/modal'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export const CourseAll = () => {
 	const [courses, setCourses] = useState<Course[]>([])
 	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState<string | null>(null)
+	const [deletingId, setDeletingId] = useState<number | null>(null)
 	const [deleteModal, setDeleteModal] = useState<{
 		isOpen: boolean
 		course: Course | null
 	}>({ isOpen: false, course: null })
 	const navigate = useNavigate()
 
-	const loadCourses = async () => {
+	const loadCourses = useCallback(async () => {
 		try {
 			setLoading(true)
+			setError(null)
 			const data = await courseApi.getAll()
 			setCourses(data)
-		} catch (err: any) {
-			// Ошибка при загрузке курсов
+		} catch {
+			setError('Не удалось загрузить курсы')
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [])
 
 	useEffect(() => {
-		loadCourses()
-	}, [])
+		void loadCourses()
+	}, [loadCourses])
 
 	const handleDelete = async () => {
 		if (!deleteModal.course) return
 		try {
-			console.log('Удаление курса с ID:', deleteModal.course.id)
-			const result = await courseApi.delete(deleteModal.course.id)
-			console.log('Результат удаления:', result)
+			setDeletingId(deleteModal.course.id)
+			setError(null)
+			await courseApi.delete(deleteModal.course.id)
 			setDeleteModal({ isOpen: false, course: null })
 			await loadCourses()
-		} catch (err: any) {
-			console.error('Ошибка удаления курса:', err)
-			alert(
-				`Ошибка при удалении: ${err?.response?.data?.message || err.message}`
-			)
+		} catch (err: unknown) {
+			const message =
+				err &&
+				typeof err === 'object' &&
+				'message' in err &&
+				typeof (err as { message?: unknown }).message === 'string'
+					? (err as { message: string }).message
+					: 'Не удалось удалить курс'
+			setError(message)
 		}
+		setDeletingId(null)
 	}
 
 	return (
@@ -73,6 +81,12 @@ export const CourseAll = () => {
 				</button>
 			</div>
 
+			{error && (
+				<div className='mb-6 p-4 border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-lg'>
+					{error}
+				</div>
+			)}
+
 			{loading && (
 				<div className='flex justify-center items-center py-12'>
 					<div className='text-gray-600 dark:text-gray-400'>Загрузка...</div>
@@ -97,11 +111,15 @@ export const CourseAll = () => {
 				{courses.map(course => (
 					<div
 						key={course.id}
-						className='bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 relative'
+						className='bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow p-6 relative group cursor-pointer'
+						onClick={() => navigate(`/admin/courses/${course.id}`)}
 					>
-						<div className='absolute top-4 right-4 flex gap-2'>
+						<div className='absolute top-4 right-4 flex gap-2 z-10'>
 							<button
-								onClick={() => navigate(`/admin/courses/${course.id}/edit`)}
+								onClick={e => {
+									e.stopPropagation()
+									navigate(`/admin/courses/${course.id}/edit`)
+								}}
 								className='p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors'
 								title='Редактировать'
 							>
@@ -121,8 +139,12 @@ export const CourseAll = () => {
 								</svg>
 							</button>
 							<button
-								onClick={() => setDeleteModal({ isOpen: true, course })}
-								className='p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors'
+								onClick={e => {
+									e.stopPropagation()
+									setDeleteModal({ isOpen: true, course })
+								}}
+								className='p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50'
+								disabled={deletingId === course.id}
 								title='Удалить'
 							>
 								<svg
@@ -158,7 +180,7 @@ export const CourseAll = () => {
 								</span>
 							))}
 						</div>
-						<div className='text-xs text-gray-400 dark:text-gray-500'>
+						<div className='text-xs text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400 transition-colors'>
 							ID: {course.id}
 						</div>
 					</div>
@@ -192,9 +214,10 @@ export const CourseAll = () => {
 						</button>
 						<button
 							onClick={handleDelete}
-							className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors'
+							className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50'
+							disabled={Boolean(deletingId)}
 						>
-							Удалить
+							{deletingId ? 'Удаление...' : 'Удалить'}
 						</button>
 					</div>
 				</div>

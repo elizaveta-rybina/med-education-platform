@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
 interface CourseFormProps {
-	onSuccess?: () => void
+	onSuccess?: (courseId: number) => void
 }
 
 export const CourseForm = ({ onSuccess }: CourseFormProps) => {
@@ -36,17 +36,14 @@ export const CourseForm = ({ onSuccess }: CourseFormProps) => {
 		formData.append('modules_description', data.modules_description)
 
 		try {
-			await create(formData)
-			// console.log('Course created successfully:', {
-			// 	title: data.title,
-			// 	description: data.description,
-			// 	skills: data.skills,
-			// 	modules_description: data.modules_description
-			// })
-			onSuccess?.()
+			const courseId = await create(formData)
+			onSuccess?.(courseId)
+			// If no success callback (when used standalone), navigate
+			if (!onSuccess) {
+				navigate('/admin/courses')
+			}
 		} catch (err) {
 			console.error('Failed to create course:', err)
-			// Ошибка обрабатывается в useCreateCourse
 		}
 	}
 
@@ -75,7 +72,7 @@ export const CourseForm = ({ onSuccess }: CourseFormProps) => {
 				<Button
 					type='button'
 					variant='outline'
-					onClick={() => navigate('/courses')}
+					onClick={() => navigate('/admin/courses')}
 				>
 					Отмена
 				</Button>

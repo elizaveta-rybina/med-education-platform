@@ -3,7 +3,7 @@ import type {
 	CourseCreateRequest,
 	CourseDetailResponse,
 	CourseListResponse,
-	CourseModulesResponse,
+	CourseModulesListResponse,
 	CourseResponse,
 	CourseUpdateRequest
 } from '@/app/api/course/course.types'
@@ -25,6 +25,10 @@ export const courseApi = {
 	delete: (id: number) =>
 		ApiClient.delete<{ message: string }>(`${BASE_URL}/${id}`),
 
-	getModules: (id: number) =>
-		ApiClient.get<CourseModulesResponse[]>(`${BASE_URL}/${id}/modules`)
+	getModules: async (id: number) => {
+		const res = await ApiClient.get<CourseModulesListResponse>(
+			`${BASE_URL}/${id}/modules`
+		)
+		return res.modules
+	}
 }

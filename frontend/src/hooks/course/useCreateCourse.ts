@@ -21,7 +21,7 @@ export const useCreateCourse = () => {
 	const error = useSelector<RootState, string | null>(selectCoursesError)
 	const [localError, setLocalError] = useState<string | null>(null)
 
-	const create = async (formData: FormData) => {
+	const create = async (formData: FormData): Promise<number> => {
 		setLocalError(null)
 		dispatch(clearError())
 
@@ -36,8 +36,8 @@ export const useCreateCourse = () => {
 			const result = (await dispatch(
 				createCourse(courseData)
 			).unwrap()) as Course
-			navigate('/admin/courses')
-			return result
+			// Don't navigate here, let the caller handle it
+			return result.id
 		} catch (err: unknown) {
 			const error = err as ApiError | { message: string }
 			if (error.message === 'Unauthorized' || error.message?.includes('401')) {

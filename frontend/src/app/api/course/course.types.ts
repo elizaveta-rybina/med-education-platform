@@ -50,3 +50,8 @@ export interface CourseModulesResponse {
 	created_at: string
 	updated_at: string
 }
+
+export interface CourseModulesListResponse {
+	course_id: number
+	modules: CourseModulesResponse[]
+}
