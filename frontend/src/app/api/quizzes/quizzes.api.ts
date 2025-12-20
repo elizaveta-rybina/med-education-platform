@@ -22,11 +22,16 @@ export const quizzesApi = {
 	},
 
 	getById: async (id: number): Promise<QuizResponse> => {
-		const { data } = await baseApi.get<QuizResponse>(`/admin/content/quizzes/${id}`)
+		const { data } = await baseApi.get<QuizResponse>(
+			`/admin/content/quizzes/${id}`
+		)
 		return data
 	},
 
-	update: async (id: number, payload: Partial<QuizPayload>): Promise<QuizResponse> => {
+	update: async (
+		id: number,
+		payload: Partial<QuizPayload>
+	): Promise<QuizResponse> => {
 		const { data } = await baseApi.put<QuizResponse>(
 			`/admin/content/quizzes/${id}`,
 			payload

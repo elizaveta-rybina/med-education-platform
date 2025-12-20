@@ -1,6 +1,5 @@
 import { baseApi } from '@/app/api/baseApi'
 import type {
-	Lecture,
 	LectureAttachmentResponse,
 	LecturePayload,
 	LectureResponse
@@ -22,7 +21,10 @@ export const lecturesApi = {
 		return data
 	},
 
-	update: async (id: number, payload: Partial<LecturePayload>): Promise<LectureResponse> => {
+	update: async (
+		id: number,
+		payload: Partial<LecturePayload>
+	): Promise<LectureResponse> => {
 		const { data } = await baseApi.put<LectureResponse>(
 			`/admin/content/lectures/${id}`,
 			payload
@@ -37,7 +39,10 @@ export const lecturesApi = {
 		return data
 	},
 
-	uploadDocument: async (id: number, file: File): Promise<LectureAttachmentResponse> => {
+	uploadDocument: async (
+		id: number,
+		file: File
+	): Promise<LectureAttachmentResponse> => {
 		const formData = new FormData()
 		formData.append('file', file)
 		const { data } = await baseApi.post<LectureAttachmentResponse>(
@@ -50,7 +55,10 @@ export const lecturesApi = {
 		return data
 	},
 
-	uploadImage: async (id: number, file: File): Promise<LectureAttachmentResponse> => {
+	uploadImage: async (
+		id: number,
+		file: File
+	): Promise<LectureAttachmentResponse> => {
 		const formData = new FormData()
 		formData.append('image', file)
 		const { data } = await baseApi.post<LectureAttachmentResponse>(
@@ -63,7 +71,10 @@ export const lecturesApi = {
 		return data
 	},
 
-	deleteImage: async (lectureId: number, imageId: number): Promise<{ message?: string }> => {
+	deleteImage: async (
+		lectureId: number,
+		imageId: number
+	): Promise<{ message?: string }> => {
 		const { data } = await baseApi.delete<{ message?: string }>(
 			`/admin/content/lectures/${lectureId}/attachments/images/${imageId}`
 		)

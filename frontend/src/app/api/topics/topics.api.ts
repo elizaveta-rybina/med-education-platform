@@ -1,6 +1,5 @@
 import { baseApi } from '@/app/api/baseApi'
 import type {
-	Topic,
 	TopicBulkCreateRequest,
 	TopicContent,
 	TopicContentResponse,
@@ -9,7 +8,9 @@ import type {
 } from '@/app/api/topics/topics.types'
 
 export const topicsApi = {
-	bulkCreate: async (payload: TopicBulkCreateRequest): Promise<TopicResponse> => {
+	bulkCreate: async (
+		payload: TopicBulkCreateRequest
+	): Promise<TopicResponse> => {
 		const { data } = await baseApi.post<TopicResponse>(
 			'/admin/content/topics/bulk',
 			payload
@@ -18,11 +19,16 @@ export const topicsApi = {
 	},
 
 	getById: async (id: number): Promise<TopicResponse> => {
-		const { data } = await baseApi.get<TopicResponse>(`/admin/content/topics/${id}`)
+		const { data } = await baseApi.get<TopicResponse>(
+			`/admin/content/topics/${id}`
+		)
 		return data
 	},
 
-	update: async (id: number, payload: Partial<TopicPayload>): Promise<TopicResponse> => {
+	update: async (
+		id: number,
+		payload: Partial<TopicPayload>
+	): Promise<TopicResponse> => {
 		const { data } = await baseApi.put<TopicResponse>(
 			`/admin/content/topics/${id}`,
 			payload

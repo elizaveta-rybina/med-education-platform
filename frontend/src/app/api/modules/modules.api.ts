@@ -6,7 +6,9 @@ import type {
 } from '@/app/api/modules/modules.types'
 
 export const modulesApi = {
-	bulkCreate: async (payload: ModuleBulkCreateRequest): Promise<ModuleResponse> => {
+	bulkCreate: async (
+		payload: ModuleBulkCreateRequest
+	): Promise<ModuleResponse> => {
 		const { data } = await baseApi.post<ModuleResponse>(
 			'/admin/content/modules/bulk',
 			payload
@@ -19,7 +21,10 @@ export const modulesApi = {
 		return data
 	},
 
-	update: async (id: number, payload: Partial<Module>): Promise<ModuleResponse> => {
+	update: async (
+		id: number,
+		payload: Partial<Module>
+	): Promise<ModuleResponse> => {
 		const { data } = await baseApi.put<ModuleResponse>(
 			`/admin/content/modules/${id}`,
 			payload
