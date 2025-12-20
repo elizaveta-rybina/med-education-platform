@@ -10,14 +10,14 @@ export interface Topic {
 }
 
 export interface TopicPayload {
-	module_id: number
 	title: string
 	description?: string | null
-	order_number?: number
+	order_number: number
 	is_published?: boolean | number
 }
 
 export interface TopicBulkCreateRequest {
+	module_id: number
 	topics: TopicPayload[]
 }
 

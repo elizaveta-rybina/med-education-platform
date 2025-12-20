@@ -29,6 +29,19 @@ class TopicContentService
         protected TopicItemService $topicItemService,
     ) {}
 
+    public function getByTopic(int $topicId): array
+    {
+        $lectures = Lecture::where('topic_id', $topicId)
+            ->orderBy('order_number')
+            ->get();
+
+        return [
+            'lectures' => $lectures,
+            'quizzes' => [],
+            'assignments' => [],
+        ];
+    }
+
     public function store(array $validated): array
     {
         $savedItems = [];

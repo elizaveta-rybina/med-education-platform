@@ -6,6 +6,8 @@ import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
 import CourseEditPage from '@/pages/Admin/CourseEditPage'
 import CourseViewPage from '@/pages/Admin/CourseViewPage'
+import ModuleViewPage from '@/pages/Admin/ModuleViewPage'
+import TopicContentPage from '@/pages/Admin/TopicContentPage'
 import { SignIn } from '@/pages/AuthPages'
 import CourseInnerPage from '@/pages/Courses/Physiology'
 import HomeAdmin from '@/pages/Dashboard/Home'
@@ -78,6 +80,22 @@ const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<CourseEditPage />
+					</ProtectedRoute>
+				)
+			},
+			{
+				path: '/admin/modules/:moduleId',
+				element: (
+					<ProtectedRoute>
+						<ModuleViewPage />
+					</ProtectedRoute>
+				)
+			},
+			{
+				path: '/admin/topics/:topicId',
+				element: (
+					<ProtectedRoute>
+						<TopicContentPage />
 					</ProtectedRoute>
 				)
 			}

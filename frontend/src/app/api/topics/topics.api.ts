@@ -15,6 +15,13 @@ export const topicsApi = {
 
 	getById: (id: number) => ApiClient.get<TopicResponse>(`${BASE_URL}/${id}`),
 
+	getByModule: async (moduleId: number) => {
+		const { data } = await ApiClient.get<{ data: any[] }>(
+			`/admin/content/modules/${moduleId}/topics`
+		)
+		return data
+	},
+
 	update: (id: number, payload: Partial<TopicPayload>) =>
 		ApiClient.put<TopicResponse>(`${BASE_URL}/${id}`, payload),
 

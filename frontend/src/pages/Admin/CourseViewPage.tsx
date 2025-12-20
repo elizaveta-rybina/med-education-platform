@@ -248,6 +248,7 @@ const CourseViewPage = () => {
 
 					<ModuleList
 						modules={modules}
+						onOpen={module => navigate(`/admin/modules/${module.id}`)}
 						onEdit={module => {
 							navigate(`/admin/courses/${courseId}/edit`, { state: { module } })
 						}}

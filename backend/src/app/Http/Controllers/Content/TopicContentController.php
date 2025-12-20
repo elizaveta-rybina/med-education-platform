@@ -12,6 +12,23 @@ class TopicContentController extends Controller
         protected TopicContentService $topicContentService,
     ) {}
 
+    public function index($topicId)
+    {
+        try {
+            $contents = $this->topicContentService->getByTopic($topicId);
+
+            return response()->json([
+                'success' => true,
+                'data' => $contents,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'Ошибка при загрузке контента темы',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

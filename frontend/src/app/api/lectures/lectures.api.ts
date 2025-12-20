@@ -1,5 +1,6 @@
 import { ApiClient } from '@/app/api/apiClient'
 import type {
+	Lecture,
 	LectureAttachmentResponse,
 	LecturePayload,
 	LectureResponse
@@ -8,6 +9,12 @@ import type {
 const BASE_URL = '/admin/content/lectures'
 
 export const lecturesApi = {
+	getByTopicId: (topicId: number) =>
+		ApiClient.get<{
+			success: boolean
+			data: { lectures: Lecture[]; quizzes: unknown[]; assignments: unknown[] }
+		}>(`/admin/content/topics/${topicId}/contents`),
+
 	create: (payload: LecturePayload) =>
 		ApiClient.post<LectureResponse>(BASE_URL, payload),
 
