@@ -57,6 +57,7 @@ class CourseService
                 }
 
                 return [
+                    'id' => $module->id,
                     'module_title' => $module->title,
                     'module_description' => $module->description,
                     'topics_count' => $module->topics->count(),

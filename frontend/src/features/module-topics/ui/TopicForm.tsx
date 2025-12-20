@@ -6,6 +6,7 @@ export interface TopicFormValues {
 	order_number: number
 	is_published?: boolean
 	cover_image?: File
+	existing_cover_url?: string
 }
 
 interface TopicFormProps {
@@ -36,6 +37,17 @@ export const TopicForm = ({
 	const [saving, setSaving] = useState(false)
 	const [error, setError] = useState<string | null>(null)
 
+	// Обновляем все поля при изменении initialValues
+	useEffect(() => {
+		setTitle(initialValues?.title ?? '')
+		setDescription(initialValues?.description ?? '')
+		setIsPublished(initialValues?.is_published ?? false)
+	}, [
+		initialValues?.title,
+		initialValues?.description,
+		initialValues?.is_published
+	])
+
 	useEffect(() => {
 		if (
 			!initialValues?.order_number &&
@@ -47,6 +59,25 @@ export const TopicForm = ({
 			setOrderNumber(String(initialValues.order_number))
 		}
 	}, [defaultOrderNumber, initialValues?.order_number])
+
+	// Отдельный эффект для обновления обложки
+	useEffect(() => {
+		console.log(
+			'Cover effect triggered, existing_cover_url:',
+			initialValues?.existing_cover_url
+		)
+		// Сбрасываем состояние при изменении initialValues
+		setCoverFile(null)
+
+		// Устанавливаем существующую обложку или null
+		if (initialValues?.existing_cover_url) {
+			console.log('Setting coverPreview to:', initialValues.existing_cover_url)
+			setCoverPreview(initialValues.existing_cover_url)
+		} else {
+			console.log('Clearing coverPreview')
+			setCoverPreview(null)
+		}
+	}, [initialValues?.existing_cover_url])
 
 	const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
@@ -87,6 +118,8 @@ export const TopicForm = ({
 			setSaving(false)
 		}
 	}
+
+	console.log(coverPreview)
 
 	return (
 		<form onSubmit={handleSubmit} className='space-y-4'>
@@ -169,13 +202,23 @@ export const TopicForm = ({
 							JPG, PNG, GIF или WebP до 5 МБ
 						</p>
 					</div>
-					{coverPreview && (
+					{coverPreview ? (
 						<div className='w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600'>
 							<img
 								src={coverPreview}
 								alt='Cover preview'
 								className='w-full h-full object-cover'
+								onLoad={() =>
+									console.log('Image loaded successfully:', coverPreview)
+								}
+								onError={e =>
+									console.error('Image load error:', coverPreview, e)
+								}
 							/>
+						</div>
+					) : (
+						<div className='w-24 h-24 flex-shrink-0 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-400 text-xs'>
+							Нет обложки
 						</div>
 					)}
 				</div>

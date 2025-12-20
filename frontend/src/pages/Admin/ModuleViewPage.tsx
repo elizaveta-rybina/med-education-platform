@@ -81,19 +81,37 @@ const ModuleViewPage = () => {
 		is_published?: boolean
 		cover_image?: File
 	}) => {
+		console.log('handleSaveTopic called with values:', {
+			...values,
+			cover_image: values.cover_image ? 'File present' : 'No file'
+		})
 		if (!moduleId) return
 		setSaving(true)
 		try {
 			if (editingTopic?.id) {
+				console.log('Updating existing topic:', editingTopic.id)
 				await topicsApi.update(editingTopic.id, {
 					title: values.title,
 					description: values.description,
 					order_number: values.order_number,
 					is_published: values.is_published
 				})
+				console.log('Topic updated successfully')
+
 				// Загружаем обложку если выбрана
 				if (values.cover_image) {
-					await topicsApi.uploadCover(editingTopic.id, values.cover_image)
+					console.log(
+						'Uploading cover for topic:',
+						editingTopic.id,
+						values.cover_image
+					)
+					const uploadResult = await topicsApi.uploadCover(
+						editingTopic.id,
+						values.cover_image
+					)
+					console.log('Cover upload result:', uploadResult)
+				} else {
+					console.log('No cover image to upload')
 				}
 			} else {
 				const createResult = await topicsApi.bulkCreate({
@@ -110,27 +128,44 @@ const ModuleViewPage = () => {
 				// Получаем ID созданной темы
 				const createdTopic = (createResult as any).data?.[0]
 				if (createdTopic?.id && values.cover_image) {
-					await topicsApi.uploadCover(createdTopic.id, values.cover_image)
+					console.log('Uploading cover for new topic:', createdTopic.id)
+					const uploadResult = await topicsApi.uploadCover(
+						createdTopic.id,
+						values.cover_image
+					)
+					console.log('Cover upload result:', uploadResult)
 				}
 			}
+
+			// Небольшая задержка чтобы backend успел обработать файл
+			await new Promise(resolve => setTimeout(resolve, 500))
+
 			// reload list only
 			const topicsList = await topicsApi.getByModule(Number(moduleId))
+			console.log('Raw topicsList from API:', topicsList)
 			const normalized = (Array.isArray(topicsList) ? topicsList : []).map(
-				(t: any) => ({
-					id: t.id,
-					module_id: t.module_id,
-					title: t.title,
-					description: t.description,
-					order_number: t.order_number,
-					is_published: t.is_published,
-					cover_image: t.cover_image,
-					created_at: t.created_at,
-					updated_at: t.updated_at
-				})
+				(t: any) => {
+					console.log('Processing topic:', t)
+					return {
+						id: t.id,
+						module_id: t.module_id,
+						title: t.title,
+						description: t.description,
+						order_number: t.order_number,
+						is_published: t.is_published,
+						cover_image: t.cover_image,
+						created_at: t.created_at,
+						updated_at: t.updated_at
+					}
+				}
 			)
+			console.log('Loaded topics with covers:', normalized)
 			setTopics(normalized)
 			setShowTopicForm(false)
 			setEditingTopic(null)
+		} catch (err) {
+			console.error('Error in handleSaveTopic:', err)
+			throw err
 		} finally {
 			setSaving(false)
 		}
@@ -254,7 +289,9 @@ const ModuleViewPage = () => {
 												title: editingTopic.title,
 												description: editingTopic.description ?? undefined,
 												order_number: editingTopic.order_number,
-												is_published: !!editingTopic.is_published
+												is_published: !!editingTopic.is_published,
+												existing_cover_url:
+													editingTopic.cover_image ?? undefined
 										  }
 										: undefined
 								}
@@ -273,7 +310,10 @@ const ModuleViewPage = () => {
 						topics={topics}
 						onOpen={t => navigate(`/admin/topics/${t.id}`)}
 						onEdit={t => {
-							setEditingTopic(t)
+							// Ищем актуальную тему из состояния по ID
+							const actualTopic = topics.find(topic => topic.id === t.id)
+							console.log('Editing topic:', actualTopic)
+							setEditingTopic(actualTopic || t)
 							setShowTopicForm(true)
 						}}
 						onDelete={handleDeleteTopic}

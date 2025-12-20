@@ -70,6 +70,33 @@ class ModuleController extends Controller
         ]);
     }
 
+    // GET /content/modules/{id}/topics - получить все темы модуля с описанием и обложкой
+    public function getModuleTopics($id)
+    {
+        $module = Module::with('topics')->findOrFail($id);
+
+        $topics = $module->topics->map(fn($topic) => [
+            'id' => $topic->id,
+            'title' => $topic->title,
+            'description' => $topic->description,
+            'cover_image' => $topic->cover_image
+                ? asset('storage/' . $topic->cover_image)
+                : null,
+            'order_number' => $topic->order_number,
+            'created_at' => $topic->created_at,
+            'updated_at' => $topic->updated_at,
+        ])->values();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $module->id,
+                'title' => $module->title,
+                'description' => $module->description,
+                'topics' => $topics,
+            ]
+        ]);
+    }
 
 
     public function update(Request $request, $id)
