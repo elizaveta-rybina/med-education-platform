@@ -1,83 +1,37 @@
-import { baseApi } from '@/app/api/baseApi'
+import { ApiClient } from '@/app/api/apiClient'
 import type {
 	LectureAttachmentResponse,
 	LecturePayload,
 	LectureResponse
 } from '@/app/api/lectures/lectures.types'
 
+const BASE_URL = '/admin/content/lectures'
+
 export const lecturesApi = {
-	create: async (payload: LecturePayload): Promise<LectureResponse> => {
-		const { data } = await baseApi.post<LectureResponse>(
-			'/admin/content/lectures',
-			payload
-		)
-		return data
-	},
+	create: (payload: LecturePayload) =>
+		ApiClient.post<LectureResponse>(BASE_URL, payload),
 
-	getById: async (id: number): Promise<LectureResponse> => {
-		const { data } = await baseApi.get<LectureResponse>(
-			`/admin/content/lectures/${id}`
-		)
-		return data
-	},
+	getById: (id: number) => ApiClient.get<LectureResponse>(`${BASE_URL}/${id}`),
 
-	update: async (
-		id: number,
-		payload: Partial<LecturePayload>
-	): Promise<LectureResponse> => {
-		const { data } = await baseApi.put<LectureResponse>(
-			`/admin/content/lectures/${id}`,
-			payload
-		)
-		return data
-	},
+	update: (id: number, payload: Partial<LecturePayload>) =>
+		ApiClient.put<LectureResponse>(`${BASE_URL}/${id}`, payload),
 
-	delete: async (id: number): Promise<{ message?: string }> => {
-		const { data } = await baseApi.delete<{ message?: string }>(
-			`/admin/content/lectures/${id}`
-		)
-		return data
-	},
+	delete: (id: number) => ApiClient.delete(`${BASE_URL}/${id}`),
 
-	uploadDocument: async (
-		id: number,
-		file: File
-	): Promise<LectureAttachmentResponse> => {
-		const formData = new FormData()
-		formData.append('file', file)
-		const { data } = await baseApi.post<LectureAttachmentResponse>(
-			`/admin/content/lectures/${id}/upload-doc`,
-			formData,
-			{
-				headers: { 'Content-Type': 'multipart/form-data' }
-			}
-		)
-		return data
-	},
+	uploadDocument: (id: number, file: File) =>
+		ApiClient.upload<LectureAttachmentResponse>(
+			`${BASE_URL}/${id}/upload-doc`,
+			file,
+			'file'
+		),
 
-	uploadImage: async (
-		id: number,
-		file: File
-	): Promise<LectureAttachmentResponse> => {
-		const formData = new FormData()
-		formData.append('image', file)
-		const { data } = await baseApi.post<LectureAttachmentResponse>(
-			`/admin/content/lectures/${id}/attachments/images/upload`,
-			formData,
-			{
-				headers: { 'Content-Type': 'multipart/form-data' }
-			}
-		)
-		return data
-	},
+	uploadImage: (id: number, file: File) =>
+		ApiClient.upload<LectureAttachmentResponse>(
+			`${BASE_URL}/${id}/attachments/images/upload`,
+			file,
+			'image'
+		),
 
-	deleteImage: async (
-		lectureId: number,
-		imageId: number
-	): Promise<{ message?: string }> => {
-		const { data } = await baseApi.delete<{ message?: string }>(
-			`/admin/content/lectures/${lectureId}/attachments/images/${imageId}`
-		)
-		return data
-	}
+	deleteImage: (lectureId: number, imageId: number) =>
+		ApiClient.delete(`${BASE_URL}/${lectureId}/attachments/images/${imageId}`)
 }

@@ -26,6 +26,9 @@ const CourseEditPage = () => {
 				setLoading(true)
 				const response = await courseApi.getById(Number(courseId))
 
+				// Определяем переменную courseData
+				let courseData: any
+
 				// Проверяем если это объект с полем 'course'
 				if (response && 'course' in response && response.course) {
 					courseData = response.course

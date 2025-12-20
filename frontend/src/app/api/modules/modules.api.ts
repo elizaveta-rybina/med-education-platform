@@ -1,41 +1,20 @@
-import { baseApi } from '@/app/api/baseApi'
+import { ApiClient } from '@/app/api/apiClient'
 import type {
 	Module,
 	ModuleBulkCreateRequest,
 	ModuleResponse
 } from '@/app/api/modules/modules.types'
 
+const BASE_URL = '/admin/content/modules'
+
 export const modulesApi = {
-	bulkCreate: async (
-		payload: ModuleBulkCreateRequest
-	): Promise<ModuleResponse> => {
-		const { data } = await baseApi.post<ModuleResponse>(
-			'/admin/content/modules/bulk',
-			payload
-		)
-		return data
-	},
+	bulkCreate: (payload: ModuleBulkCreateRequest) =>
+		ApiClient.post<ModuleResponse>(`${BASE_URL}/bulk`, payload),
 
-	getById: async (id: number): Promise<Module> => {
-		const { data } = await baseApi.get<Module>(`/admin/content/modules/${id}`)
-		return data
-	},
+	getById: (id: number) => ApiClient.get<Module>(`${BASE_URL}/${id}`),
 
-	update: async (
-		id: number,
-		payload: Partial<Module>
-	): Promise<ModuleResponse> => {
-		const { data } = await baseApi.put<ModuleResponse>(
-			`/admin/content/modules/${id}`,
-			payload
-		)
-		return data
-	},
+	update: (id: number, payload: Partial<Module>) =>
+		ApiClient.put<ModuleResponse>(`${BASE_URL}/${id}`, payload),
 
-	delete: async (id: number): Promise<{ message?: string }> => {
-		const { data } = await baseApi.delete<{ message?: string }>(
-			`/admin/content/modules/${id}`
-		)
-		return data
-	}
+	delete: (id: number) => ApiClient.delete(`${BASE_URL}/${id}`)
 }

@@ -1,4 +1,4 @@
-import { baseApi } from '@/app/api/baseApi'
+import { ApiClient } from '@/app/api/apiClient'
 import type {
 	CourseCreateRequest,
 	CourseDetailResponse,
@@ -8,53 +8,23 @@ import type {
 	CourseUpdateRequest
 } from '@/app/api/course/course.types'
 
+const BASE_URL = '/admin/content/courses'
+
 export const courseApi = {
-	getAll: async (): Promise<CourseListResponse> => {
-		const { data } = await baseApi.get<CourseListResponse>(
-			'/admin/content/courses'
-		)
-		return data
-	},
+	getAll: () => ApiClient.get<CourseListResponse>(BASE_URL),
 
-	getById: async (
-		id: number
-	): Promise<CourseResponse | CourseDetailResponse> => {
-		const { data } = await baseApi.get<CourseResponse | CourseDetailResponse>(
-			`/admin/content/courses/${id}`
-		)
-		return data
-	},
+	getById: (id: number) =>
+		ApiClient.get<CourseResponse | CourseDetailResponse>(`${BASE_URL}/${id}`),
 
-	create: async (payload: CourseCreateRequest): Promise<CourseResponse> => {
-		const { data } = await baseApi.post<CourseResponse>(
-			'/admin/content/courses',
-			payload
-		)
-		return data
-	},
+	create: (payload: CourseCreateRequest) =>
+		ApiClient.post<CourseResponse>(BASE_URL, payload),
 
-	update: async (
-		id: number,
-		payload: CourseUpdateRequest
-	): Promise<CourseResponse> => {
-		const { data } = await baseApi.put<CourseResponse>(
-			`/admin/content/courses/${id}`,
-			payload
-		)
-		return data
-	},
+	update: (id: number, payload: CourseUpdateRequest) =>
+		ApiClient.put<CourseResponse>(`${BASE_URL}/${id}`, payload),
 
-	delete: async (id: number): Promise<{ message: string }> => {
-		const { data } = await baseApi.delete<{ message: string }>(
-			`/admin/content/courses/${id}`
-		)
-		return data
-	},
+	delete: (id: number) =>
+		ApiClient.delete<{ message: string }>(`${BASE_URL}/${id}`),
 
-	getModules: async (id: number): Promise<CourseModulesResponse[]> => {
-		const { data } = await baseApi.get<CourseModulesResponse[]>(
-			`/admin/content/courses/${id}/modules`
-		)
-		return data
-	}
+	getModules: (id: number) =>
+		ApiClient.get<CourseModulesResponse[]>(`${BASE_URL}/${id}/modules`)
 }
