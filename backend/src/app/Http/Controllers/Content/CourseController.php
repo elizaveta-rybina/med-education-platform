@@ -68,9 +68,19 @@ class CourseController extends Controller
     }
 
     // DELETE /admin/content/courses/{id}
-    public function destroy($id)
+    public function destroy($course)
     {
-        $this->courseService->deleteCourse($id);
+        // Если это модель, получаем ID
+        $courseId = is_object($course) ? $course->id : $course;
+
+        \Log::info('CourseController destroy called', [
+            'param' => $course,
+            'type' => gettype($course),
+            'is_model' => $course instanceof \App\Models\Content\Course,
+            'course_id' => $courseId
+        ]);
+
+        $this->courseService->deleteCourse($courseId);
 
         return response()->json(['message' => 'Курс удалён успешно']);
     }

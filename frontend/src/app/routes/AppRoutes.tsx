@@ -4,6 +4,7 @@ import AppLayout from '@/layout/AppLayout'
 import { CoursePage, NotFound } from '@/pages'
 import { CourseAll } from '@/pages/Admin/CourseAll'
 import CourseCreatePage from '@/pages/Admin/CourseCreatePage'
+import CourseEditPage from '@/pages/Admin/CourseEditPage'
 import { SignIn } from '@/pages/AuthPages'
 import CourseInnerPage from '@/pages/Courses/Physiology'
 import HomeAdmin from '@/pages/Dashboard/Home'
@@ -60,6 +61,14 @@ const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<CourseCreatePage />
+					</ProtectedRoute>
+				)
+			},
+			{
+				path: '/admin/courses/:courseId/edit',
+				element: (
+					<ProtectedRoute>
+						<CourseEditPage />
 					</ProtectedRoute>
 				)
 			}

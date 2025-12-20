@@ -36,7 +36,7 @@ export const useCreateCourse = () => {
 			const result = (await dispatch(
 				createCourse(courseData)
 			).unwrap()) as Course
-			navigate('/courses')
+			navigate('/admin/courses')
 			return result
 		} catch (err: unknown) {
 			const error = err as ApiError | { message: string }
