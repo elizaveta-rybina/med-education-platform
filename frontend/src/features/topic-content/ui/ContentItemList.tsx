@@ -1,4 +1,5 @@
 import type { Lecture } from '@/app/api/lectures/lectures.types'
+import type { Quiz } from '@/app/api/quizzes/quizzes.types'
 import { useState } from 'react'
 
 export interface ContentItem {
@@ -7,12 +8,15 @@ export interface ContentItem {
 	title: string
 	order_number?: number
 	lecture?: Lecture
+	quiz?: Quiz
 }
 
 interface ContentItemListProps {
 	items: ContentItem[]
 	onEditLecture: (lecture: Lecture) => void
 	onDeleteLecture: (id: number) => Promise<void>
+	onEditQuiz?: (quiz: Quiz) => void
+	onDeleteQuiz?: (id: number) => Promise<void>
 	isLoading?: boolean
 }
 
@@ -20,16 +24,27 @@ export const ContentItemList = ({
 	items,
 	onEditLecture,
 	onDeleteLecture,
+	onEditQuiz,
+	onDeleteQuiz,
 	isLoading = false
 }: ContentItemListProps) => {
 	const [deletingId, setDeletingId] = useState<number | null>(null)
 	const [error, setError] = useState<string | null>(null)
 
-	const handleDelete = async (id: number) => {
-		setDeletingId(id)
+	const handleDelete = async (item: ContentItem) => {
+		setDeletingId(item.id)
 		setError(null)
 		try {
-			await onDeleteLecture(id)
+			if (item.type === 'lecture') {
+				await onDeleteLecture(item.id)
+				return
+			}
+
+			if (!onDeleteQuiz) {
+				throw new Error('Quiz delete handler is not defined')
+			}
+
+			await onDeleteQuiz(item.id)
 		} catch {
 			setError('Ошибка при удалении элемента')
 		} finally {
@@ -130,8 +145,31 @@ export const ContentItemList = ({
 									</svg>
 								</button>
 							)}
+							{item.type === 'quiz' && item.quiz && onEditQuiz && (
+								<button
+									onClick={() => onEditQuiz(item.quiz!)}
+									disabled={isLoading || deletingId === item.id}
+									className='p-2 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors disabled:opacity-50'
+									title='Редактировать'
+								>
+									<svg
+										xmlns='http://www.w3.org/2000/svg'
+										className='h-5 w-5'
+										fill='none'
+										viewBox='0 0 24 24'
+										stroke='currentColor'
+									>
+										<path
+											strokeLinecap='round'
+											strokeLinejoin='round'
+											strokeWidth={2}
+											d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
+										/>
+									</svg>
+								</button>
+							)}
 							<button
-								onClick={() => handleDelete(item.id)}
+								onClick={() => handleDelete(item)}
 								disabled={isLoading || deletingId === item.id}
 								className='p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50'
 								title='Удалить'

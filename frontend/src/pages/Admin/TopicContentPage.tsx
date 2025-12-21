@@ -1,5 +1,7 @@
 import { lecturesApi } from '@/app/api/lectures/lectures.api'
 import type { Lecture } from '@/app/api/lectures/lectures.types'
+import { quizzesApi } from '@/app/api/quizzes/quizzes.api'
+import type { Quiz, QuizPayload } from '@/app/api/quizzes/quizzes.types'
 import { topicsApi } from '@/app/api/topics/topics.api'
 import type { Topic } from '@/app/api/topics/topics.types'
 import { TopicForm } from '@/features/module-topics/ui/TopicForm'
@@ -8,6 +10,7 @@ import {
 	type ContentItem
 } from '@/features/topic-content/ui/ContentItemList'
 import { LectureForm } from '@/features/topic-content/ui/LectureForm'
+import { QuizForm } from '@/features/topic-content/ui/QuizForm'
 import { Modal } from '@/shared/ui/modal'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -17,12 +20,14 @@ const TopicContentPage = () => {
 	const navigate = useNavigate()
 	const [topic, setTopic] = useState<Topic | null>(null)
 	const [lectures, setLectures] = useState<Lecture[]>([])
+	const [quizzes, setQuizzes] = useState<Quiz[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 	const [showDeleteModal, setShowDeleteModal] = useState(false)
 	const [deletingLectureId, setDeletingLectureId] = useState<number | null>(
 		null
 	)
+	const [deletingQuizId, setDeletingQuizId] = useState<number | null>(null)
 	const [showTopicForm, setShowTopicForm] = useState(false)
 	const [saving, setSaving] = useState(false)
 
@@ -39,6 +44,22 @@ const TopicContentPage = () => {
 			const contentResponse = await lecturesApi.getByTopicId(Number(topicId))
 			const lectures = contentResponse.data?.lectures || []
 			setLectures(lectures)
+
+			// Загружаем тесты и фильтруем по текущей теме
+			try {
+				const quizzesResponse = await quizzesApi.getAll()
+				const quizzesData =
+					(quizzesResponse as { data?: Quiz[] }).data ||
+					(quizzesResponse as Quiz[])
+				const topicQuizzes = (quizzesData || []).filter(
+					q =>
+						q.topic_id === Number(topicId) || q.quizable_id === Number(topicId)
+				) as Quiz[]
+				setQuizzes(topicQuizzes)
+			} catch (e) {
+				console.warn('Не удалось загрузить тесты:', e)
+				setQuizzes([])
+			}
 		} catch (e) {
 			setError('Не удалось загрузить тему')
 		} finally {
@@ -51,14 +72,29 @@ const TopicContentPage = () => {
 	}, [loadAll])
 
 	const contentItems = useMemo<ContentItem[]>(() => {
-		return lectures.map(lec => ({
+		const lectureItems: ContentItem[] = lectures.map(lec => ({
 			id: lec.id!,
 			type: 'lecture' as const,
 			title: lec.title,
 			order_number: lec.order_number,
 			lecture: lec
 		}))
-	}, [lectures])
+
+		const quizItems: ContentItem[] = quizzes.map((quiz, index) => ({
+			id: quiz.id ?? Number(`${topicId ?? '0'}${index + 1}00`),
+			type: 'quiz' as const,
+			title: quiz.title || 'Без названия',
+			order_number: quiz.order_number ?? undefined,
+			quiz
+		}))
+
+		return [...lectureItems, ...quizItems].sort((a, b) => {
+			const aOrder = a.order_number ?? Number.MAX_SAFE_INTEGER
+			const bOrder = b.order_number ?? Number.MAX_SAFE_INTEGER
+			if (aOrder !== bOrder) return aOrder - bOrder
+			return a.id - b.id
+		})
+	}, [lectures, quizzes, topicId])
 
 	const nextOrder = useMemo(
 		() =>
@@ -68,7 +104,17 @@ const TopicContentPage = () => {
 		[lectures]
 	)
 
+	const nextQuizOrder = useMemo(
+		() =>
+			contentItems.length > 0
+				? Math.max(...contentItems.map(item => item.order_number ?? 0)) + 1
+				: 1,
+		[contentItems]
+	)
+
 	const [showLectureForm, setShowLectureForm] = useState(false)
+	const [showQuizForm, setShowQuizForm] = useState(false)
+	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
 
 	const handleImageUpload = async (file: File): Promise<string> => {
@@ -86,6 +132,56 @@ const TopicContentPage = () => {
 		} catch (e) {
 			console.error('Image upload failed:', e)
 			throw e
+		}
+	}
+
+	const handleSaveQuiz = async (payload: QuizPayload) => {
+		if (!topicId) return
+		setSaving(true)
+		try {
+			if (editingQuiz?.id) {
+				const updatePayload = {
+					title: payload.title,
+					description: payload.description,
+					quiz_type: payload.quiz_type,
+					max_attempts: payload.max_attempts,
+					passing_score: payload.passing_score,
+					time_limit_minutes: payload.time_limit_minutes,
+					order_number: payload.order_number,
+					entity_type: payload.entity_type,
+					quizable_id: payload.quizable_id,
+					is_published: payload.is_published,
+					questions: payload.questions
+				}
+				const resp = await quizzesApi.update(editingQuiz.id, updatePayload)
+				const updated = (resp as { data?: Quiz; quiz?: Quiz }).data ||
+					(resp as { data?: Quiz; quiz?: Quiz }).quiz || {
+						...editingQuiz,
+						...updatePayload
+					}
+				setQuizzes(prev =>
+					prev.map(q => (q.id === editingQuiz.id ? { ...q, ...updated } : q))
+				)
+				setEditingQuiz(null)
+				setShowQuizForm(false)
+			} else {
+				const response = await quizzesApi.create(payload)
+				const createdQuiz =
+					(response as { quiz?: Quiz; data?: Quiz }).quiz ||
+					(response as { quiz?: Quiz; data?: Quiz }).data
+
+				if (createdQuiz) {
+					setQuizzes(prev => [...prev, createdQuiz])
+				} else {
+					await loadAll()
+				}
+
+				setShowQuizForm(false)
+			}
+		} catch (e) {
+			setError('Ошибка при сохранении теста')
+		} finally {
+			setSaving(false)
 		}
 	}
 
@@ -141,6 +237,26 @@ const TopicContentPage = () => {
 			setDeletingLectureId(null)
 		} catch (e) {
 			setError('Ошибка при удалении лекции')
+		} finally {
+			setSaving(false)
+		}
+	}
+
+	const handleDeleteQuiz = async (quizId: number) => {
+		setDeletingQuizId(quizId)
+		setShowDeleteModal(true)
+	}
+
+	const confirmDeleteQuiz = async () => {
+		if (!deletingQuizId) return
+		setSaving(true)
+		try {
+			await quizzesApi.delete(deletingQuizId)
+			setQuizzes(prev => prev.filter(q => q.id !== deletingQuizId))
+			setShowDeleteModal(false)
+			setDeletingQuizId(null)
+		} catch (e) {
+			setError('Ошибка при удалении теста')
 		} finally {
 			setSaving(false)
 		}
@@ -257,7 +373,11 @@ const TopicContentPage = () => {
 							Редактировать
 						</button>
 						<button
-							onClick={() => setShowDeleteModal(true)}
+							onClick={() => {
+								setDeletingLectureId(null)
+								setDeletingQuizId(null)
+								setShowDeleteModal(true)
+							}}
 							className='flex items-center gap-2 px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm'
 							title='Удалить тему'
 							disabled={saving}
@@ -318,17 +438,24 @@ const TopicContentPage = () => {
 					onClose={() => {
 						setShowDeleteModal(false)
 						setDeletingLectureId(null)
+						setDeletingQuizId(null)
 					}}
 					showCloseButton={true}
 					className='max-w-sm mx-4'
 				>
 					<div className='p-6'>
 						<h3 className='text-lg font-semibold text-gray-800 dark:text-white mb-4'>
-							{deletingLectureId ? 'Удалить лекцию?' : 'Удалить тему?'}
+							{deletingLectureId
+								? 'Удалить лекцию?'
+								: deletingQuizId
+								? 'Удалить тест?'
+								: 'Удалить тему?'}
 						</h3>
 						<p className='text-gray-600 dark:text-gray-300 mb-6'>
 							{deletingLectureId
 								? 'Вы уверены, что хотите удалить эту лекцию? Это действие нельзя отменить.'
+								: deletingQuizId
+								? 'Вы уверены, что хотите удалить этот тест? Это действие нельзя отменить.'
 								: `Вы уверены, что хотите удалить тему "${topic?.title}"? Это действие нельзя отменить.`}
 						</p>
 						<div className='flex gap-3 justify-end'>
@@ -336,6 +463,7 @@ const TopicContentPage = () => {
 								onClick={() => {
 									setShowDeleteModal(false)
 									setDeletingLectureId(null)
+									setDeletingQuizId(null)
 								}}
 								disabled={saving}
 								className='px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50'
@@ -343,9 +471,17 @@ const TopicContentPage = () => {
 								Отмена
 							</button>
 							<button
-								onClick={
-									deletingLectureId ? confirmDeleteLecture : handleDeleteTopic
-								}
+								onClick={async () => {
+									if (deletingLectureId) {
+										await confirmDeleteLecture()
+										return
+									}
+									if (deletingQuizId) {
+										await confirmDeleteQuiz()
+										return
+									}
+									await handleDeleteTopic()
+								}}
 								disabled={saving}
 								className='px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50'
 							>
@@ -359,12 +495,13 @@ const TopicContentPage = () => {
 						<h2 className='text-2xl font-bold text-gray-800 dark:text-white'>
 							Контент темы
 						</h2>
-						{!showLectureForm && (
+						{!showLectureForm && !showQuizForm && (
 							<div className='flex gap-2'>
 								<button
 									onClick={() => {
 										setEditingLecture(null)
 										setShowLectureForm(true)
+										setShowQuizForm(false)
 									}}
 									className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
 									title='Добавить лекцию'
@@ -387,8 +524,9 @@ const TopicContentPage = () => {
 								</button>
 								<button
 									onClick={() => {
-										// TODO: add quiz form
-										alert('Добавление тестов будет реализовано позже')
+										setShowQuizForm(true)
+										setShowLectureForm(false)
+										setEditingLecture(null)
 									}}
 									className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
 									title='Добавить тест'
@@ -446,6 +584,25 @@ const TopicContentPage = () => {
 						</div>
 					)}
 
+					{showQuizForm && topicId && (
+						<div className='mb-6 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600'>
+							<h3 className='font-semibold text-gray-800 dark:text-white mb-4'>
+								{editingQuiz ? 'Редактирование теста' : 'Добавление теста'}
+							</h3>
+							<QuizForm
+								topicId={Number(topicId)}
+								defaultOrderNumber={nextQuizOrder}
+								isLoading={saving}
+								onSubmit={handleSaveQuiz}
+								onCancel={() => {
+									setShowQuizForm(false)
+									setEditingQuiz(null)
+								}}
+								initialValues={editingQuiz || undefined}
+							/>
+						</div>
+					)}
+
 					<ContentItemList
 						items={contentItems}
 						onEditLecture={lec => {
@@ -453,6 +610,12 @@ const TopicContentPage = () => {
 							setShowLectureForm(true)
 						}}
 						onDeleteLecture={handleDeleteLecture}
+						onEditQuiz={quiz => {
+							setEditingQuiz(quiz)
+							setShowQuizForm(true)
+							setShowLectureForm(false)
+						}}
+						onDeleteQuiz={handleDeleteQuiz}
 						isLoading={saving}
 					/>
 				</div>

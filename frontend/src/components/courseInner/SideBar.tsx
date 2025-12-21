@@ -12,7 +12,7 @@ const SideBarCourse = () => {
 	const { isMobileOpen, isExpanded, toggleMobileSidebar, toggleSidebar } =
 		useSidebar()
 	const [currentHash, setCurrentHash] = useState('')
-	const { course } = useCourse()
+	const { course, resetReadFlags } = useCourse()
 	const [chapterReadStatus, setChapterReadStatus] = useState<
 		Record<string, boolean>
 	>({})
@@ -247,8 +247,22 @@ const SideBarCourse = () => {
 							}
 							onRestart={() => {
 								setChapterReadStatus({})
+								setLectureReadStatus({})
+								resetReadFlags()
+
+								// Удаляем все результаты тестов
+								const keysToRemove = []
+								for (let i = 0; i < localStorage.length; i++) {
+									const key = localStorage.key(i)
+									if (key && key.startsWith('quizResults_')) {
+										keysToRemove.push(key)
+									}
+								}
+								keysToRemove.forEach(key => localStorage.removeItem(key))
+
 								// Dispatch event to force update
 								window.dispatchEvent(new Event('chapterReadStatusUpdated'))
+								window.dispatchEvent(new Event('lectureReadStatusUpdated'))
 							}}
 						/>
 					</div>

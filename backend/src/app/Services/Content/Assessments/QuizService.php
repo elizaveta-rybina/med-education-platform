@@ -24,7 +24,7 @@ class QuizService implements QuizServiceInterface
         $this->questionService = $questionService;
     }
 
-    public function getAllQuizzes(): array
+    public function getAllQuizzes()
     {
         return $this->quizRepository->getAllWithRelations(['quizable', 'questions', 'questions.options']);
     }

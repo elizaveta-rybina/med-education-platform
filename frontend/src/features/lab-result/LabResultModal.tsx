@@ -29,6 +29,9 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		localStorage.removeItem('testResults')
 		localStorage.removeItem('freeInputBlock_answers_clinical-case-1-1')
 		localStorage.removeItem('freeInputBlock_submitted_clinical-case-1-1')
+		// Очистка статуса лекций (прочитано)
+		localStorage.removeItem('lectureReadStatus')
+		window.dispatchEvent(new Event('lectureReadStatusUpdated'))
 		resetReadStatus()
 		onRestart()
 		setIsModalOpen(false)
@@ -105,12 +108,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 
 	return (
 		<>
-			<div
-				onClick={() => isAllRead && setIsModalOpen(true)}
-				className={isAllRead ? '' : 'opacity-50 cursor-not-allowed'}
-			>
-				{triggerButton}
-			</div>
+			<div onClick={() => handleRestart()}>{triggerButton}</div>
 			{modalContent && createPortal(modalContent, document.body)}
 		</>
 	)
