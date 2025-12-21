@@ -14,7 +14,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 	onRestart = () => {}
 }) => {
 	const { t } = useTranslation('courseInner')
-	const { isAllRead, resetReadStatus } = useCheckAllRead()
+	const { isAllRead: _isAllRead, resetReadStatus } = useCheckAllRead()
 	const { correctAnswers, totalAnswers } = useResults()
 	const [isModalOpen, setIsModalOpen] = useState(false)
 

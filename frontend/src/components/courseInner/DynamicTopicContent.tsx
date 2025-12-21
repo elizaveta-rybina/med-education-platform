@@ -28,7 +28,7 @@ const DynamicTopicContent: React.FC = () => {
 	const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null)
 	const [userAnswers, setUserAnswers] = useState<Record<number, number[]>>({})
 	const [showResults, setShowResults] = useState(false)
-	const [quizScore, setQuizScore] = useState<{
+	const [_quizScore, setQuizScore] = useState<{
 		correct: number
 		total: number
 	} | null>(null)
