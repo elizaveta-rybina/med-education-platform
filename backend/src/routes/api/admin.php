@@ -51,6 +51,7 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::post('bulk', [TopicController::class, 'storeBulk']);
             Route::get('{topic}', [TopicController::class, 'show']);
             Route::put('{topic}', [TopicController::class, 'update']);
+            Route::post('{topic}/cover', [TopicController::class, 'uploadCover']);
             Route::delete('{topic}', [TopicController::class, 'destroy']);
 
             // Topic contents

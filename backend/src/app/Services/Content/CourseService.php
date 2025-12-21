@@ -57,6 +57,7 @@ class CourseService
                 }
 
                 return [
+                    'id' => $module->id,
                     'module_title' => $module->title,
                     'module_description' => $module->description,
                     'topics_count' => $module->topics->count(),
@@ -88,6 +89,10 @@ class CourseService
      */
     public function deleteCourse($id)
     {
-        Course::findOrFail($id)->delete();
+        \Log::info('Deleting course', ['id' => $id, 'type' => gettype($id)]);
+        $course = Course::findOrFail($id);
+        \Log::info('Found course', ['course_id' => $course->id, 'title' => $course->title]);
+        $course->delete();
+        \Log::info('Course deleted successfully');
     }
 }

@@ -10,93 +10,55 @@ import {
 	clearAuthToken,
 	setAuthTokenFromLoginResponse
 } from '@/app/api/auth/authToken'
-import { baseApi } from '@/app/api/baseApi'
+import { ApiClient } from '@/app/api/apiClient'
 
-/**
- * Auth API service
- */
+const handleTokenResponse = (response: LoginResponse) => {
+	setAuthTokenFromLoginResponse({
+		token: response.token,
+		token_type: response.token_type,
+		expires_in: response.expires_in
+	})
+	return response
+}
+
 export const authApi = {
-	/**
-	 * Register a new user
-	 * @param data Registration data
-	 * @returns Registration response with optional token
-	 */
 	register: async (data: RegisterRequest): Promise<RegisterResponse> => {
-		const response = await baseApi.post<RegisterResponse>(
+		const response = await ApiClient.post<RegisterResponse>(
 			'/auth/register',
 			data
 		)
-
-		// If token is returned, save it
-		if (response.data.token) {
+		if (response.token) {
 			setAuthTokenFromLoginResponse({
-				token: response.data.token,
-				token_type: response.data.token_type || 'bearer',
-				expires_in: response.data.expires_in || 900
+				token: response.token,
+				token_type: response.token_type || 'bearer',
+				expires_in: response.expires_in || 900
 			})
 		}
-
-		return response.data
+		return response
 	},
 
-	/**
-	 * Login user
-	 * @param credentials User credentials (email, password)
-	 * @returns Login response with token
-	 */
 	login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-		const response = await baseApi.post<LoginResponse>(
+		const response = await ApiClient.post<LoginResponse>(
 			'/auth/login',
 			credentials
 		)
-
-		// Save token
-		setAuthTokenFromLoginResponse({
-			token: response.data.token,
-			token_type: response.data.token_type,
-			expires_in: response.data.expires_in
-		})
-
-		return response.data
+		return handleTokenResponse(response)
 	},
 
-	/**
-	 * Logout user
-	 * @returns Logout response
-	 */
 	logout: async (): Promise<LogoutResponse> => {
 		try {
-			const response = await baseApi.post<LogoutResponse>('/auth/logout')
-			return response.data
+			return await ApiClient.post<LogoutResponse>('/auth/logout')
 		} finally {
-			// Always clear token on logout
 			clearAuthToken()
 		}
 	},
 
-	/**
-	 * Refresh auth token
-	 * @returns New token
-	 */
 	refresh: async (): Promise<LoginResponse> => {
-		const response = await baseApi.post<LoginResponse>('/auth/refresh')
-
-		// Update token
-		setAuthTokenFromLoginResponse({
-			token: response.data.token,
-			token_type: response.data.token_type,
-			expires_in: response.data.expires_in
-		})
-
-		return response.data
+		const response = await ApiClient.post<LoginResponse>('/auth/refresh')
+		return handleTokenResponse(response)
 	},
 
-	/**
-	 * Get current authenticated user
-	 * @returns User data
-	 */
 	getMe: async (): Promise<MeResponse> => {
-		const response = await baseApi.get<MeResponse>('/auth/me')
-		return response.data
+		return ApiClient.get<MeResponse>('/auth/me')
 	}
 }

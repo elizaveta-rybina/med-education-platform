@@ -40,7 +40,19 @@ class TopicController extends Controller
         $topic = Topic::findOrFail($id);
 
         return response()->json([
-            'data' => $topic,
+            'data' => [
+                'id' => $topic->id,
+                'module_id' => $topic->module_id,
+                'title' => $topic->title,
+                'description' => $topic->description,
+                'order_number' => $topic->order_number,
+                'is_published' => $topic->is_published,
+                'cover_image' => $topic->cover_image
+                    ? asset('storage/' . $topic->cover_image)
+                    : null,
+                'created_at' => $topic->created_at,
+                'updated_at' => $topic->updated_at,
+            ],
         ]);
     }
 
@@ -49,7 +61,22 @@ class TopicController extends Controller
     {
         $topics = Topic::where('module_id', $module)
             ->orderBy('order_number')
-            ->get();
+            ->get()
+            ->map(function ($topic) {
+                return [
+                    'id' => $topic->id,
+                    'module_id' => $topic->module_id,
+                    'title' => $topic->title,
+                    'description' => $topic->description,
+                    'order_number' => $topic->order_number,
+                    'is_published' => $topic->is_published,
+                    'cover_image' => $topic->cover_image
+                        ? asset('storage/' . $topic->cover_image)
+                        : null,
+                    'created_at' => $topic->created_at,
+                    'updated_at' => $topic->updated_at,
+                ];
+            });
 
         return response()->json([
             'data' => $topics,
@@ -86,5 +113,49 @@ class TopicController extends Controller
         return response()->json([
             'message' => 'Тема успешно удалена',
         ]);
+    }
+
+    // Загрузить обложку темы
+    public function uploadCover(Request $request, $id)
+    {
+        $topic = Topic::findOrFail($id);
+
+        $validated = $request->validate([
+            'cover' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120', // 5MB
+        ]);
+
+        try {
+            // Удаляем старую обложку если существует
+            if ($topic->cover_image) {
+                $oldPath = public_path('storage/' . $topic->cover_image);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Сохраняем новую обложку
+            $file = $validated['cover'];
+            $path = $file->store('topics/covers', 'public');
+
+            $topic->cover_image = $path;
+            $topic->save();
+
+            return response()->json([
+                'message' => 'Обложка темы успешно загружена',
+                'cover_image' => $path,
+                'url' => asset('storage/' . $path),
+            ], 200);
+        } catch (\Throwable $e) {
+            \Log::error('Upload cover error:', [
+                'topic_id' => $id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'message' => 'Ошибка при загрузке обложки',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

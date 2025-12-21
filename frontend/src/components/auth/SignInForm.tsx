@@ -1,3 +1,4 @@
+import { ADMIN_STORAGE_KEY } from '@/app/routes/ProtectedRoute'
 import { LoginData } from '@/app/store/auth/model'
 import { selectAuthError, selectAuthStatus } from '@/app/store/auth/selectors'
 import { useAppSelector } from '@/app/store/hooks'
@@ -5,7 +6,7 @@ import { useAuthActions } from '@/hooks/auth/useAuthActions'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from '../../icons'
 import Label from '../form/Label'
 import Input from '../form/input/InputField'
@@ -18,6 +19,8 @@ export const SignInForm = () => {
 	const error = useAppSelector(selectAuthError)
 	const { login } = useAuthActions()
 	const [showPassword, setShowPassword] = useState(false)
+	const navigate = useNavigate()
+	const [searchParams] = useSearchParams()
 
 	const {
 		register,
@@ -34,6 +37,16 @@ export const SignInForm = () => {
 
 	const onSubmit = async (data: LoginData) => {
 		try {
+			// Проверяем, если это admin/admin для доступа к админке
+			if (data.email === 'admin@example.com' && data.password === 'password') {
+				localStorage.setItem(ADMIN_STORAGE_KEY, 'true')
+				const redirectTo = searchParams.get('redirectTo') || '/admin/dashboard'
+				navigate(redirectTo)
+				reset()
+				return
+			}
+
+			// Обычная авторизация через API
 			await login(data)
 			reset()
 		} catch (err) {

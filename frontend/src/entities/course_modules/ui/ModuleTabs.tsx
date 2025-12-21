@@ -1,26 +1,52 @@
+import type { PublicModuleResponse } from '@/app/api/course/publicCourse.api'
 import { LoginModal } from '@/features/auth-modal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Module } from '../cfg/modules.data'
 
-interface ModuleTabsProps {
-	language?: 'en' | 'ru'
-	modules: Module[]
+interface Topic {
+	id: number
+	title: string
+	description?: string
+	cover_image?: string | null
+	order_number?: number
 }
 
-export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
-	const navigate = useNavigate()
-	const [active, setActive] = useState(1)
-	const [isModalOpen, setIsModalOpen] = useState(false)
-	const current = modules.find(m => m.id === active)!
+interface ModuleTabsProps {
+	modules: PublicModuleResponse[]
+	courseId: number
+}
 
-	const getImageSrc = (image: Module['image'], lang: 'en' | 'ru'): string => {
-		return typeof image === 'string' ? image : image[lang]
-	}
+export const ModuleTabs = ({ modules, courseId }: ModuleTabsProps) => {
+	const navigate = useNavigate()
+	const [topics, setTopics] = useState<Topic[]>([])
+	const [activeTopicId, setActiveTopicId] = useState<number | null>(null)
+	const [isModalOpen, setIsModalOpen] = useState(false)
+
+	// Загружаем темы для первого модуля
+	useEffect(() => {
+		const firstModule = modules[0]
+		if (!firstModule) return
+
+		if (firstModule.topics && firstModule.topics.length > 0) {
+			setTopics(firstModule.topics)
+			setActiveTopicId(firstModule.topics[0]?.id || null)
+		} else {
+			setTopics([])
+			setActiveTopicId(null)
+		}
+	}, [modules])
+
+	const current = topics.find(t => t.id === activeTopicId)
 
 	const handleStart = () => {
+		if (!current) return
+		// Берём id модуля из первого элемента массива (именно его темы отображаются в табах)
+		const moduleId = modules[0]?.id
+		if (!moduleId) return
+
 		if (localStorage.getItem('auth') === 'true') {
-			navigate(`/course/${current.id}`)
+			// Переходим на страницу курса, передавая выбранные модуль и тему
+			navigate(`/course/${courseId}?module=${moduleId}&topic=${current.id}`)
 		} else {
 			setIsModalOpen(true)
 		}
@@ -30,23 +56,33 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 		setIsModalOpen(false)
 	}
 
+	if (!current || topics.length === 0) {
+		return (
+			<div className='w-[603px] flex items-center justify-center p-8 text-gray-500'>
+				Темы не найдены
+			</div>
+		)
+	}
+
 	return (
 		<div className='w-[603px] flex flex-col'>
 			<div className='relative w-[603px]'>
-				{/* Tabs */}
+				{/* Topic Tabs */}
 				<div className='flex'>
-					{modules.map(m => (
+					{topics.map((topic, index) => (
 						<button
-							key={m.id}
-							onClick={() => setActive(m.id)}
+							key={topic.id}
+							onClick={() => setActiveTopicId(topic.id)}
 							className={`relative -ml-2 first:ml-0 transition-all duration-600
                 ${
-									m.id === active
+									topic.id === activeTopicId
 										? 'z-20 px-6 bg-white text-[#8C3192] text-base font-medium border-2 border-b-[#fff] border-[#8C3192] rounded-tl-[20px] rounded-tr-[20px] overflow-hidden -mb-0.5'
 										: 'z-10 w-10 h-10 rounded-t-[20px] bg-[#9D82AA] border-b-0 text-white text-sm hover:bg-[#9D82AA] border-2 border-[#8C3192]'
 								}`}
 						>
-							{m.id === active ? m.shortTitle[language] : m.id}
+							{topic.id === activeTopicId
+								? `${topic.order_number ?? index + 1} модуль`
+								: topic.order_number ?? index + 1}
 						</button>
 					))}
 				</div>
@@ -56,7 +92,8 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 			<div className='flex flex-col border-2 border-t-2 border-[#8C3192] rounded-b-[20px] bg-white shadow-[6px_10px_4px_rgba(0,0,0,0.25)] p-5 rounded-tr-[20px]'>
 				{/* Title */}
 				<div className='text-black text-3xl w-full mb-4 whitespace-pre-wrap'>
-					{current.title[language]}
+					{current.order_number ?? topics.indexOf(current) + 1} модуль -{' '}
+					{current.title}
 				</div>
 
 				{/* Content Container */}
@@ -64,25 +101,25 @@ export const ModuleTabs = ({ language = 'ru', modules }: ModuleTabsProps) => {
 					{/* Text Content */}
 					<div className='flex flex-col flex-1'>
 						<div className='text-black text-base mb-4 text-left text-wrap whitespace-pre-line'>
-							{current.description[language]}
+							{current.description}
 						</div>
 						<div className='text-zinc-600 text-base'>
-							{current.time[language]}
+							Среднее время прохождения 25 мин.
 						</div>
 					</div>
 
 					{/* Image */}
 					<div className='flex flex-col justify-center'>
 						<img
-							src={getImageSrc(current.image, language)}
-							alt={current.title[language]}
+							src={current.cover_image || '/assets/default_topic_cover.png'}
+							alt={current.title}
 							className='w-80 h-48 rounded-[10px] object-cover'
 						/>
 						<button
 							onClick={handleStart}
 							className='mt-4 w-56 h-9 bg-[#8C3192] rounded-[10px] flex items-center justify-center text-white text-xl self-center'
 						>
-							{language === 'en' ? 'Get started' : 'Начать работу'}
+							Начать работу
 						</button>
 					</div>
 				</div>

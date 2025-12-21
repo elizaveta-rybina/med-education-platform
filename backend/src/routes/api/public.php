@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Content\CourseController;
+use App\Http\Controllers\Content\ModuleController;
 use App\Http\Controllers\UniversityController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,7 +9,9 @@ use App\Http\Controllers\Content\LectureAttachmentController;
 
 
 Route::prefix('content')->group(function () {
+    Route::get('courses', [CourseController::class, 'index']);
     Route::get('courses/{course}', [CourseController::class, 'show']);
+    Route::get('modules/{module}/topics', [ModuleController::class, 'getModuleTopics']);
     Route::get('universities', [UniversityController::class, 'index']);
 });
 

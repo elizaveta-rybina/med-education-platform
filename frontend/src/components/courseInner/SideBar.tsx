@@ -1,15 +1,26 @@
+import { lecturesApi } from '@/app/api/lectures/lectures.api'
+import type { Lecture } from '@/app/api/lectures/lectures.types'
+import { topicsApi } from '@/app/api/topics/topics.api'
 import { useSidebar } from '@/context/SidebarContext'
 import { LabResultModal } from '@/features/lab-result/LabResultModal'
 import { useCourse } from '@/hooks/useCourse'
 import { useEffect, useState } from 'react'
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa'
+import { useSearchParams } from 'react-router-dom'
 
 const SideBarCourse = () => {
 	const { isMobileOpen, isExpanded, toggleMobileSidebar, toggleSidebar } =
 		useSidebar()
 	const [currentHash, setCurrentHash] = useState('')
-	const { course } = useCourse()
+	const { course, resetReadFlags } = useCourse()
 	const [chapterReadStatus, setChapterReadStatus] = useState<
+		Record<string, boolean>
+	>({})
+	const [searchParams, setSearchParams] = useSearchParams()
+	const topicIdParam = searchParams.get('topic')
+	const [dynamicLectures, setDynamicLectures] = useState<Lecture[]>([])
+	const [topicTitle, setTopicTitle] = useState<string>('')
+	const [lectureReadStatus, setLectureReadStatus] = useState<
 		Record<string, boolean>
 	>({})
 
@@ -41,6 +52,50 @@ const SideBarCourse = () => {
 		return () => window.removeEventListener('hashchange', handleHashChange)
 	}, [])
 
+	// Load dynamic topic lectures when topic is present in URL
+	useEffect(() => {
+		const load = async () => {
+			const topicId = Number(topicIdParam)
+			if (!topicId) {
+				setDynamicLectures([])
+				setTopicTitle('')
+				return
+			}
+			try {
+				const [contentsResp, topicResp] = await Promise.all([
+					lecturesApi.getByTopicId(topicId),
+					topicsApi.getById(topicId)
+				])
+				const lectures = (contentsResp as any).data?.lectures || []
+				setDynamicLectures(lectures as Lecture[])
+
+				const topicData =
+					(topicResp as any).data || (topicResp as any).topic || topicResp
+				setTopicTitle((topicData?.title as string) || '')
+			} catch (e) {
+				console.error('Failed to load lectures/topic for', topicId, e)
+				setDynamicLectures([])
+				setTopicTitle('')
+			}
+		}
+		void load()
+	}, [topicIdParam])
+
+	// Sync lecture read status from localStorage
+	useEffect(() => {
+		const updateLectureReadStatus = () => {
+			const saved = localStorage.getItem('lectureReadStatus')
+			setLectureReadStatus(saved ? JSON.parse(saved) : {})
+		}
+		updateLectureReadStatus()
+		window.addEventListener('lectureReadStatusUpdated', updateLectureReadStatus)
+		return () =>
+			window.removeEventListener(
+				'lectureReadStatusUpdated',
+				updateLectureReadStatus
+			)
+	}, [])
+
 	const allChapters = course?.modules.flatMap(m => m.chapters) ?? []
 
 	// Combine isRead from course with saved state
@@ -69,7 +124,9 @@ const SideBarCourse = () => {
 				<div className='flex items-center justify-between p-2 lg:p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800'>
 					{(isExpanded || isMobileOpen) && (
 						<h2 className='text-lg font-bold text-gray-800 dark:text-gray-200 truncate'>
-							{course?.title ?? 'Загрузка...'}
+							{topicIdParam
+								? topicTitle || 'Загрузка темы...'
+								: course?.title ?? 'Загрузка...'}
 						</h2>
 					)}
 					<button
@@ -116,35 +173,66 @@ const SideBarCourse = () => {
 				{(isExpanded || isMobileOpen) && (
 					<nav className='flex-1 p-2'>
 						<ul className='space-y-1'>
-							{chaptersWithReadStatus.map(chapter => (
-								<li key={chapter.id}>
-									<a
-										href={`#${chapter.hash}`}
-										className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors ${
-											currentHash === chapter.hash
-												? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400'
-												: chapter.isRead
-												? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
-												: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-										}`}
-									>
-										<span className='flex-shrink-0 mr-3'>
-											{chapter.isRead ? (
-												<FaCheckCircle className='text-green-500 w-5 h-5' />
-											) : (
-												<FaRegCircle className='text-gray-400 w-5 h-5' />
-											)}
-										</span>
-										<span
-											className={`text-sm leading-tight ${
-												currentHash === chapter.hash ? 'font-medium' : ''
-											}`}
-										>
-											{chapter.title}
-										</span>
-									</a>
-								</li>
-							))}
+							{dynamicLectures.length > 0
+								? dynamicLectures.map(lec => {
+										const isRead = !!lectureReadStatus[String(lec.id)]
+										return (
+											<li key={lec.id}>
+												<button
+													onClick={() => {
+														const next = new URLSearchParams(searchParams)
+														next.set('lecture', String(lec.id))
+														setSearchParams(next)
+													}}
+													className={`flex items-center justify-start w-full px-4 py-3 text-sm rounded-lg transition-colors ${
+														isRead
+															? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
+															: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+													}`}
+												>
+													<span className='flex-shrink-0 mr-3'>
+														{isRead ? (
+															<FaCheckCircle className='text-green-500 w-5 h-5' />
+														) : (
+															<FaRegCircle className='text-gray-400 w-5 h-5' />
+														)}
+													</span>
+													<span className='text-sm leading-tight text-left'>
+														{lec.title}
+													</span>
+												</button>
+											</li>
+										)
+								  })
+								: chaptersWithReadStatus.map(chapter => (
+										<li key={chapter.id}>
+											<a
+												href={`#${chapter.hash}`}
+												className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors ${
+													currentHash === chapter.hash
+														? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400'
+														: chapter.isRead
+														? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
+														: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+												}`}
+											>
+												<span className='flex-shrink-0 mr-3'>
+													{chapter.isRead ? (
+														<FaCheckCircle className='text-green-500 w-5 h-5' />
+													) : (
+														<FaRegCircle className='text-gray-400 w-5 h-5' />
+													)}
+												</span>
+												<span
+													className={`text-sm leading-tight ${
+														currentHash === chapter.hash ? 'font-medium' : ''
+													}`}
+												>
+													{chapter.title}
+												</span>
+											</a>
+										</li>
+								  ))}
 						</ul>
 					</nav>
 				)}
@@ -159,8 +247,22 @@ const SideBarCourse = () => {
 							}
 							onRestart={() => {
 								setChapterReadStatus({})
+								setLectureReadStatus({})
+								resetReadFlags()
+
+								// Удаляем все результаты тестов
+								const keysToRemove = []
+								for (let i = 0; i < localStorage.length; i++) {
+									const key = localStorage.key(i)
+									if (key && key.startsWith('quizResults_')) {
+										keysToRemove.push(key)
+									}
+								}
+								keysToRemove.forEach(key => localStorage.removeItem(key))
+
 								// Dispatch event to force update
 								window.dispatchEvent(new Event('chapterReadStatusUpdated'))
+								window.dispatchEvent(new Event('lectureReadStatusUpdated'))
 							}}
 						/>
 					</div>

@@ -1,59 +1,43 @@
-// import { selectAuthStatus, selectUser } from '@/app/store/auth/selectors'
-// import { useAppSelector } from '@/app/store/hooks'
-// import { ReactNode } from 'react'
-// import { Navigate, useLocation } from 'react-router-dom'
-
-// interface ProtectedRouteProps {
-// 	children: ReactNode
-// }
-
-// const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-// 	const user = useAppSelector(selectUser)
-// 	const status = useAppSelector(selectAuthStatus)
-// 	const location = useLocation()
-
-// 	// console.log('ProtectedRoute:', {
-// 	// 	status,
-// 	// 	user,
-// 	// 	pathname: location.pathname,
-// 	// 	localStorage: localStorage.getItem('persist:auth')
-// 	// })
-
-// 	if (status === 'loading') {
-// 		return <div>Loading...</div>
-// 	}
-
-// 	if (!user) {
-// 		const redirectTo = location.pathname + location.search
-// 		console.log('Redirecting to signin, no user found:', { redirectTo })
-// 		return (
-// 			<Navigate
-// 				to={`/signin?redirectTo=${encodeURIComponent(redirectTo)}`}
-// 				replace
-// 			/>
-// 		)
-// 	}
-
-// 	return <>{children}</>
-// }
-
-// export default ProtectedRoute
-
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
 interface ProtectedRouteProps {
 	children: ReactNode
 }
 
+export const ADMIN_STORAGE_KEY = 'admin_access_granted'
+
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 	const location = useLocation()
-	const isAuthenticated = localStorage.getItem('auth') === 'true'
+	const isAdminRoute = location.pathname.startsWith('/admin')
 
-	if (!isAuthenticated) {
+	useEffect(() => {
+		if (isAdminRoute) {
+			const metaRobots = document.createElement('meta')
+			metaRobots.name = 'robots'
+			metaRobots.content = 'noindex, nofollow'
+			document.head.appendChild(metaRobots)
+
+			return () => {
+				document.head.removeChild(metaRobots)
+			}
+		}
+	}, [isAdminRoute])
+
+	if (!isAdminRoute) {
+		return <>{children}</>
+	}
+
+	const hasAccess = localStorage.getItem(ADMIN_STORAGE_KEY) === 'true'
+
+	if (!hasAccess) {
 		const redirectTo = location.pathname + location.search
-		console.log('Redirecting to root, no auth found:', { redirectTo })
-		return <Navigate to='/' replace />
+		return (
+			<Navigate
+				to={`/signin?redirectTo=${encodeURIComponent(redirectTo)}`}
+				replace
+			/>
+		)
 	}
 
 	return <>{children}</>

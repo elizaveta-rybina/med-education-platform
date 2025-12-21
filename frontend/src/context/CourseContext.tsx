@@ -13,6 +13,7 @@ interface CourseContextType {
 	course: Course | null
 	courseId?: string // Добавляем courseId
 	markChapterAsRead: (moduleId: string, chapterId: string) => void
+	resetReadFlags: () => void
 	answerQuestion: (
 		moduleId: string,
 		chapterId: string,
@@ -118,6 +119,31 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 		[]
 	)
 
+	const resetReadFlags = useCallback(() => {
+		setCourse(prev => {
+			if (!prev) return prev
+			return {
+				...prev,
+				modules: prev.modules.map(module => ({
+					...module,
+					chapters: module.chapters.map(chapter => ({
+						...chapter,
+						isRead: false,
+						testPassed: false,
+						blocks: chapter.blocks.map(block => {
+							if (block.type !== 'question') return block
+							return {
+								...block,
+								userAnswer: undefined,
+								isCorrect: undefined
+							}
+						})
+					}))
+				}))
+			}
+		})
+	}, [])
+
 	const answerQuestion = useCallback(
 		(
 			moduleId: string,
@@ -214,6 +240,7 @@ export const CourseProvider = ({ children }: { children: ReactNode }) => {
 				course,
 				courseId, // Добавляем courseId в значение контекста
 				markChapterAsRead,
+				resetReadFlags,
 				answerQuestion,
 				getTestResults,
 				completeChapterTest
