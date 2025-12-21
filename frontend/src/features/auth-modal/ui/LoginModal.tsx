@@ -19,6 +19,17 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 		password: '',
 		remember: false
 	})
+	const [sessionExpired, setSessionExpired] = useState(false)
+
+	useEffect(() => {
+		// Check if redirected due to session expiration
+		const params = new URLSearchParams(window.location.search)
+		if (params.get('session') === 'expired') {
+			setSessionExpired(true)
+			// Clear the query parameter
+			window.history.replaceState({}, '', window.location.pathname)
+		}
+	}, [])
 
 	useEffect(() => {
 		const handleEscape = (e: KeyboardEvent) => {
@@ -94,6 +105,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 						</button>
 					</div>
 					<div className='p-4 md:p-5'>
+						{sessionExpired && (
+							<div className='mb-4 p-3 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300'>
+								Ваша сессия истекла. Пожалуйста, войдите снова.
+							</div>
+						)}
 						<div className='space-y-4'>
 							<div>
 								<label

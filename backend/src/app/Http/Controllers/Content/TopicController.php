@@ -61,31 +61,46 @@ class TopicController extends Controller
     {
         $topics = Topic::where('module_id', $module)
             ->orderBy('order_number')
-            ->get()
-            ->map(function ($topic) {
-                return [
-                    'id' => $topic->id,
-                    'module_id' => $topic->module_id,
-                    'title' => $topic->title,
-                    'description' => $topic->description,
-                    'order_number' => $topic->order_number,
-                    'is_published' => $topic->is_published,
-                    'cover_image' => $topic->cover_image
-                        ? asset('storage/' . $topic->cover_image)
-                        : null,
-                    'created_at' => $topic->created_at,
-                    'updated_at' => $topic->updated_at,
-                ];
-            });
+            ->get();
+
+        \Log::info('Fetching topics for module:', [
+            'module_id' => $module,
+            'count' => count($topics),
+            'topics' => $topics->map(fn($t) => [
+                'id' => $t->id,
+                'title' => $t->title,
+                'cover_image' => $t->cover_image
+            ])->toArray()
+        ]);
+
+        $result = $topics->map(function ($topic) {
+            return [
+                'id' => $topic->id,
+                'module_id' => $topic->module_id,
+                'title' => $topic->title,
+                'description' => $topic->description,
+                'order_number' => $topic->order_number,
+                'is_published' => $topic->is_published,
+                'cover_image' => $topic->cover_image
+                    ? asset('storage/' . $topic->cover_image)
+                    : null,
+                'created_at' => $topic->created_at,
+                'updated_at' => $topic->updated_at,
+            ];
+        });
+
+        \Log::info('indexByModule response (before return):', [
+            'data' => $result->toArray()
+        ]);
 
         return response()->json([
-            'data' => $topics,
+            'data' => $result
         ]);
     }
 
 
     // Обновить тему по ID
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         $topic = Topic::findOrFail($id);
 
@@ -137,8 +152,27 @@ class TopicController extends Controller
             $file = $validated['cover'];
             $path = $file->store('topics/covers', 'public');
 
-            $topic->cover_image = $path;
-            $topic->save();
+            \Log::info('Saving cover for topic:', [
+                'topic_id' => $id,
+                'path' => $path,
+                'cover_image_before' => $topic->cover_image
+            ]);
+
+            // Используем update() для явного обновления
+            $topic->update(['cover_image' => $path]);
+
+            // Перезагружаем модель из БД
+            $topic->refresh();
+
+            // Проверяем что сохранилось в БД
+            $freshTopic = Topic::find($id);
+
+            \Log::info('Cover saved verification:', [
+                'topic_id' => $id,
+                'cover_image_from_update' => $topic->cover_image,
+                'cover_image_from_fresh_find' => $freshTopic->cover_image,
+                'stored_path' => $path
+            ]);
 
             return response()->json([
                 'message' => 'Обложка темы успешно загружена',

@@ -49,7 +49,11 @@ class CourseService
             'course_description' => $course->description,
             'modules' => $course->modules->map(function ($module) {
                 $topics = $module->topics->map(fn($topic) => [
-                    'title' => $topic->title
+                    'id' => $topic->id,
+                    'title' => $topic->title,
+                    'description' => $topic->description,
+                    'order_number' => $topic->order_number,
+                    'cover_image' => $topic->cover_image ? asset('storage/' . $topic->cover_image) : null
                 ])->values();
 
                 if (optional($module->quizzes)->firstWhere('quiz_type', 'module_final')) {

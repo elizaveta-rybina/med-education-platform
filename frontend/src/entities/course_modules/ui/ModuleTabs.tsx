@@ -65,7 +65,7 @@ export const ModuleTabs = ({ modules, courseId }: ModuleTabsProps) => {
 	}
 
 	return (
-		<div className='w-[603px] flex flex-col'>
+		<div className='w-[700px] flex flex-col'>
 			<div className='relative w-[603px]'>
 				{/* Topic Tabs */}
 				<div className='flex'>

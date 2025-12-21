@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import MarkdownEditor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
+import remarkGfm from 'remark-gfm'
 
 export interface LectureFormValues {
 	title: string
@@ -130,7 +131,39 @@ export const LectureForm = ({
 						value={content}
 						style={{ height: '500px' }}
 						onChange={handleEditorChange}
-						renderHTML={text => <ReactMarkdown>{text}</ReactMarkdown>}
+						renderHTML={text => (
+							<div className='markdown-preview'>
+								<ReactMarkdown
+									remarkPlugins={[remarkGfm]}
+									components={{
+										ol: props => (
+											<ol
+												style={{
+													listStyle: 'decimal',
+													paddingLeft: '1.5rem',
+													marginTop: '0.5rem',
+													marginBottom: '0.5rem'
+												}}
+												{...props}
+											/>
+										),
+										ul: props => (
+											<ul
+												style={{
+													listStyle: 'disc',
+													paddingLeft: '1.5rem',
+													marginTop: '0.5rem',
+													marginBottom: '0.5rem'
+												}}
+												{...props}
+											/>
+										)
+									}}
+								>
+									{text}
+								</ReactMarkdown>
+							</div>
+						)}
 						onImageUpload={handleImageUpload}
 						config={{
 							view: { menu: true, md: true, html: false },

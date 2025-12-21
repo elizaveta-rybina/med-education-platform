@@ -61,23 +61,27 @@ export const CourseModules = ({
 			const response = await publicCourseApi.getCourseWithModules(courseId)
 
 			if (response && response.modules && response.modules.length > 0) {
-				// Загружаем темы для каждого модуля
+				// Загружаем темы для каждого модуля (или используем уже пришедшие)
 				const modulesWithTopics = await Promise.all(
 					response.modules.map(async module => {
+						if (module.topics && module.topics.length > 0) {
+							return module
+						}
+
 						try {
-							const topicsData = await publicCourseApi.getModuleTopics(
+							const topicsArray = await publicCourseApi.getModuleTopics(
 								module.id
 							)
 							return {
 								...module,
-								topics: topicsData.topics
+								topics: topicsArray
 							}
 						} catch (error) {
 							console.error(
 								`Failed to load topics for module ${module.id}:`,
 								error
 							)
-							return module
+							return { ...module, topics: [] }
 						}
 					})
 				)

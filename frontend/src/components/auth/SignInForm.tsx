@@ -40,7 +40,7 @@ export const SignInForm = () => {
 			// Проверяем, если это admin/admin для доступа к админке
 			if (data.email === 'admin@example.com' && data.password === 'password') {
 				localStorage.setItem(ADMIN_STORAGE_KEY, 'true')
-				const redirectTo = searchParams.get('redirectTo') || '/admin/dashboard'
+				const redirectTo = searchParams.get('redirectTo') || '/admin/courses'
 				navigate(redirectTo)
 				reset()
 				return

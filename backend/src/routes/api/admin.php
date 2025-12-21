@@ -34,10 +34,14 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
         // Модули
         Route::post('modules/bulk', [ModuleController::class, 'storeBulk']);
         Route::apiResource('modules', ModuleController::class)->except(['index']);
+        Route::get('modules/{module}/topics', [TopicController::class, 'indexByModule']);
 
         // Топики
         Route::post('topics/bulk', [TopicController::class, 'storeBulk']);
         Route::apiResource('topics', TopicController::class)->except(['index']);
+
+        // Загрузка обложки темы
+        Route::post('topics/{topic}/cover', [TopicController::class, 'uploadCover']);
 
         // Контент топиков
         Route::prefix('topics/{topic}/contents')->group(function () {
@@ -58,6 +62,7 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
         });
 
         // Квизы
+        Route::get('quizzes', [QuizController::class, 'index']);
         Route::apiResource('quizzes', QuizController::class)->except(['index']);
         Route::prefix('quizzes/{quiz}/questions')->group(function () {
             Route::post('/', [QuizController::class, 'storeQuestion']);

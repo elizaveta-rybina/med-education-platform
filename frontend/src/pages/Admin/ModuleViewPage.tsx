@@ -47,6 +47,7 @@ const ModuleViewPage = () => {
 				description: t.description,
 				order_number: t.order_number,
 				is_published: t.is_published,
+				cover_image: t.cover_image,
 				created_at: t.created_at,
 				updated_at: t.updated_at
 			}))
@@ -143,9 +144,23 @@ const ModuleViewPage = () => {
 			// reload list only
 			const topicsList = await topicsApi.getByModule(Number(moduleId))
 			console.log('Raw topicsList from API:', topicsList)
+			console.log('Raw topicsList JSON:', JSON.stringify(topicsList, null, 2))
+
+			// Дополнительная проверка
+			if (Array.isArray(topicsList) && topicsList.length > 0) {
+				console.log('First topic in list:', {
+					id: topicsList[0]?.id,
+					title: topicsList[0]?.title,
+					cover_image: topicsList[0]?.cover_image,
+					hasOwnProperty_cover_image:
+						topicsList[0]?.hasOwnProperty('cover_image'),
+					allKeys: Object.keys(topicsList[0] || {})
+				})
+			}
+
 			const normalized = (Array.isArray(topicsList) ? topicsList : []).map(
 				(t: any) => {
-					console.log('Processing topic:', t)
+					console.log('Processing topic:', t, 'cover_image:', t.cover_image)
 					return {
 						id: t.id,
 						module_id: t.module_id,
@@ -255,6 +270,10 @@ const ModuleViewPage = () => {
 								onClick={() => {
 									setEditingTopic(null)
 									setShowTopicForm(true)
+									// Прокрутка наверх к форме
+									setTimeout(() => {
+										window.scrollTo({ top: 0, behavior: 'smooth' })
+									}, 0)
 								}}
 								className='flex items-center justify-center w-10 h-10 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition-colors'
 								title='Добавить тему'
@@ -315,6 +334,10 @@ const ModuleViewPage = () => {
 							console.log('Editing topic:', actualTopic)
 							setEditingTopic(actualTopic || t)
 							setShowTopicForm(true)
+							// Прокрутка наверх к форме
+							setTimeout(() => {
+								window.scrollTo({ top: 0, behavior: 'smooth' })
+							}, 0)
 						}}
 						onDelete={handleDeleteTopic}
 						isLoading={saving}

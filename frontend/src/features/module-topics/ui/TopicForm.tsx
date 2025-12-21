@@ -64,7 +64,11 @@ export const TopicForm = ({
 	useEffect(() => {
 		console.log(
 			'Cover effect triggered, existing_cover_url:',
-			initialValues?.existing_cover_url
+			initialValues?.existing_cover_url,
+			'cover_image:',
+			initialValues?.cover_image,
+			'all initialValues:',
+			initialValues
 		)
 		// Сбрасываем состояние при изменении initialValues
 		setCoverFile(null)

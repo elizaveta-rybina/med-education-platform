@@ -48,6 +48,21 @@ class CourseController extends Controller
         return response()->json($details);
     }
 
+    // GET /api/content/courses (публичный)
+    public function indexPublic()
+    {
+        $courses = $this->courseService->getAllCourses();
+        return response()->json($courses);
+    }
+
+    // GET /api/content/courses/{course} (публичный)
+    public function showPublic($course)
+    {
+        $courseId = is_object($course) && property_exists($course, 'id') ? $course->id : $course;
+        $details = $this->courseService->getCourseDetails((int) $courseId);
+        return response()->json($details);
+    }
+
     // PUT /admin/content/courses/{id}
     public function update(Request $request, $id)
     {

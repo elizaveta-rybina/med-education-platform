@@ -3,9 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import type {
 	Quiz,
 	QuizPayload,
-	QuizQuestionPayload,
-	QuizQuestionType,
-	QuizTableMetadataColumn
+	QuizQuestionPayload
 } from '@/app/api/quizzes/quizzes.types'
 
 interface QuizFormProps {
@@ -23,64 +21,30 @@ type ChoiceOptionState = {
 	is_correct: boolean
 }
 
-type TableRowState = {
-	id: string
-	columnA: string
-	columnB: string
-	correctOptions: string[]
-}
-
 type QuestionState = {
 	id: string
 	text: string
-	question_type: QuizQuestionType
+	question_type: 'single_choice' | 'multiple_choice'
 	points: number
 	is_auto_graded: boolean
 	options: ChoiceOptionState[]
-	tableRows: TableRowState[]
-	columns: QuizTableMetadataColumn[]
 }
-
-const defaultColumns: QuizTableMetadataColumn[] = [
-	{ name: 'Органы и системы', type: 'text' },
-	{ name: 'Эффекты', type: 'text' },
-	{ name: 'Механизмы эффектов', type: 'multi_select' }
-]
 
 const generateId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`
 
-const createQuestionState = (type: QuizQuestionType): QuestionState => {
-	const baseOptions: ChoiceOptionState[] = [
-		{ id: generateId(), text: 'Вариант 1', is_correct: true },
-		{ id: generateId(), text: 'Вариант 2', is_correct: false }
-	]
-
+const createQuestionState = (
+	type: 'single_choice' | 'multiple_choice'
+): QuestionState => {
 	return {
 		id: generateId(),
 		text: '',
 		question_type: type,
 		points: 1,
 		is_auto_graded: true,
-		options:
-			type === 'table'
-				? [
-						{ id: generateId(), text: 'Опция 1', is_correct: false },
-						{ id: generateId(), text: 'Опция 2', is_correct: false },
-						{ id: generateId(), text: 'Опция 3', is_correct: false }
-				  ]
-				: baseOptions,
-		tableRows:
-			type === 'table'
-				? [
-						{
-							id: generateId(),
-							columnA: '',
-							columnB: '',
-							correctOptions: []
-						}
-				  ]
-				: [],
-		columns: defaultColumns
+		options: [
+			{ id: generateId(), text: 'Вариант 1', is_correct: true },
+			{ id: generateId(), text: 'Вариант 2', is_correct: false }
+		]
 	}
 }
 
@@ -126,43 +90,39 @@ export const QuizForm = ({
 		if (typeof initialValues.order_number !== 'undefined')
 			setOrderNumber(String(initialValues.order_number ?? ''))
 
-		// Загружаем вопросы, если они есть
+		// Загружаем вопросы (только single_choice и multiple_choice)
 		if (initialValues.questions && initialValues.questions.length > 0) {
-			const loadedQuestions: QuestionState[] = initialValues.questions.map(
-				q => {
+			const loadedQuestions: QuestionState[] = initialValues.questions
+				.filter(
+					q =>
+						q.question_type === 'single_choice' ||
+						q.question_type === 'multiple_choice'
+				)
+				.map(q => {
 					const options: ChoiceOptionState[] = (q.options || []).map(opt => ({
 						id: generateId(),
 						text: opt.text || '',
 						is_correct: opt.is_correct || false
 					}))
 
-					const tableRows: TableRowState[] = (q.table_rows || []).map(row => ({
-						id: generateId(),
-						columnA: row.columnA || '',
-						columnB: row.columnB || '',
-						correctOptions: row.correctOptions || []
-					}))
-
-					const columns: QuizTableMetadataColumn[] =
-						q.metadata?.columns || defaultColumns
-
 					return {
 						id: generateId(),
 						text: q.text || '',
-						question_type: q.type || 'single_choice',
+						question_type: q.question_type as
+							| 'single_choice'
+							| 'multiple_choice',
 						points: q.points || 1,
 						is_auto_graded: q.is_auto_graded ?? true,
-						options,
-						tableRows,
-						columns
+						options
 					}
-				}
-			)
-			setQuestions(loadedQuestions)
+				})
+			if (loadedQuestions.length > 0) {
+				setQuestions(loadedQuestions)
+			}
 		}
 	}, [initialValues])
 
-	const handleAddQuestion = (type: QuizQuestionType) => {
+	const handleAddQuestion = (type: 'single_choice' | 'multiple_choice') => {
 		setQuestions(prev => [...prev, createQuestionState(type)])
 	}
 
@@ -229,47 +189,6 @@ export const QuizForm = ({
 		}))
 	}
 
-	const handleAddRow = (questionId: string) => {
-		updateQuestion(questionId, q => ({
-			...q,
-			tableRows: [
-				...q.tableRows,
-				{ id: generateId(), columnA: '', columnB: '', correctOptions: [] }
-			]
-		}))
-	}
-
-	const handleRowChange = (
-		questionId: string,
-		rowId: string,
-		field: 'columnA' | 'columnB' | 'correctOptions',
-		value: string | string[]
-	) => {
-		updateQuestion(questionId, q => ({
-			...q,
-			tableRows: q.tableRows.map(row =>
-				row.id === rowId ? { ...row, [field]: value } : row
-			)
-		}))
-	}
-
-	const handleColumnChange = (
-		questionId: string,
-		index: number,
-		field: 'name' | 'type',
-		value: string
-	) => {
-		updateQuestion(questionId, q => {
-			const updatedColumns = [...q.columns]
-			updatedColumns[index] = {
-				...updatedColumns[index],
-				[field]:
-					field === 'type' ? (value as QuizTableMetadataColumn['type']) : value
-			}
-			return { ...q, columns: updatedColumns }
-		})
-	}
-
 	const validate = (): string | null => {
 		if (!title.trim()) return 'Название теста обязательно'
 		if (questions.length === 0) return 'Добавьте хотя бы один вопрос'
@@ -280,13 +199,6 @@ export const QuizForm = ({
 			}
 			if (question.points <= 0) {
 				return 'Баллы за вопрос должны быть > 0'
-			}
-
-			if (question.question_type === 'table') {
-				if (question.options.length === 0)
-					return 'Добавьте варианты для таблицы'
-				if (question.tableRows.length === 0) return 'Добавьте строки таблицы'
-				continue
 			}
 
 			if (question.options.length < 2) {
@@ -312,34 +224,6 @@ export const QuizForm = ({
 		const parsedTimeLimit = timeLimit ? Number(timeLimit) : undefined
 
 		const mappedQuestions: QuizQuestionPayload[] = questions.map((q, idx) => {
-			if (q.question_type === 'table') {
-				const tableOptions = q.options.map((opt, optionIndex) => ({
-					text: opt.text.trim(),
-					order: optionIndex
-				}))
-
-				return {
-					text: q.text.trim(),
-					question_type: q.question_type,
-					points: q.points,
-					is_auto_graded: q.is_auto_graded,
-					order_number: idx + 1,
-					options: tableOptions,
-					metadata: {
-						columns: q.columns.map(col => ({
-							name: col.name.trim(),
-							type: col.type
-						})),
-						rows: q.tableRows.map(row => ({
-							cells: [row.columnA.trim(), row.columnB.trim(), []],
-							correct_option_ids: row.correctOptions
-								.map(optId => q.options.findIndex(opt => opt.id === optId))
-								.filter(index => index >= 0)
-						}))
-					}
-				}
-			}
-
 			const choiceOptions = q.options.map((opt, optionIndex) => ({
 				text: opt.text.trim(),
 				is_correct: opt.is_correct,
@@ -391,11 +275,10 @@ export const QuizForm = ({
 		}
 	}
 
-	const questionTypeLabels: Record<QuizQuestionType, string> = useMemo(
+	const questionTypeLabels = useMemo(
 		() => ({
 			single_choice: 'Одиночный выбор',
-			multiple_choice: 'Множественный выбор',
-			table: 'Таблица (drag & drop)'
+			multiple_choice: 'Множественный выбор'
 		}),
 		[]
 	)
@@ -522,14 +405,6 @@ export const QuizForm = ({
 					>
 						Добавить (множественный)
 					</button>
-					<button
-						type='button'
-						onClick={() => handleAddQuestion('table')}
-						disabled={isLoading || saving}
-						className='px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50'
-					>
-						Добавить таблицу
-					</button>
 				</div>
 			</div>
 
@@ -549,14 +424,18 @@ export const QuizForm = ({
 										value={question.question_type}
 										onChange={e =>
 											updateQuestion(question.id, () =>
-												createQuestionState(e.target.value as QuizQuestionType)
+												createQuestionState(
+													e.target.value as 'single_choice' | 'multiple_choice'
+												)
 											)
 										}
 										disabled={isLoading || saving}
 										className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-sm'
 									>
 										{(
-											Object.keys(questionTypeLabels) as QuizQuestionType[]
+											Object.keys(questionTypeLabels) as Array<
+												'single_choice' | 'multiple_choice'
+											>
 										).map(type => (
 											<option key={type} value={type}>
 												{questionTypeLabels[type]}
@@ -623,279 +502,67 @@ export const QuizForm = ({
 							</button>
 						</div>
 
-						{question.question_type !== 'table' && (
-							<div className='space-y-2'>
-								{question.options.map((option, optionIdx) => (
-									<div
-										key={option.id}
-										className='flex items-center gap-3 bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-3'
-									>
-										<input
-											type={
-												question.question_type === 'single_choice'
-													? 'radio'
-													: 'checkbox'
-											}
-											checked={option.is_correct}
-											onChange={e =>
-												handleOptionChange(
-													question.id,
-													option.id,
-													'is_correct',
-													e.target.checked
-												)
-											}
-											disabled={isLoading || saving}
-											className='h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300'
-											name={`correct-${question.id}`}
-										/>
-										<input
-											type='text'
-											value={option.text}
-											onChange={e =>
-												handleOptionChange(
-													question.id,
-													option.id,
-													'text',
-													e.target.value
-												)
-											}
-											disabled={isLoading || saving}
-											className='flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
-											placeholder={`Вариант ${optionIdx + 1}`}
-										/>
-										<button
-											type='button'
-											onClick={() => handleRemoveOption(question.id, option.id)}
-											disabled={
-												question.options.length <= 2 || isLoading || saving
-											}
-											className='text-red-600 hover:text-red-700 text-sm'
-										>
-											Удалить
-										</button>
-									</div>
-								))}
-								<button
-									type='button'
-									onClick={() => handleAddOption(question.id)}
-									disabled={isLoading || saving}
-									className='px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+						<div className='space-y-2'>
+							{question.options.map((option, optionIdx) => (
+								<div
+									key={option.id}
+									className='flex items-center gap-3 bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-3'
 								>
-									Добавить вариант
-								</button>
-							</div>
-						)}
-
-						{question.question_type === 'table' && (
-							<div className='space-y-4'>
-								<div className='grid grid-cols-1 md:grid-cols-3 gap-2'>
-									{question.columns.map((column, idx) => (
-										<div
-											key={`${question.id}-col-${idx}`}
-											className='space-y-1'
-										>
-											<label className='block text-xs font-medium text-gray-600 dark:text-gray-300'>
-												Колонка {idx + 1}
-											</label>
-											<input
-												type='text'
-												value={column.name}
-												onChange={e =>
-													handleColumnChange(
-														question.id,
-														idx,
-														'name',
-														e.target.value
-													)
-												}
-												disabled={isLoading || saving}
-												className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white'
-											/>
-											{idx === 2 && (
-												<select
-													value={column.type}
-													onChange={e =>
-														handleColumnChange(
-															question.id,
-															idx,
-															'type',
-															e.target.value
-														)
-													}
-													disabled={isLoading || saving}
-													className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white'
-												>
-													<option value='multi_select'>
-														Множественный выбор
-													</option>
-													<option value='text'>Текст</option>
-												</select>
-											)}
-										</div>
-									))}
-								</div>
-
-								<div className='space-y-2'>
-									<h4 className='text-sm font-semibold text-gray-800 dark:text-gray-200'>
-										Варианты для перетаскивания
-									</h4>
-									{question.options.map((option, optionIdx) => (
-										<div
-											key={`${question.id}-table-opt-${option.id}`}
-											className='flex items-center gap-3 bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-3'
-										>
-											<span className='text-sm text-gray-500 w-6'>
-												#{optionIdx + 1}
-											</span>
-											<input
-												type='text'
-												value={option.text}
-												onChange={e =>
-													updateQuestion(question.id, q => ({
-														...q,
-														options: q.options.map(opt =>
-															opt.id === option.id
-																? { ...opt, text: e.target.value }
-																: opt
-														)
-													}))
-												}
-												disabled={isLoading || saving}
-												className='flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
-												placeholder={`Опция ${optionIdx + 1}`}
-											/>
-											<button
-												type='button'
-												onClick={() =>
-													handleRemoveOption(question.id, option.id)
-												}
-												disabled={
-													question.options.length <= 3 || isLoading || saving
-												}
-												className='text-red-600 hover:text-red-700 text-sm'
-											>
-												Удалить
-											</button>
-										</div>
-									))}
+									<input
+										type={
+											question.question_type === 'single_choice'
+												? 'radio'
+												: 'checkbox'
+										}
+										checked={option.is_correct}
+										onChange={e =>
+											handleOptionChange(
+												question.id,
+												option.id,
+												'is_correct',
+												e.target.checked
+											)
+										}
+										disabled={isLoading || saving}
+										className='h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300'
+										name={`correct-${question.id}`}
+									/>
+									<input
+										type='text'
+										value={option.text}
+										onChange={e =>
+											handleOptionChange(
+												question.id,
+												option.id,
+												'text',
+												e.target.value
+											)
+										}
+										disabled={isLoading || saving}
+										className='flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+										placeholder={`Вариант ${optionIdx + 1}`}
+									/>
 									<button
 										type='button'
-										onClick={() => handleAddOption(question.id)}
-										disabled={isLoading || saving}
-										className='px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+										onClick={() => handleRemoveOption(question.id, option.id)}
+										disabled={
+											question.options.length <= 2 || isLoading || saving
+										}
+										className='text-red-600 hover:text-red-700 text-sm'
 									>
-										Добавить опцию
+										Удалить
 									</button>
 								</div>
-
-								<div className='space-y-2'>
-									<h4 className='text-sm font-semibold text-gray-800 dark:text-gray-200'>
-										Строки таблицы и правильные ответы
-									</h4>
-									{question.tableRows.map((row, rowIdx) => (
-										<div
-											key={`${question.id}-row-${row.id}`}
-											className='border border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-3 space-y-2'
-										>
-											<div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-												<input
-													type='text'
-													value={row.columnA}
-													onChange={e =>
-														handleRowChange(
-															question.id,
-															row.id,
-															'columnA',
-															e.target.value
-														)
-													}
-													disabled={isLoading || saving}
-													className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white'
-													placeholder='Первая колонка'
-												/>
-												<input
-													type='text'
-													value={row.columnB}
-													onChange={e =>
-														handleRowChange(
-															question.id,
-															row.id,
-															'columnB',
-															e.target.value
-														)
-													}
-													disabled={isLoading || saving}
-													className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white'
-													placeholder='Вторая колонка'
-												/>
-											</div>
-											<div className='flex flex-wrap gap-3'>
-												{question.options.map(option => (
-													<label
-														key={`${question.id}-row-${row.id}-opt-${option.id}`}
-														className='inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200'
-													>
-														<input
-															type='checkbox'
-															checked={row.correctOptions.includes(option.id)}
-															onChange={e => {
-																const next = e.target.checked
-																	? [...row.correctOptions, option.id]
-																	: row.correctOptions.filter(
-																			id => id !== option.id
-																	  )
-																handleRowChange(
-																	question.id,
-																	row.id,
-																	'correctOptions',
-																	next
-																)
-															}}
-															disabled={isLoading || saving}
-															className='h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300'
-														/>
-														<span>{option.text}</span>
-													</label>
-												))}
-											</div>
-											<div className='flex justify-between items-center'>
-												<span className='text-xs text-gray-500'>
-													Строка {rowIdx + 1}
-												</span>
-												<button
-													type='button'
-													onClick={() =>
-														updateQuestion(question.id, q => ({
-															...q,
-															tableRows: q.tableRows.filter(
-																r => r.id !== row.id
-															)
-														}))
-													}
-													disabled={
-														question.tableRows.length <= 1 ||
-														isLoading ||
-														saving
-													}
-													className='text-red-600 hover:text-red-700 text-sm'
-												>
-													Удалить строку
-												</button>
-											</div>
-										</div>
-									))}
-									<button
-										type='button'
-										onClick={() => handleAddRow(question.id)}
-										disabled={isLoading || saving}
-										className='px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
-									>
-										Добавить строку
-									</button>
-								</div>
-							</div>
-						)}
+							))}
+							<button
+								type='button'
+								onClick={() => handleAddOption(question.id)}
+								disabled={isLoading || saving}
+								className='px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors'
+							>
+								Добавить вариант
+							</button>
+						</div>
 					</div>
 				))}
 			</div>

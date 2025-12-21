@@ -7,8 +7,7 @@ import axios, {
 } from 'axios'
 
 // Base URL from environment variable or fallback
-const BASE_URL =
-	import.meta.env.VITE_API_BASE_URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 /**
  * Creates an Axios instance with default configuration and interceptors
  * @returns Configured Axios instance
@@ -41,7 +40,20 @@ export const createBaseApi = (): AxiosInstance => {
 	// Response interceptor for error handling
 	instance.interceptors.response.use(
 		(response: AxiosResponse) => response,
-		(error: AxiosError) => handleApiError(error)
+		(error: AxiosError) => {
+			// Handle 401 Unauthorized errors (token expired)
+			if (error.response?.status === 401) {
+				// Clear auth data
+				localStorage.removeItem('token')
+				localStorage.removeItem('user')
+
+				// Redirect to login if not already there
+				if (!window.location.pathname.includes('/login')) {
+					window.location.href = '/login?session=expired'
+				}
+			}
+			return handleApiError(error)
+		}
 	)
 
 	return instance

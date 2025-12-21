@@ -7,8 +7,11 @@ import type { Topic } from '@/app/api/topics/topics.types'
 import { ChapterHeader } from '@/components/courseInner/ChapterHeader'
 import { MarkAsReadButton } from '@/components/courseInner/MarkAsReadButton'
 import React, { useEffect, useMemo, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { useSearchParams } from 'react-router-dom'
+import { LectureContent } from './dynamic/LectureContent'
+import { LectureNavigation } from './dynamic/LectureNavigation'
+import { QuizView } from './dynamic/QuizView'
+import { ResultsButton } from './dynamic/ResultsButton'
 
 const DynamicTopicContent: React.FC = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
@@ -235,91 +238,17 @@ const DynamicTopicContent: React.FC = () => {
 					isRead={false}
 				/>
 				{!activeQuiz && selectedLecture?.content ? (
-					<div className='prose max-w-none'>
-						<ReactMarkdown>{selectedLecture.content}</ReactMarkdown>
-					</div>
+					<LectureContent lecture={selectedLecture} />
 				) : null}
 				{activeQuiz && (
 					<div className='mt-4'>
-						{showResults ? (
-							<div className='bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6'>
-								<h3 className='text-xl font-semibold text-blue-900 dark:text-blue-100 mb-2'>
-									Результаты теста
-								</h3>
-								<p className='text-blue-800 dark:text-blue-200 text-lg'>
-									Правильных ответов: {quizScore?.correct} из {quizScore?.total}
-								</p>
-								<p className='text-blue-700 dark:text-blue-300 mt-1'>
-									Процент:{' '}
-									{quizScore
-										? Math.round((quizScore.correct / quizScore.total) * 100)
-										: 0}
-									%
-								</p>
-							</div>
-						) : (
-							<div>
-								{(activeQuiz.questions || []).length === 0 ? (
-									<div className='text-gray-500'>Вопросы отсутствуют</div>
-								) : (
-									<div className='space-y-6'>
-										{(activeQuiz.questions || []).map((q, idx) => (
-											<div key={idx}>
-												<div className='font-medium text-lg text-gray-800 dark:text-gray-200 mb-3'>
-													Вопрос {idx + 1}: {q.text}
-												</div>
-
-												<div className='space-y-2'>
-													{(q.options || []).map((opt, oIdx) => {
-														const isSelected = (
-															userAnswers[idx] || []
-														).includes(oIdx)
-														const questionType = q.question_type
-
-														return (
-															<label
-																key={oIdx}
-																className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-																	isSelected
-																		? 'border-fuchsia-500 bg-fuchsia-50 dark:bg-fuchsia-900/20'
-																		: 'border-gray-200 dark:border-gray-700 hover:border-fuchsia-300 dark:hover:border-fuchsia-700'
-																}`}
-															>
-																<input
-																	type={
-																		questionType === 'single_choice'
-																			? 'radio'
-																			: 'checkbox'
-																	}
-																	name={`question-${idx}`}
-																	checked={isSelected}
-																	onChange={() => handleAnswerSelect(idx, oIdx)}
-																	className='w-4 h-4 text-fuchsia-600'
-																/>
-																<span className='text-gray-700 dark:text-gray-300'>
-																	{opt.text}
-																</span>
-															</label>
-														)
-													})}
-												</div>
-											</div>
-										))}
-
-										<button
-											onClick={handleSubmitQuiz}
-											disabled={
-												Object.keys(userAnswers).length !==
-												activeQuiz.questions?.length
-											}
-											className='w-full mt-6 px-6 py-3 bg-fuchsia-700 text-white rounded-xl shadow-sm hover:bg-fuchsia-600 disabled:opacity-50 disabled:cursor-not-allowed'
-										>
-											Закончить тест
-										</button>
-									</div>
-								)}
-							</div>
-						)}
+						<QuizView
+							quiz={activeQuiz}
+							showResults={showResults}
+							userAnswers={userAnswers}
+							onSelect={handleAnswerSelect}
+							onSubmit={handleSubmitQuiz}
+						/>
 					</div>
 				)}
 				{!activeQuiz && !selectedLecture?.content && (
@@ -333,49 +262,15 @@ const DynamicTopicContent: React.FC = () => {
 							isRead={isSelectedRead}
 							onMark={handleMarkAsRead}
 						/>
-						{quizzes.find(
-							q =>
-								q.title?.toLowerCase() === selectedLecture.title?.toLowerCase()
-						) &&
-							localStorage.getItem(
-								`quizResults_${
-									quizzes.find(
-										q =>
-											q.title?.toLowerCase() ===
-											selectedLecture.title?.toLowerCase()
-									)?.id
-								}`
-							) && (
-								<button
-									onClick={() => {
-										const matchingQuiz = quizzes.find(
-											q =>
-												q.title?.toLowerCase() ===
-												selectedLecture.title?.toLowerCase()
-										)
-										if (matchingQuiz) {
-											setActiveQuiz(matchingQuiz)
-										}
-									}}
-									className='px-4 py-2 bg-blue-200 text-black rounded-xl shadow-sm hover:bg-blue-300'
-								>
-									Посмотреть результаты теста
-								</button>
-							)}
-						<div className='ml-auto flex gap-2'>
-							<button
-								onClick={() => navigateLecture('prev')}
-								className='px-4 py-2 bg-gray-800 text-white rounded-xl shadow-sm hover:bg-gray-700'
-							>
-								Предыдущая лекция
-							</button>
-							<button
-								onClick={() => navigateLecture('next')}
-								className='px-4 py-2 bg-fuchsia-700 text-white rounded-xl shadow-sm hover:bg-fuchsia-500'
-							>
-								Следующая лекция
-							</button>
-						</div>
+						<ResultsButton
+							selectedLecture={selectedLecture || null}
+							quizzes={quizzes}
+							onOpenResults={quiz => setActiveQuiz(quiz)}
+						/>
+						<LectureNavigation
+							onPrev={() => navigateLecture('prev')}
+							onNext={() => navigateLecture('next')}
+						/>
 					</div>
 				)}
 			</div>

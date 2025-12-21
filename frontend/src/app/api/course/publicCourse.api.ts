@@ -57,9 +57,21 @@ export const publicCourseApi = {
 	 * Получить все темы модуля с полной информацией (описание, обложка и т.д.)
 	 */
 	getModuleTopics: async (moduleId: number) => {
-		const res = await ApiClient.get<ModuleTopicsResponse>(
+		const res = await ApiClient.get<ModuleTopicsResponse | Topic[]>(
 			`/content/modules/${moduleId}/topics`
 		)
-		return res.data
+
+		// Бэкенд возвращает { data: [...] }, поэтому извлекаем корректно
+		const payload: any = res as any
+		const data = payload?.data
+		const topics = Array.isArray(data?.data)
+			? data.data
+			: Array.isArray(data?.topics)
+			? data.topics
+			: Array.isArray(data)
+			? data
+			: []
+
+		return topics as Topic[]
 	}
 }

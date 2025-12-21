@@ -9,6 +9,7 @@ import {
 	ContentItemList,
 	type ContentItem
 } from '@/features/topic-content/ui/ContentItemList'
+import { DragDropQuizForm } from '@/features/topic-content/ui/DragDropQuizForm'
 import { LectureForm } from '@/features/topic-content/ui/LectureForm'
 import { QuizForm } from '@/features/topic-content/ui/QuizForm'
 import { Modal } from '@/shared/ui/modal'
@@ -114,23 +115,98 @@ const TopicContentPage = () => {
 
 	const [showLectureForm, setShowLectureForm] = useState(false)
 	const [showQuizForm, setShowQuizForm] = useState(false)
+	const [showQuizTypeSelection, setShowQuizTypeSelection] = useState(false)
+	const [quizType, setQuizType] = useState<'standard' | 'table' | null>(null)
 	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
 
 	const handleImageUpload = async (file: File): Promise<string> => {
-		if (!editingLecture?.id) {
-			throw new Error('Сначала создайте лекцию для загрузки изображений')
+		if (!topicId) {
+			throw new Error('Тема не найдена')
 		}
+
 		try {
+			// Если лекция еще не создана, создаем черновик
+			if (!editingLecture?.id) {
+				const draftLecture = await lecturesApi.create({
+					topic_id: Number(topicId),
+					title: 'Черновик лекции (без названия)',
+					content: '',
+					order_number: nextOrder,
+					content_type: 'markdown'
+				})
+
+				const lectureId =
+					(draftLecture as any).data?.id ||
+					(draftLecture as any).id ||
+					(draftLecture as any).lecture?.id
+
+				if (!lectureId) {
+					throw new Error('Не удалось создать черновик лекции')
+				}
+
+				// Обновляем состояние с созданной лекцией
+				setEditingLecture({
+					id: lectureId,
+					topic_id: Number(topicId),
+					title: 'Черновик лекции (без названия)',
+					content: '',
+					order_number: nextOrder,
+					content_type: 'markdown'
+				})
+
+				// Загружаем изображение в созданную лекцию
+				const response = await lecturesApi.uploadImage(lectureId, file)
+				console.log('Ответ от сервера при загрузке изображения:', response)
+
+				// Пробуем извлечь URL из различных возможных структур ответа
+				const url =
+					(response as any).url ||
+					(response as any).path ||
+					(response as any).data?.url ||
+					(response as any).data?.path ||
+					(response as any).file_path ||
+					(response as any).image_url
+
+				if (url) {
+					// Если это относительный путь, делаем его абсолютным
+					if (url.startsWith('/')) {
+						const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+						return `${apiBaseUrl}${url}`
+					}
+					return url
+				}
+
+				console.warn('URL не получен от сервера, используем локальный URL')
+				return URL.createObjectURL(file)
+			}
+
+			// Если лекция уже существует, просто загружаем изображение
 			const response = await lecturesApi.uploadImage(editingLecture.id, file)
-			// Backend should return URL in response - fallback to object URL for preview
+			console.log('Ответ от сервера при загрузке изображения:', response)
+
+			// Пробуем извлечь URL из различных возможных структур ответа
 			const url =
 				(response as any).url ||
 				(response as any).path ||
-				URL.createObjectURL(file)
-			return url
+				(response as any).data?.url ||
+				(response as any).data?.path ||
+				(response as any).file_path ||
+				(response as any).image_url
+
+			if (url) {
+				// Если это относительный путь, делаем его абсолютным
+				if (url.startsWith('/')) {
+					const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+					return `${apiBaseUrl}${url}`
+				}
+				return url
+			}
+
+			console.warn('URL не получен от сервера, используем локальный URL')
+			return URL.createObjectURL(file)
 		} catch (e) {
-			console.error('Image upload failed:', e)
+			console.error('Ошибка загрузки изображения:', e)
 			throw e
 		}
 	}
@@ -524,9 +600,11 @@ const TopicContentPage = () => {
 								</button>
 								<button
 									onClick={() => {
-										setShowQuizForm(true)
+										setShowQuizTypeSelection(true)
 										setShowLectureForm(false)
 										setEditingLecture(null)
+										setEditingQuiz(null)
+										setQuizType(null)
 									}}
 									className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
 									title='Добавить тест'
@@ -589,19 +667,82 @@ const TopicContentPage = () => {
 							<h3 className='font-semibold text-gray-800 dark:text-white mb-4'>
 								{editingQuiz ? 'Редактирование теста' : 'Добавление теста'}
 							</h3>
-							<QuizForm
-								topicId={Number(topicId)}
-								defaultOrderNumber={nextQuizOrder}
-								isLoading={saving}
-								onSubmit={handleSaveQuiz}
-								onCancel={() => {
-									setShowQuizForm(false)
-									setEditingQuiz(null)
-								}}
-								initialValues={editingQuiz || undefined}
-							/>
+							{quizType === 'standard' && (
+								<QuizForm
+									topicId={Number(topicId)}
+									defaultOrderNumber={nextQuizOrder}
+									isLoading={saving}
+									onSubmit={handleSaveQuiz}
+									onCancel={() => {
+										setShowQuizForm(false)
+										setEditingQuiz(null)
+										setQuizType(null)
+									}}
+									initialValues={editingQuiz || undefined}
+								/>
+							)}
+							{quizType === 'table' && (
+								<DragDropQuizForm
+									topicId={Number(topicId)}
+									defaultOrderNumber={nextQuizOrder}
+									isLoading={saving}
+									onSubmit={handleSaveQuiz}
+									onCancel={() => {
+										setShowQuizForm(false)
+										setEditingQuiz(null)
+										setQuizType(null)
+									}}
+									initialValues={editingQuiz || undefined}
+								/>
+							)}
 						</div>
 					)}
+
+					<Modal
+						isOpen={showQuizTypeSelection}
+						onClose={() => {
+							setShowQuizTypeSelection(false)
+							setQuizType(null)
+						}}
+					>
+						<div className='p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full'>
+							<h2 className='text-xl font-semibold text-gray-900 dark:text-white mb-4'>
+								Выберите тип теста
+							</h2>
+							<div className='space-y-3'>
+								<button
+									onClick={() => {
+										setQuizType('standard')
+										setShowQuizTypeSelection(false)
+										setShowQuizForm(true)
+									}}
+									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20'
+								>
+									<div className='font-semibold text-gray-900 dark:text-white'>
+										Стандартный тест
+									</div>
+									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
+										Вопросы с выбором одного или нескольких ответов
+									</div>
+								</button>
+								<button
+									onClick={() => {
+										setQuizType('table')
+										setShowQuizTypeSelection(false)
+										setShowQuizForm(true)
+									}}
+									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 dark:hover:border-green-500 transition-colors hover:bg-green-50 dark:hover:bg-green-900/20'
+								>
+									<div className='font-semibold text-gray-900 dark:text-white'>
+										Таблица (Drag & Drop)
+									</div>
+									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
+										Интерактивная таблица с динамическими колонками и ячейками
+									</div>
+								</button>
+							</div>
+						</div>
+					</Modal>
 
 					<ContentItemList
 						items={contentItems}
@@ -612,6 +753,11 @@ const TopicContentPage = () => {
 						onDeleteLecture={handleDeleteLecture}
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
+							// Determine quiz type based on questions
+							const hasTableQuestion = quiz.questions?.some(
+								q => q.question_type === 'table'
+							)
+							setQuizType(hasTableQuestion ? 'table' : 'standard')
 							setShowQuizForm(true)
 							setShowLectureForm(false)
 						}}

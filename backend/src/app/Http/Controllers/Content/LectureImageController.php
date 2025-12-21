@@ -32,7 +32,14 @@ class LectureImageController extends Controller
 
         Storage::disk('public')->put($path, file_get_contents($file));
 
+        // Получаем URL от Storage, который учитывает APP_URL из .env
         $url = Storage::disk('public')->url($path);
+        
+        // Если URL относительный, делаем его абсолютным
+        if (!str_starts_with($url, 'http')) {
+            $appUrl = config('app.url', 'http://localhost');
+            $url = rtrim($appUrl, '/') . '/' . ltrim($url, '/');
+        }
 
         $attachment = LectureAttachment::create([
             'lecture_id' => $lecture->id,

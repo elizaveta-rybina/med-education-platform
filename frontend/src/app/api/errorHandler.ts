@@ -22,8 +22,12 @@ export const handleApiError = (error: any) => {
 	if (error instanceof AxiosError) {
 		let message: string
 
+		// Handle 401 separately with more context
+		if (error.response?.status === 401) {
+			message = 'Сессия истекла или требуется авторизация'
+		}
 		// Check common error response structures
-		if (error.response?.data) {
+		else if (error.response?.data) {
 			const data = error.response.data
 			if (data.message) {
 				message = data.message
