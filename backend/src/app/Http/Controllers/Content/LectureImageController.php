@@ -34,7 +34,7 @@ class LectureImageController extends Controller
 
         // Получаем URL от Storage, который учитывает APP_URL из .env
         $url = Storage::disk('public')->url($path);
-        
+
         // Если URL относительный, делаем его абсолютным
         if (!str_starts_with($url, 'http')) {
             $appUrl = config('app.url', 'http://localhost');

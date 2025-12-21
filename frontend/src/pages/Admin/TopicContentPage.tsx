@@ -171,7 +171,8 @@ const TopicContentPage = () => {
 				if (url) {
 					// Если это относительный путь, делаем его абсолютным
 					if (url.startsWith('/')) {
-						const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+						const apiBaseUrl =
+							import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 						return `${apiBaseUrl}${url}`
 					}
 					return url
@@ -197,7 +198,8 @@ const TopicContentPage = () => {
 			if (url) {
 				// Если это относительный путь, делаем его абсолютным
 				if (url.startsWith('/')) {
-					const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+					const apiBaseUrl =
+						import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 					return `${apiBaseUrl}${url}`
 				}
 				return url
