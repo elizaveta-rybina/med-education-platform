@@ -32,6 +32,11 @@ export const createBaseApi = (): AxiosInstance => {
 			if (token && config.headers) {
 				config.headers.Authorization = `Bearer ${token}`
 			}
+			console.log('[API Request]', {
+				method: config.method?.toUpperCase(),
+				url: config.url,
+				fullUrl: config.baseURL + config.url
+			})
 			return config
 		},
 		(error: AxiosError) => Promise.reject(error)
@@ -41,6 +46,14 @@ export const createBaseApi = (): AxiosInstance => {
 	instance.interceptors.response.use(
 		(response: AxiosResponse) => response,
 		(error: AxiosError) => {
+			console.error('[API Error]', {
+				message: error.message,
+				code: error.code,
+				status: error.response?.status,
+				url: error.config?.url,
+				baseURL: error.config?.baseURL,
+				fullUrl: error.config?.baseURL + error.config?.url
+			})
 			// Handle 401 Unauthorized errors (token expired)
 			if (error.response?.status === 401) {
 				// Clear auth data

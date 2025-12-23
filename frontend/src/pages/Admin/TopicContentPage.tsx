@@ -13,6 +13,7 @@ import { DragDropQuizForm } from '@/features/topic-content/ui/DragDropQuizForm'
 import { LectureForm } from '@/features/topic-content/ui/LectureForm'
 import { QuizForm } from '@/features/topic-content/ui/QuizForm'
 import { Modal } from '@/shared/ui/modal'
+import { resizeImage } from '@/shared/utils/imageResize'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -113,12 +114,46 @@ const TopicContentPage = () => {
 		[contentItems]
 	)
 
+	// Вспомогательная функция для преобразования относительного URL в абсолютный
+	const getAbsoluteImageUrl = (url: string): string => {
+		if (!url) return url
+
+		const hasPort = /^https?:\/\/[^/]+:\d+/.test(url)
+
+		// Уже корректный абсолютный с портом
+		if (url.includes('localhost:8000') || hasPort) {
+			return url
+		}
+
+		// http://localhost/… (без порта) → добавить 8000
+		if (url.startsWith('http://localhost/')) {
+			return url.replace('http://localhost/', 'http://localhost:8000/')
+		}
+
+		// /storage/... → подставить хост (без /api)
+		if (url.startsWith('/storage/')) {
+			const apiBaseUrl =
+				import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+			const match = apiBaseUrl.match(/^(https?:\/\/[^/]+)/)
+			const hostUrl = match ? match[1] : 'http://localhost:8000'
+			return `${hostUrl}${url}`
+		}
+
+		// Остальные пути считаем относительными к API
+		const apiBaseUrl =
+			import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+		return `${apiBaseUrl}${url}`
+	}
+
 	const [showLectureForm, setShowLectureForm] = useState(false)
 	const [showQuizForm, setShowQuizForm] = useState(false)
 	const [showQuizTypeSelection, setShowQuizTypeSelection] = useState(false)
 	const [quizType, setQuizType] = useState<'standard' | 'table' | null>(null)
 	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
+	const [uploadedImages, setUploadedImages] = useState<
+		Array<{ id: number; url: string; filename: string; attachment_id: number }>
+	>([])
 
 	const handleImageUpload = async (file: File): Promise<string> => {
 		if (!topicId) {
@@ -126,6 +161,14 @@ const TopicContentPage = () => {
 		}
 
 		try {
+			// 1) Уменьшаем изображение по пикселям, если превышает лимиты
+			const resize = await resizeImage(file, {
+				maxWidth: 1000,
+				maxHeight: 1000,
+				quality: 0.85
+			})
+			const fileToUpload = resize.file
+
 			// Если лекция еще не создана, создаем черновик
 			if (!editingLecture?.id) {
 				const draftLecture = await lecturesApi.create({
@@ -156,7 +199,7 @@ const TopicContentPage = () => {
 				})
 
 				// Загружаем изображение в созданную лекцию
-				const response = await lecturesApi.uploadImage(lectureId, file)
+				const response = await lecturesApi.uploadImage(lectureId, fileToUpload)
 				console.log('Ответ от сервера при загрузке изображения:', response)
 
 				// Пробуем извлечь URL из различных возможных структур ответа
@@ -168,22 +211,45 @@ const TopicContentPage = () => {
 					(response as any).file_path ||
 					(response as any).image_url
 
+				const attachmentId =
+					(response as any).attachment_id ||
+					(response as any).data?.attachment_id
+
 				if (url) {
 					// Если это относительный путь, делаем его абсолютным
-					if (url.startsWith('/')) {
-						const apiBaseUrl =
-							import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-						return `${apiBaseUrl}${url}`
-					}
-					return url
+					const fullUrl = getAbsoluteImageUrl(url)
+					// Добавляем изображение в список загруженных
+					setUploadedImages(prev => [
+						...prev,
+						{
+							id: Date.now(),
+							url: fullUrl,
+							filename: file.name,
+							attachment_id: attachmentId || 0
+						}
+					])
+					return fullUrl
 				}
 
 				console.warn('URL не получен от сервера, используем локальный URL')
-				return URL.createObjectURL(file)
+				const localUrl = URL.createObjectURL(fileToUpload)
+				setUploadedImages(prev => [
+					...prev,
+					{
+						id: Date.now(),
+						url: localUrl,
+						filename: file.name,
+						attachment_id: attachmentId || 0
+					}
+				])
+				return localUrl
 			}
 
 			// Если лекция уже существует, просто загружаем изображение
-			const response = await lecturesApi.uploadImage(editingLecture.id, file)
+			const response = await lecturesApi.uploadImage(
+				editingLecture.id,
+				fileToUpload
+			)
 			console.log('Ответ от сервера при загрузке изображения:', response)
 
 			// Пробуем извлечь URL из различных возможных структур ответа
@@ -195,18 +261,37 @@ const TopicContentPage = () => {
 				(response as any).file_path ||
 				(response as any).image_url
 
+			const attachmentId =
+				(response as any).attachment_id || (response as any).data?.attachment_id
+
 			if (url) {
 				// Если это относительный путь, делаем его абсолютным
-				if (url.startsWith('/')) {
-					const apiBaseUrl =
-						import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-					return `${apiBaseUrl}${url}`
-				}
-				return url
+				const fullUrl = getAbsoluteImageUrl(url)
+				// Добавляем изображение в список загруженных
+				setUploadedImages(prev => [
+					...prev,
+					{
+						id: Date.now(),
+						url: fullUrl,
+						filename: file.name,
+						attachment_id: attachmentId || 0
+					}
+				])
+				return fullUrl
 			}
 
-			console.warn('URL не получен от сервера, используем локальный URL')
-			return URL.createObjectURL(file)
+			console.warn('URL не получен от сервера')
+			// Добавляем изображение в список загруженных
+			setUploadedImages(prev => [
+				...prev,
+				{
+					id: Date.now(),
+					url,
+					filename: file.name,
+					attachment_id: attachmentId || 0
+				}
+			])
+			return url
 		} catch (e) {
 			console.error('Ошибка загрузки изображения:', e)
 			throw e
@@ -295,6 +380,7 @@ const TopicContentPage = () => {
 			setLectures(lectures)
 			setShowLectureForm(false)
 			setEditingLecture(null)
+			setUploadedImages([])
 		} finally {
 			setSaving(false)
 		}
@@ -658,8 +744,10 @@ const TopicContentPage = () => {
 								onCancel={() => {
 									setShowLectureForm(false)
 									setEditingLecture(null)
+									setUploadedImages([])
 								}}
 								onImageUpload={handleImageUpload}
+								uploadedImages={uploadedImages}
 							/>
 						</div>
 					)}
