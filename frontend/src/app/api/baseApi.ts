@@ -19,9 +19,7 @@ export const createBaseApi = (): AxiosInstance => {
 		timeout: 10000,
 		headers: {
 			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			'Access-Control-Allow-Origin':
-				import.meta.env.VITE_APP_URL || window.location.origin
+			Accept: 'application/json'
 		}
 	})
 

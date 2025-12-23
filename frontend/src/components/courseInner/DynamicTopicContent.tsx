@@ -249,6 +249,22 @@ const DynamicTopicContent: React.FC = () => {
 							onSelect={handleAnswerSelect}
 							onSubmit={handleSubmitQuiz}
 						/>
+						{/* Кнопка возврата к лекции после завершения теста */}
+						{showResults && (
+							<div className='mt-6 pt-4 border-t border-gray-200'>
+								<button
+									onClick={() => {
+										setActiveQuiz(null)
+										setShowResults(false)
+										setUserAnswers({})
+										setQuizScore(null)
+									}}
+									className='px-6 py-2 bg-gray-600 text-white rounded-xl shadow-sm hover:bg-gray-700 transition-colors'
+								>
+									Вернуться к лекции
+								</button>
+							</div>
+						)}
 					</div>
 				)}
 				{!activeQuiz && !selectedLecture?.content && (
@@ -256,7 +272,7 @@ const DynamicTopicContent: React.FC = () => {
 						Для темы пока нет лекций в формате markdown.
 					</div>
 				)}
-				{selectedLecture && (
+				{selectedLecture && !activeQuiz && (
 					<div className='mt-6 pt-4 border-t border-gray-200 flex items-center gap-3'>
 						<MarkAsReadButton
 							isRead={isSelectedRead}
