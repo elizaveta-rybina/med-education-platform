@@ -19,6 +19,9 @@ const SideBarCourse = () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const topicIdParam = searchParams.get('topic')
 	const [dynamicLectures, setDynamicLectures] = useState<Lecture[]>([])
+	const [dynamicAssignments, setDynamicAssignments] = useState<
+		Array<{ id: number; title: string; order_number?: number | null }>
+	>([])
 	const [topicTitle, setTopicTitle] = useState<string>('')
 	const [lectureReadStatus, setLectureReadStatus] = useState<
 		Record<string, boolean>
@@ -58,6 +61,7 @@ const SideBarCourse = () => {
 			const topicId = Number(topicIdParam)
 			if (!topicId) {
 				setDynamicLectures([])
+				setDynamicAssignments([])
 				setTopicTitle('')
 				return
 			}
@@ -67,7 +71,39 @@ const SideBarCourse = () => {
 					topicsApi.getById(topicId)
 				])
 				const lectures = (contentsResp as any).data?.lectures || []
+				const quizzes = (contentsResp as any).data?.quizzes || []
 				setDynamicLectures(lectures as Lecture[])
+
+				// Собираем названия лекций для фильтра дубликатов
+				const lectureTitleSet = new Set(
+					(lectures as Lecture[])
+						.map(l => (l.title || '').trim().toLowerCase())
+						.filter(Boolean)
+				)
+
+				// Фильтруем задания (квизы): берем только нужные типы и исключаем дубликаты по названию
+				const filteredAssignments = (quizzes as any[])
+					.filter(q => {
+						const typeMatch =
+							q?.quiz_type === 'additional' ||
+							(Array.isArray(q?.questions) &&
+								q.questions.some((qq: any) =>
+									['table', 'input_answer', 'interactive_experience'].includes(
+										qq?.question_type
+									)
+								))
+						if (!typeMatch) return false
+						const t = (q?.title || '').trim().toLowerCase()
+						if (!t) return false
+						return !lectureTitleSet.has(t)
+					})
+					.map(q => ({
+						id: Number(q.id),
+						title: String(q.title ?? ''),
+						order_number: (q as any).order_number ?? null
+					}))
+
+				setDynamicAssignments(filteredAssignments)
 
 				const topicData =
 					(topicResp as any).data || (topicResp as any).topic || topicResp
@@ -75,6 +111,7 @@ const SideBarCourse = () => {
 			} catch (e) {
 				console.error('Failed to load lectures/topic for', topicId, e)
 				setDynamicLectures([])
+				setDynamicAssignments([])
 				setTopicTitle('')
 			}
 		}
@@ -96,10 +133,10 @@ const SideBarCourse = () => {
 			)
 	}, [])
 
-	const allChapters = course?.modules.flatMap(m => m.chapters) ?? []
+	const allChapters = course?.modules.flatMap((m: any) => m.chapters) ?? []
 
 	// Combine isRead from course with saved state
-	const chaptersWithReadStatus = allChapters.map(chapter => ({
+	const chaptersWithReadStatus = allChapters.map((chapter: any) => ({
 		...chapter,
 		isRead: chapterReadStatus[chapter.hash] || chapter.isRead
 	}))
@@ -173,38 +210,70 @@ const SideBarCourse = () => {
 				{(isExpanded || isMobileOpen) && (
 					<nav className='flex-1 p-2'>
 						<ul className='space-y-1'>
-							{dynamicLectures.length > 0
-								? dynamicLectures.map(lec => {
-										const isRead = !!lectureReadStatus[String(lec.id)]
-										return (
-											<li key={lec.id}>
-												<button
-													onClick={() => {
-														const next = new URLSearchParams(searchParams)
-														next.set('lecture', String(lec.id))
-														setSearchParams(next)
-													}}
-													className={`flex items-center justify-start w-full px-4 py-3 text-sm rounded-lg transition-colors ${
-														isRead
-															? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
-															: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-													}`}
-												>
-													<span className='flex-shrink-0 mr-3'>
-														{isRead ? (
-															<FaCheckCircle className='text-green-500 w-5 h-5' />
-														) : (
-															<FaRegCircle className='text-gray-400 w-5 h-5' />
-														)}
-													</span>
-													<span className='text-sm leading-tight text-left'>
-														{lec.title}
-													</span>
-												</button>
-											</li>
+							{topicIdParam
+								? (() => {
+										// Комбинируем лекции и задания и сортируем по order_number
+										const combined = [
+											...dynamicLectures.map(lec => ({
+												id: Number(lec.id),
+												title: lec.title,
+												order_number:
+													lec.order_number ?? Number.MAX_SAFE_INTEGER,
+												type: 'lecture' as const
+											})),
+											...dynamicAssignments.map(q => ({
+												id: Number(q.id),
+												title: q.title,
+												order_number: (q.order_number ??
+													Number.MAX_SAFE_INTEGER) as number,
+												type: 'assignment' as const
+											}))
+										].sort(
+											(a, b) => (a.order_number ?? 0) - (b.order_number ?? 0)
 										)
-								  })
-								: chaptersWithReadStatus.map(chapter => (
+
+										return combined.map(item => {
+											const isLecture = item.type === 'lecture'
+											const isRead = isLecture
+												? !!lectureReadStatus[String(item.id)]
+												: !!chapterReadStatus[`quiz_${item.id}`] ||
+												  !!localStorage.getItem(`quizResults_${item.id}`)
+											return (
+												<li key={`${item.type}_${item.id}`}>
+													<button
+														onClick={() => {
+															const next = new URLSearchParams(searchParams)
+															if (isLecture) {
+																next.set('lecture', String(item.id))
+																next.delete('assignment')
+															} else {
+																next.set('assignment', String(item.id))
+																next.delete('lecture')
+															}
+															setSearchParams(next)
+														}}
+														className={`flex items-center justify-start w-full px-4 py-3 text-sm rounded-lg transition-colors ${
+															isRead
+																? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
+																: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+														}`}
+													>
+														<span className='flex-shrink-0 mr-3'>
+															{isRead ? (
+																<FaCheckCircle className='text-green-500 w-5 h-5' />
+															) : (
+																<FaRegCircle className='text-gray-400 w-5 h-5' />
+															)}
+														</span>
+														<span className='text-sm leading-tight text-left'>
+															{item.title}
+														</span>
+													</button>
+												</li>
+											)
+										})
+								  })()
+								: chaptersWithReadStatus.map((chapter: any) => (
 										<li key={chapter.id}>
 											<a
 												href={`#${chapter.hash}`}

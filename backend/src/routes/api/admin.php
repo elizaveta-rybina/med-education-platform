@@ -61,6 +61,9 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::delete('/{attachmentId}', [LectureImageController::class, 'delete']);
         });
 
+        // Добавление игры к лекции
+        Route::post('lectures/{lectureId}/attachments/add-game', [LectureAttachmentController::class, 'addGameAttachment']);
+
         // Квизы
         Route::get('quizzes', [QuizController::class, 'index']);
         Route::apiResource('quizzes', QuizController::class)->except(['index']);

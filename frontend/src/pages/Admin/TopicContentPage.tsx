@@ -906,22 +906,15 @@ const TopicContentPage = () => {
 						onDeleteLecture={handleDeleteLecture}
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
-							// Determine quiz type based on questions
-							const hasTableQuestion = quiz.questions?.some(
-								q => q.question_type === 'table'
-							)
-							const hasInteractive = quiz.questions?.some(
-								q => q.question_type === 'interactive_experience'
-							)
-							const hasInput = quiz.questions?.some(
-								q => q.question_type === 'input_answer'
-							)
-							if (hasTableQuestion) {
+							// Determine quiz type based on question type first, then quiz_type
+							if (quiz.questions?.some(q => q.question_type === 'table')) {
 								setQuizType('table')
-							} else if (hasInteractive) {
-								setQuizType('interactive')
-							} else if (hasInput) {
+							} else if (
+								quiz.questions?.some(q => q.question_type === 'input_answer')
+							) {
 								setQuizType('input')
+							} else if (quiz.quiz_type === 'additional') {
+								setQuizType('interactive')
 							} else {
 								setQuizType('standard')
 							}

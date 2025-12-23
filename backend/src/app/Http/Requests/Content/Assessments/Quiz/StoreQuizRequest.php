@@ -65,6 +65,8 @@ class StoreQuizRequest extends FormRequest
             'max_attempts' => ['nullable', 'integer', 'min:1'],
             'passing_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1'],
+            'file_name' => ['nullable', 'string', 'max:255'],
+            'game_path' => ['nullable', 'string', 'max:512'],
             'entity_type' => ['required', Rule::in(self::ENTITY_TYPES), $this->validateQuizTypeEntityCompatibility()],
             'quizable_id' => [
                 'required',

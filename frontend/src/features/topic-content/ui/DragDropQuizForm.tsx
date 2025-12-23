@@ -18,12 +18,14 @@ interface DragDropQuizFormProps {
 type OptionState = {
 	id: string
 	text: string
+	originalDbId?: number // ID из БД при загрузке
 }
 
 type TableRowState = {
 	id: string
 	cells: string[]
 	correctOptions: string[]
+	answerMode: 'all' | 'any' // 'all' = AND (все ответы), 'any' = OR (любой ответ)
 }
 
 type TableQuestionState = {
@@ -79,7 +81,8 @@ export const DragDropQuizForm = ({
 			{
 				id: generateId(),
 				cells: ['', '', ''],
-				correctOptions: []
+				correctOptions: [],
+				answerMode: 'all'
 			}
 		]
 	})
@@ -110,24 +113,42 @@ export const DragDropQuizForm = ({
 		// Загружаем вопрос-таблицу, если есть
 		if (initialValues.questions && initialValues.questions.length > 0) {
 			const q = initialValues.questions[0]
-			const options: OptionState[] = (q.options || []).map(opt => ({
+			const meta =
+				typeof (q as any).metadata === 'string'
+					? JSON.parse((q as any).metadata as string)
+					: (q as any).metadata || {}
+			const options: OptionState[] = (q.options || []).map((opt: any) => ({
 				id: generateId(),
-				text: opt.text || ''
+				text: opt.text || '',
+				originalDbId: opt.id // Сохраняем исходный ID из БД
 			}))
 
 			const columns: QuizTableMetadataColumn[] =
-				q.metadata?.columns || createDefaultColumns(3)
+				meta.columns || createDefaultColumns(3)
 
-			const tableRows: TableRowState[] = (q.metadata?.rows || []).map(row => {
-				const correctOptionIds = row.correct_option_ids || []
+			const tableRows: TableRowState[] = (meta.rows || []).map((row: any) => {
+				const correctOptionValues = row.correct_option_ids || []
+				// Сопоставляем correct_option_ids с опциями
+				// Это может быть либо индекс (0, 1, 2...), либо БД ID (106, 107...)
+				const correctOptions = correctOptionValues
+					.map((value: number) => {
+						// Сначала пробуем найти по originalDbId (если это старые данные с БД ID)
+						const byDbId = options.find(opt => opt.originalDbId === value)
+						if (byDbId) return byDbId.id
+
+						// Иначе используем как индекс (для новых опций)
+						const byIndex = options[value]
+						return byIndex?.id || ''
+					})
+					.filter((id: string) => id !== '')
+				
 				return {
 					id: generateId(),
-					cells: row.cells.map(cell =>
+					cells: row.cells.map((cell: unknown) =>
 						Array.isArray(cell) ? '' : String(cell)
 					),
-					correctOptions: correctOptionIds.map(idx =>
-						options[idx] ? options[idx].id : ''
-					)
+					correctOptions,
+					answerMode: (row.answer_mode as 'all' | 'any') || 'all'
 				}
 			})
 
@@ -230,7 +251,8 @@ export const DragDropQuizForm = ({
 				{
 					id: generateId(),
 					cells: new Array(prev.columns.length).fill(''),
-					correctOptions: []
+					correctOptions: [],
+					answerMode: 'all'
 				}
 			]
 		}))
@@ -264,10 +286,20 @@ export const DragDropQuizForm = ({
 	}
 
 	const handleRowCorrectOptionsChange = (rowId: string, value: string[]) => {
+
 		setQuestion(prev => ({
 			...prev,
 			tableRows: prev.tableRows.map(row =>
 				row.id === rowId ? { ...row, correctOptions: value } : row
+			)
+		}))
+	}
+
+	const handleRowAnswerModeChange = (rowId: string, mode: 'all' | 'any') => {
+		setQuestion(prev => ({
+			...prev,
+			tableRows: prev.tableRows.map(row =>
+				row.id === rowId ? { ...row, answerMode: mode } : row
 			)
 		}))
 	}
@@ -299,18 +331,29 @@ export const DragDropQuizForm = ({
 			is_auto_graded: question.is_auto_graded,
 			order_number: 1,
 			options: tableOptions,
-			metadata: {
+			metadata: JSON.stringify({
 				columns: question.columns.map(col => ({
 					name: col.name.trim(),
 					type: col.type
 				})),
-				rows: question.tableRows.map(row => ({
-					cells: row.cells.map(cell => cell.trim()),
-					correct_option_ids: row.correctOptions
-						.map(optId => question.options.findIndex(opt => opt.id === optId))
-						.filter(index => index >= 0)
-				}))
-			}
+				rows: question.tableRows.map(row => {
+					const correctOptionIds = row.correctOptions
+						.map((optId: string) => {
+							// Находим индекс опции в массиве - всегда используем индекс
+							const optionIndex = question.options.findIndex(
+								o => o.id === optId
+							)
+							return optionIndex >= 0 ? optionIndex : -1
+						})
+						.filter((index: number) => index >= 0)
+
+					return {
+						cells: row.cells.map(cell => cell.trim()),
+						correct_option_ids: correctOptionIds,
+						answer_mode: row.answerMode
+					}
+				})
+			})
 		}
 
 		return {
@@ -647,35 +690,81 @@ export const DragDropQuizForm = ({
 											/>
 										</div>
 									))}
-									<div>
-										<label className='block text-xs text-gray-600 dark:text-gray-400 mb-1'>
-											Правильные опции для этой строки
-										</label>
-										<select
-											multiple
-											value={row.correctOptions}
-											onChange={e =>
-												handleRowCorrectOptionsChange(
-													row.id,
-													Array.from(
-														e.target.selectedOptions,
-														option => option.value
+									<div className='space-y-2 pt-2 border-t border-gray-300 dark:border-gray-600'>
+										<div>
+											<label className='block text-xs text-gray-600 dark:text-gray-400 mb-2'>
+												Режим проверки ответов
+											</label>
+											<div className='flex gap-3'>
+												<label className='inline-flex items-center gap-2'>
+													<input
+														type='radio'
+														name={`answerMode_${row.id}`}
+														value='all'
+														checked={row.answerMode === 'all'}
+														onChange={() =>
+															handleRowAnswerModeChange(row.id, 'all')
+														}
+														disabled={isLoading || saving}
+														className='rounded-full border-gray-300 text-purple-600 focus:ring-purple-500'
+													/>
+													<span className='text-xs text-gray-700 dark:text-gray-300'>
+														Все ответы (И)
+													</span>
+												</label>
+												<label className='inline-flex items-center gap-2'>
+													<input
+														type='radio'
+														name={`answerMode_${row.id}`}
+														value='any'
+														checked={row.answerMode === 'any'}
+														onChange={() =>
+															handleRowAnswerModeChange(row.id, 'any')
+														}
+														disabled={isLoading || saving}
+														className='rounded-full border-gray-300 text-purple-600 focus:ring-purple-500'
+													/>
+													<span className='text-xs text-gray-700 dark:text-gray-300'>
+														Любой ответ (ИЛИ)
+													</span>
+												</label>
+											</div>
+											<p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
+												{row.answerMode === 'all'
+													? '✓ Правильны только если выбраны все эти опции'
+													: '✓ Правильны если выбрана хотя бы одна из этих опций'}
+											</p>
+										</div>
+										<div>
+											<label className='block text-xs text-gray-600 dark:text-gray-400 mb-1'>
+												Правильные опции для этой строки
+											</label>
+											<select
+												multiple
+												value={row.correctOptions}
+												onChange={e =>
+													handleRowCorrectOptionsChange(
+														row.id,
+														Array.from(
+															e.target.selectedOptions,
+															option => option.value
+														)
 													)
-												)
-											}
-											disabled={isLoading || saving}
-											className='w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
-											size={Math.min(question.options.length, 5)}
-										>
-											{question.options.map(option => (
-												<option key={option.id} value={option.id}>
-													{option.text}
-												</option>
-											))}
-										</select>
-										<p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
-											Удерживайте Ctrl/Cmd для выбора нескольких
-										</p>
+												}
+												disabled={isLoading || saving}
+												className='w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white'
+												size={Math.min(question.options.length, 5)}
+											>
+												{question.options.map(option => (
+													<option key={option.id} value={option.id}>
+														{option.text}
+													</option>
+												))}
+											</select>
+											<p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
+												Удерживайте Ctrl/Cmd для выбора нескольких
+											</p>
+										</div>
 									</div>
 								</div>
 							</div>

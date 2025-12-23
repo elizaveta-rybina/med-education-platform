@@ -25,6 +25,8 @@ class QuizResource extends JsonResource
             'time_limit_minutes' => $this->time_limit_minutes,
             'entity_type' => $this->quizable_type, // возвращаем как entity_type
             'quizable_id' => $this->quizable_id,
+            'file_name' => $this->file_name,
+            'game_path' => $this->game_path,
             'quizable' => $this->whenLoaded('quizable', fn() => [
                 'id' => $this->quizable->id,
                 'name' => $this->quizable->name ?? $this->quizable->title, // адаптируйте под вашу модель

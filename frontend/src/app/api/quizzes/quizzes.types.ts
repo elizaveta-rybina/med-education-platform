@@ -34,7 +34,7 @@ export interface QuizQuestionPayload {
 	points: number
 	is_auto_graded?: boolean
 	options?: QuizOptionPayload[]
-	metadata?: QuizTableMetadata
+	metadata?: QuizTableMetadata | string
 	order_number?: number
 }
 
@@ -53,6 +53,8 @@ export interface Quiz {
 	topic_id?: number | null
 	order_number?: number | null
 	is_published?: boolean | number
+	file_name?: string | null
+	game_path?: string | null
 	created_at?: string
 	updated_at?: string
 	questions?: QuizQuestionPayload[]
@@ -70,6 +72,8 @@ export interface QuizPayload {
 	questions: QuizQuestionPayload[]
 	order_number?: number
 	is_published?: boolean | number
+	file_name?: string | null
+	game_path?: string | null
 }
 
 export interface QuizResponse {

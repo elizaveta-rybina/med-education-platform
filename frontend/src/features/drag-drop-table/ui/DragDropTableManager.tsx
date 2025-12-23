@@ -6,11 +6,13 @@ import { DragDropTableComponent } from './DragDropTableComponent'
 interface DragDropTableManagerProps {
 	blocks: DragDropTableBlock[]
 	onComplete: (isCorrect: boolean) => void
+	chapterHash?: string
 }
 
 export const DragDropTableManager: React.FC<DragDropTableManagerProps> = ({
 	blocks,
-	onComplete
+	onComplete,
+	chapterHash
 }) => {
 	const { t } = useTranslation('courseInner')
 	const [currentBlockIndex, setCurrentBlockIndex] = useState(0)
@@ -73,10 +75,27 @@ export const DragDropTableManager: React.FC<DragDropTableManagerProps> = ({
 			<DragDropTableComponent
 				block={currentBlock}
 				onComplete={handleComplete}
+				chapterHash={chapterHash}
 			/>
 			{isBlockLocked() && currentBlockIndex < blocks.length - 1 && (
 				<button
-					onClick={() => setCurrentBlockIndex(prev => prev + 1)}
+					onClick={() => {
+						// Отмечаем текущее задание как прочитанное
+						if (chapterHash) {
+							const savedReadStatus = localStorage.getItem('chapterReadStatus')
+							const readStatus = savedReadStatus
+								? JSON.parse(savedReadStatus)
+								: {}
+							readStatus[chapterHash] = true
+							localStorage.setItem(
+								'chapterReadStatus',
+								JSON.stringify(readStatus)
+							)
+							window.dispatchEvent(new Event('chapterReadStatusUpdated'))
+						}
+						// Переходим к следующей таблице
+						setCurrentBlockIndex(prev => prev + 1)
+					}}
 					className='mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2'
 				>
 					{t('dnd.nextTable')}

@@ -3,6 +3,8 @@
 namespace App\Services\Content;
 
 use App\Models\Content\Assignment;
+use App\Models\Content\Assessments\Quiz;
+use App\Models\Content\Topic as ContentTopic;
 use App\Models\Content\Lecture;
 use App\Models\Content\Topic;
 use App\Services\Content\TopicItemService;
@@ -35,9 +37,14 @@ class TopicContentService
             ->orderBy('order_number')
             ->get();
 
+        $quizzes = Quiz::where('quizable_type', ContentTopic::class)
+            ->where('quizable_id', $topicId)
+            ->with(['questions'])
+            ->get();
+
         return [
             'lectures' => $lectures,
-            'quizzes' => [],
+            'quizzes' => $quizzes,
             'assignments' => [],
         ];
     }

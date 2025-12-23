@@ -42,6 +42,8 @@ class UpdateQuizRequest extends FormRequest
             'passing_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'questions_count' => ['nullable', 'integer', 'min:0'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1'],
+            'file_name' => ['nullable', 'string', 'max:255'],
+            'game_path' => ['nullable', 'string', 'max:512'],
             'entity_type' => ['required', Rule::in($entityTypes)],
             'quizable_id' => [
                 'required',

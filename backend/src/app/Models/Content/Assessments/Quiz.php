@@ -23,6 +23,8 @@ class Quiz extends Model
         'time_limit_minutes',
         'quizable_type',
         'quizable_id',
+        'file_name',
+        'game_path',
     ];
 
     protected $casts = [

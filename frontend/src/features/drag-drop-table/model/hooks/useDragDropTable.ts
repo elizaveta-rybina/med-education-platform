@@ -99,6 +99,8 @@ export const useDragDropTable = (
 	const checkAnswers = () => {
 		if (isLocked || attempts >= 2) return
 
+		console.log('🔍 checkAnswers - block.correctAnswers:', block.correctAnswers)
+
 		const newErrors: Record<string, boolean> = {}
 		let localCorrectCount = 0
 		let allCorrect = true
@@ -107,6 +109,14 @@ export const useDragDropTable = (
 			const cellId = `${row.id}_effects`
 			const userAnswers = (assigned[cellId] || []).map(String)
 			const correctValue = block.correctAnswers[cellId]
+
+			console.log('🔍 checkAnswers - row check:', {
+				rowId: row.id,
+				cellId,
+				userAnswers,
+				correctValue,
+				correctValueType: typeof correctValue
+			})
 
 			let isCorrect = false
 
@@ -121,9 +131,21 @@ export const useDragDropTable = (
 				}
 			}
 
+			console.log('🔍 checkAnswers - row result:', {
+				rowId: row.id,
+				isCorrect,
+				allCorrect: allCorrect && isCorrect
+			})
+
 			newErrors[cellId] = !isCorrect
 			if (!isCorrect) allCorrect = false
 			if (isCorrect) localCorrectCount++
+		})
+
+		console.log('🔍 checkAnswers - final result:', {
+			allCorrect,
+			localCorrectCount,
+			newErrors
 		})
 
 		setErrors(newErrors)

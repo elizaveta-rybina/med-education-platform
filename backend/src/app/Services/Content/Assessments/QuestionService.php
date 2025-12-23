@@ -54,30 +54,6 @@ class QuestionService implements QuestionServiceInterface
                     $createdOptions = $this->questionOptionService->createMultipleOptions($quiz, $question, $optionsData);
                 }
 
-                // 3. Специальная обработка для table: заменяем индексы на реальные ID
-                if ($metadataRaw && $question->question_type === 'table' && !empty($createdOptions)) {
-                    $metadataArray = is_string($metadataRaw) ? json_decode($metadataRaw, true) : $metadataRaw;
-
-                    if (is_array($metadataArray) && isset($metadataArray['rows'])) {
-                        foreach ($metadataArray['rows'] as &$row) {
-                            if (isset($row['correct_option_ids']) && is_array($row['correct_option_ids'])) {
-                                $realIds = [];
-                                foreach ($row['correct_option_ids'] as $index) {
-                                    // createdOptions сохраняет порядок создания
-                                    if (isset($createdOptions[$index])) {
-                                        $realIds[] = $createdOptions[$index]->id;
-                                    }
-                                }
-                                $row['correct_option_ids'] = $realIds;
-                            }
-                        }
-
-                        // Обновляем metadata с реальными ID
-                        $question->metadata = $metadataArray;
-                        $question->save();
-                    }
-                }
-
                 // Для matching и других типов — metadata уже сохранён на шаге 1, ничего не трогаем
 
                 return $question->fresh(['options']);
