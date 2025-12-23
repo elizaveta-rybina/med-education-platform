@@ -32,11 +32,6 @@ export const createBaseApi = (): AxiosInstance => {
 			if (token && config.headers) {
 				config.headers.Authorization = `Bearer ${token}`
 			}
-			console.log('[API Request]', {
-				method: config.method?.toUpperCase(),
-				url: config.url,
-				fullUrl: config.baseURL + config.url
-			})
 			return config
 		},
 		(error: AxiosError) => Promise.reject(error)

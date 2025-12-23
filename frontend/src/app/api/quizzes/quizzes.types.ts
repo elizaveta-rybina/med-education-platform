@@ -1,6 +1,11 @@
 export type QuizEntityType = 'module' | 'topic' | 'lecture'
 
-export type QuizQuestionType = 'single_choice' | 'multiple_choice' | 'table'
+export type QuizQuestionType =
+	| 'single_choice'
+	| 'multiple_choice'
+	| 'table'
+	| 'interactive_experience'
+	| 'input_answer'
 
 export interface QuizOptionPayload {
 	text: string

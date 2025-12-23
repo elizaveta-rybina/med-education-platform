@@ -51,7 +51,7 @@ export async function resizeImage(
 	file: File,
 	options: ResizeOptions = {}
 ): Promise<ResizeResult> {
-	const { maxWidth = 1000, maxHeight = 1000, quality = 0.85 } = options
+	const { maxWidth = 600, maxHeight = 600, quality = 0.85 } = options
 
 	const dataUrl = await readFileAsDataURL(file)
 	const img = await loadImage(dataUrl)

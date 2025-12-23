@@ -10,6 +10,8 @@ import {
 	type ContentItem
 } from '@/features/topic-content/ui/ContentItemList'
 import { DragDropQuizForm } from '@/features/topic-content/ui/DragDropQuizForm'
+import { InputAnswerForm } from '@/features/topic-content/ui/InputAnswerForm'
+import { InteractiveExperienceForm } from '@/features/topic-content/ui/InteractiveExperienceForm'
 import { LectureForm } from '@/features/topic-content/ui/LectureForm'
 import { QuizForm } from '@/features/topic-content/ui/QuizForm'
 import { Modal } from '@/shared/ui/modal'
@@ -148,7 +150,9 @@ const TopicContentPage = () => {
 	const [showLectureForm, setShowLectureForm] = useState(false)
 	const [showQuizForm, setShowQuizForm] = useState(false)
 	const [showQuizTypeSelection, setShowQuizTypeSelection] = useState(false)
-	const [quizType, setQuizType] = useState<'standard' | 'table' | null>(null)
+	const [quizType, setQuizType] = useState<
+		'standard' | 'table' | 'interactive' | 'input' | null
+	>(null)
 	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
 	const [uploadedImages, setUploadedImages] = useState<
@@ -163,8 +167,8 @@ const TopicContentPage = () => {
 		try {
 			// 1) Уменьшаем изображение по пикселям, если превышает лимиты
 			const resize = await resizeImage(file, {
-				maxWidth: 1000,
-				maxHeight: 1000,
+				maxWidth: 600,
+				maxHeight: 600,
 				quality: 0.85
 			})
 			const fileToUpload = resize.file
@@ -784,7 +788,35 @@ const TopicContentPage = () => {
 									}}
 									initialValues={editingQuiz || undefined}
 								/>
+							)}{' '}
+							{quizType === 'interactive' && (
+								<InteractiveExperienceForm
+									topicId={Number(topicId)}
+									defaultOrderNumber={nextQuizOrder}
+									isLoading={saving}
+									onSubmit={handleSaveQuiz}
+									onCancel={() => {
+										setShowQuizForm(false)
+										setEditingQuiz(null)
+										setQuizType(null)
+									}}
+									initialValues={editingQuiz || undefined}
+								/>
 							)}
+							{quizType === 'input' && (
+								<InputAnswerForm
+									topicId={Number(topicId)}
+									defaultOrderNumber={nextQuizOrder}
+									isLoading={saving}
+									onSubmit={handleSaveQuiz}
+									onCancel={() => {
+										setShowQuizForm(false)
+										setEditingQuiz(null)
+										setQuizType(null)
+									}}
+									initialValues={editingQuiz || undefined}
+								/>
+							)}{' '}
 						</div>
 					)}
 
@@ -794,8 +826,9 @@ const TopicContentPage = () => {
 							setShowQuizTypeSelection(false)
 							setQuizType(null)
 						}}
+						className='p-6 max-w-3xl'
 					>
-						<div className='p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full'>
+						<div className='p-6 bg-white dark:bg-gray-800 rounded-lg inline-block w-auto max-w-3xl'>
 							<h2 className='text-xl font-semibold text-gray-900 dark:text-white mb-4'>
 								Выберите тип теста
 							</h2>
@@ -829,7 +862,37 @@ const TopicContentPage = () => {
 									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
 										Интерактивная таблица с динамическими колонками и ячейками
 									</div>
+								</button>{' '}
+								<button
+									onClick={() => {
+										setQuizType('interactive')
+										setShowQuizTypeSelection(false)
+										setShowQuizForm(true)
+									}}
+									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/20'
+								>
+									<div className='font-semibold text-gray-900 dark:text-white'>
+										Интерактивный опыт
+									</div>
+									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
+										Блок с интерактивным сценарием/инструкцией
+									</div>
 								</button>
+								<button
+									onClick={() => {
+										setQuizType('input')
+										setShowQuizTypeSelection(false)
+										setShowQuizForm(true)
+									}}
+									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 dark:hover:border-orange-500 transition-colors hover:bg-orange-50 dark:hover:bg-orange-900/20'
+								>
+									<div className='font-semibold text-gray-900 dark:text-white'>
+										Тест с вводом ответов
+									</div>
+									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
+										Открытые ответы с проверкой ввода
+									</div>
+								</button>{' '}
 							</div>
 						</div>
 					</Modal>
@@ -847,7 +910,21 @@ const TopicContentPage = () => {
 							const hasTableQuestion = quiz.questions?.some(
 								q => q.question_type === 'table'
 							)
-							setQuizType(hasTableQuestion ? 'table' : 'standard')
+							const hasInteractive = quiz.questions?.some(
+								q => q.question_type === 'interactive_experience'
+							)
+							const hasInput = quiz.questions?.some(
+								q => q.question_type === 'input_answer'
+							)
+							if (hasTableQuestion) {
+								setQuizType('table')
+							} else if (hasInteractive) {
+								setQuizType('interactive')
+							} else if (hasInput) {
+								setQuizType('input')
+							} else {
+								setQuizType('standard')
+							}
 							setShowQuizForm(true)
 							setShowLectureForm(false)
 						}}
