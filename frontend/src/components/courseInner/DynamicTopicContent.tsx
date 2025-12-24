@@ -120,9 +120,14 @@ const DynamicTopicContent: React.FC = () => {
 			}
 			try {
 				const quizResp = await quizzesApi.getById(assignmentId)
-				const quizData =
+				let quizData =
 					(quizResp as any).data || (quizResp as any).quiz || quizResp
-				setAssignmentQuiz(quizData as Quiz)
+				quizData = quizData as Quiz
+
+				// Debug: выводим полученные данные
+				console.log('Loaded quiz:', quizData)
+
+				setAssignmentQuiz(quizData)
 				setCurrentTableIndex(0)
 			} catch (e) {
 				console.error('Failed to load assignment quiz:', e)
@@ -260,7 +265,6 @@ const DynamicTopicContent: React.FC = () => {
 		if (quiz.questions?.some(q => q.question_type === 'table')) return 'table'
 		if (quiz.questions?.some(q => q.question_type === 'input_answer'))
 			return 'input'
-		// Затем проверяем quiz_type
 		if (quiz.quiz_type === 'additional') return 'interactive'
 		return 'standard'
 	}
@@ -275,8 +279,6 @@ const DynamicTopicContent: React.FC = () => {
 				const metadata =
 					typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta
 
-				// Преобразуем correct_option_ids и answer_mode в correctAnswers
-				// correct_option_ids содержат ИНДЕКСЫ (0, 1, 2, 3...), нужно маппить на answer ID (ans_0, ans_1...)
 				const correctAnswers: Record<string, string[] | { anyOf: string[] }> =
 					{}
 				;(metadata.rows || []).forEach((row: any, rowIdx: number) => {
@@ -284,7 +286,6 @@ const DynamicTopicContent: React.FC = () => {
 					const correctOptionIds = row.correct_option_ids || []
 					const answerMode = row.answer_mode || 'all'
 
-					// Преобразуем индексы в answer ID
 					const correctAnswerIds = correctOptionIds.map(
 						(idx: number) => `ans_${idx}`
 					)
@@ -401,21 +402,29 @@ const DynamicTopicContent: React.FC = () => {
 					<div className='mt-4'>
 						<div className='p-6 bg-gray-50 rounded-lg'>
 							<h3 className='text-lg font-medium mb-4'>
-								Интерактивное задание
+								Пройдите интерактивное задание, а после заполните таблицу под ним.
 							</h3>
-							{displayedQuiz.file_name && displayedQuiz.game_path && (
+							{displayedQuiz.game_path || displayedQuiz.file_name ? (
 								<div className='space-y-2'>
+									<div className='flex gap-2'>
+										<iframe
+											src={`http://localhost:8000${
+												displayedQuiz.game_path ||
+												`/games/semester_one/${displayedQuiz.file_name}`
+											}/index.html`}
+											className='w-full h-[578px] border border-gray-300 rounded-lg mt-4'
+											title={displayedQuiz.file_name || displayedQuiz.title}
+											allow='fullscreen; autoplay; encrypted-media'
+										/>
+									</div>
+								</div>
+							) : (
+								<div className='p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-yellow-800'>
 									<p>
-										<strong>Игра:</strong> {displayedQuiz.file_name}
+										Не удалось загрузить игру: отсутствуют данные пути
+										(game_path или file_name)
 									</p>
-									<p>
-										<strong>Путь:</strong> {displayedQuiz.game_path}
-									</p>
-									<iframe
-										src={displayedQuiz.game_path}
-										className='w-full h-[600px] border border-gray-300 rounded-lg mt-4'
-										title={displayedQuiz.file_name}
-									/>
+									<p className='text-sm mt-2'>Quiz ID: {displayedQuiz.id}</p>
 								</div>
 							)}
 						</div>

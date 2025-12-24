@@ -316,6 +316,8 @@ const TopicContentPage = () => {
 					entity_type: payload.entity_type,
 					quizable_id: payload.quizable_id,
 					is_published: payload.is_published,
+					file_name: payload.file_name,
+					game_path: payload.game_path,
 					questions: payload.questions
 				}
 				const resp = await quizzesApi.update(editingQuiz.id, updatePayload)

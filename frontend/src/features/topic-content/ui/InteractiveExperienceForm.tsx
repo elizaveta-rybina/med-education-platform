@@ -57,6 +57,14 @@ export const InteractiveExperienceForm = ({
 			setError('Заполните название')
 			return
 		}
+		if (!fileName.trim()) {
+			setError('Заполните название игры (file_name)')
+			return
+		}
+		if (!gamePath.trim()) {
+			setError('Заполните путь к игре (game_path)')
+			return
+		}
 		setError(null)
 		setSaving(true)
 		try {

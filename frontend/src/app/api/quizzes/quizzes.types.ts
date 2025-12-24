@@ -53,8 +53,8 @@ export interface Quiz {
 	topic_id?: number | null
 	order_number?: number | null
 	is_published?: boolean | number
-	file_name?: string | null
-	game_path?: string | null
+	file_name?: string
+	game_path?: string
 	created_at?: string
 	updated_at?: string
 	questions?: QuizQuestionPayload[]
