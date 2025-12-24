@@ -7,7 +7,10 @@ interface Props {
 	isLoading?: boolean
 	onSubmit: (payload: QuizPayload) => Promise<void>
 	onCancel: () => void
-	initialValues?: Partial<Quiz> & { file_name?: string; game_path?: string }
+	initialValues?: Partial<Quiz> & {
+		file_name?: string | null
+		game_path?: string | null
+	}
 }
 
 export const InteractiveExperienceForm = ({
@@ -33,7 +36,6 @@ export const InteractiveExperienceForm = ({
 
 	useEffect(() => {
 		if (!initialValues) return
-		console.log('📥 initialValues получены:', initialValues)
 		if (initialValues.title) setTitle(initialValues.title)
 		if (initialValues.order_number)
 			setOrderNumber(String(initialValues.order_number))
@@ -42,12 +44,10 @@ export const InteractiveExperienceForm = ({
 		// Загружаем file_name и game_path если они есть в initialValues
 		if ('file_name' in initialValues) {
 			const fn = (initialValues as any).file_name || ''
-			console.log('📝 Загружаю file_name:', fn)
 			setFileName(fn)
 		}
 		if ('game_path' in initialValues) {
 			const gp = (initialValues as any).game_path || ''
-			console.log('🎮 Загружаю game_path:', gp)
 			setGamePath(gp)
 		}
 	}, [initialValues])
@@ -81,8 +81,6 @@ export const InteractiveExperienceForm = ({
 				file_name: fileName,
 				game_path: gamePath
 			}
-			console.log('📤 Отправляю payload:', payload)
-			console.log('📝 fileName:', fileName, 'gamePath:', gamePath)
 			await onSubmit(payload)
 		} catch (e) {
 			console.error('❌ Ошибка при сохранении:', e)

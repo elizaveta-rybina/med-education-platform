@@ -107,7 +107,7 @@ export const CourseModules = ({
 	if (loading) {
 		return (
 			<div className='text-center py-16'>
-				<p className='text-gray-600'>{t('loading') || 'Загрузка модулей...'}</p>
+				<p className='text-gray-600'>{'Загрузка модулей...'}</p>
 			</div>
 		)
 	}
