@@ -204,7 +204,6 @@ const TopicContentPage = () => {
 
 				// Загружаем изображение в созданную лекцию
 				const response = await lecturesApi.uploadImage(lectureId, fileToUpload)
-				console.log('Ответ от сервера при загрузке изображения:', response)
 
 				// Пробуем извлечь URL из различных возможных структур ответа
 				const url =
@@ -254,7 +253,6 @@ const TopicContentPage = () => {
 				editingLecture.id,
 				fileToUpload
 			)
-			console.log('Ответ от сервера при загрузке изображения:', response)
 
 			// Пробуем извлечь URL из различных возможных структур ответа
 			const url =

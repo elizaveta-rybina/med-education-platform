@@ -1,4 +1,3 @@
-export { ComponentCard } from './ComponentCard'
 export { ErrorBoundary } from './ErrorBoundary'
 export { LanguageToggleButton } from './LanguageToggleButton'
 export { PageMeta } from './PageMeta'

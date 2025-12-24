@@ -27,10 +27,8 @@ export const useCourses = () => {
 		const loadCourses = async () => {
 			setLocalError(null)
 			dispatch(clearError())
-			//console.log('Fetching courses, token:', localStorage.getItem('token'))
 			try {
 				await dispatch(fetchCourses()).unwrap()
-				//console.log('Courses fetched successfully:', courses)
 			} catch (err: unknown) {
 				const error = err as ApiError | { message: string }
 				console.error('Failed to fetch courses:', error)
@@ -63,12 +61,10 @@ export const useCourses = () => {
 		)
 		try {
 			await dispatch(deleteCourse(courseId)).unwrap()
-			//console.log(`Course ${courseId} deleted successfully`)
 		} catch (err: unknown) {
 			const error = err as ApiError | { message: string }
 			console.error('Failed to delete course:', error)
 			if (error.message === 'Unauthorized' || error.message?.includes('401')) {
-				//console.log('Unauthorized error detected, redirecting to /signin')
 				localStorage.removeItem('token')
 				navigate('/signin')
 			} else {

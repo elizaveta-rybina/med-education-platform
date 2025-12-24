@@ -82,30 +82,19 @@ const ModuleViewPage = () => {
 		is_published?: boolean
 		cover_image?: File
 	}) => {
-		console.log('handleSaveTopic called with values:', {
-			...values,
-			cover_image: values.cover_image ? 'File present' : 'No file'
-		})
 		if (!moduleId) return
 		setSaving(true)
 		try {
 			if (editingTopic?.id) {
-				console.log('Updating existing topic:', editingTopic.id)
 				await topicsApi.update(editingTopic.id, {
 					title: values.title,
 					description: values.description,
 					order_number: values.order_number,
 					is_published: values.is_published
 				})
-				console.log('Topic updated successfully')
 
 				// Загружаем обложку если выбрана
 				if (values.cover_image) {
-					console.log(
-						'Uploading cover for topic:',
-						editingTopic.id,
-						values.cover_image
-					)
 					const uploadResult = await topicsApi.uploadCover(
 						editingTopic.id,
 						values.cover_image
@@ -129,12 +118,10 @@ const ModuleViewPage = () => {
 				// Получаем ID созданной темы
 				const createdTopic = (createResult as any).data?.[0]
 				if (createdTopic?.id && values.cover_image) {
-					console.log('Uploading cover for new topic:', createdTopic.id)
 					const uploadResult = await topicsApi.uploadCover(
 						createdTopic.id,
 						values.cover_image
 					)
-					console.log('Cover upload result:', uploadResult)
 				}
 			}
 
@@ -143,24 +130,9 @@ const ModuleViewPage = () => {
 
 			// reload list only
 			const topicsList = await topicsApi.getByModule(Number(moduleId))
-			console.log('Raw topicsList from API:', topicsList)
-			console.log('Raw topicsList JSON:', JSON.stringify(topicsList, null, 2))
-
-			// Дополнительная проверка
-			if (Array.isArray(topicsList) && topicsList.length > 0) {
-				console.log('First topic in list:', {
-					id: topicsList[0]?.id,
-					title: topicsList[0]?.title,
-					cover_image: topicsList[0]?.cover_image,
-					hasOwnProperty_cover_image:
-						topicsList[0]?.hasOwnProperty('cover_image'),
-					allKeys: Object.keys(topicsList[0] || {})
-				})
-			}
 
 			const normalized = (Array.isArray(topicsList) ? topicsList : []).map(
 				(t: any) => {
-					console.log('Processing topic:', t, 'cover_image:', t.cover_image)
 					return {
 						id: t.id,
 						module_id: t.module_id,
@@ -174,7 +146,6 @@ const ModuleViewPage = () => {
 					}
 				}
 			)
-			console.log('Loaded topics with covers:', normalized)
 			setTopics(normalized)
 			setShowTopicForm(false)
 			setEditingTopic(null)
@@ -331,7 +302,6 @@ const ModuleViewPage = () => {
 						onEdit={t => {
 							// Ищем актуальную тему из состояния по ID
 							const actualTopic = topics.find(topic => topic.id === t.id)
-							console.log('Editing topic:', actualTopic)
 							setEditingTopic(actualTopic || t)
 							setShowTopicForm(true)
 							// Прокрутка наверх к форме

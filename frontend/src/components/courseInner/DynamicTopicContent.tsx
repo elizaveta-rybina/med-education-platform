@@ -220,13 +220,6 @@ const DynamicTopicContent: React.FC = () => {
 				userAnswer.length === correctIndices.length &&
 				userAnswer.every(a => correctIndices.includes(a))
 
-			console.log(`Вопрос ${idx + 1}:`, {
-				userAnswer,
-				correctIndices,
-				isCorrect,
-				options: q.options
-			})
-
 			if (isCorrect) correct++
 		})
 
@@ -281,24 +274,6 @@ const DynamicTopicContent: React.FC = () => {
 				const rawMeta = q.metadata as any
 				const metadata =
 					typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta
-				console.log('📊 DynamicTopicContent - parsing metadata:', {
-					quizId: quiz.id,
-					questionIdx: idx,
-					rawMeta,
-					parsedMetadata: metadata,
-					rows: metadata.rows,
-					firstRowCorrectIds: metadata.rows?.[0]?.correct_option_ids
-				})
-
-				// DEBUG: Проверяем что в каждой строке
-				metadata.rows?.forEach((row: any, rowIdx: number) => {
-					console.log(
-						`📊 Row ${rowIdx} correct_option_ids:`,
-						row.correct_option_ids,
-						'type:',
-						typeof row.correct_option_ids
-					)
-				})
 
 				// Преобразуем correct_option_ids и answer_mode в correctAnswers
 				// correct_option_ids содержат ИНДЕКСЫ (0, 1, 2, 3...), нужно маппить на answer ID (ans_0, ans_1...)
@@ -320,11 +295,6 @@ const DynamicTopicContent: React.FC = () => {
 						correctAnswers[cellId] = correctAnswerIds
 					}
 				})
-
-				console.log(
-					'📊 DynamicTopicContent - converted correctAnswers:',
-					correctAnswers
-				)
 
 				return {
 					id: `table_${quiz.id}_${idx}`,

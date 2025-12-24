@@ -62,23 +62,13 @@ export const TopicForm = ({
 
 	// Отдельный эффект для обновления обложки
 	useEffect(() => {
-		console.log(
-			'Cover effect triggered, existing_cover_url:',
-			initialValues?.existing_cover_url,
-			'cover_image:',
-			initialValues?.cover_image,
-			'all initialValues:',
-			initialValues
-		)
 		// Сбрасываем состояние при изменении initialValues
 		setCoverFile(null)
 
 		// Устанавливаем существующую обложку или null
 		if (initialValues?.existing_cover_url) {
-			console.log('Setting coverPreview to:', initialValues.existing_cover_url)
 			setCoverPreview(initialValues.existing_cover_url)
 		} else {
-			console.log('Clearing coverPreview')
 			setCoverPreview(null)
 		}
 	}, [initialValues?.existing_cover_url])
@@ -122,8 +112,6 @@ export const TopicForm = ({
 			setSaving(false)
 		}
 	}
-
-	console.log(coverPreview)
 
 	return (
 		<form onSubmit={handleSubmit} className='space-y-4'>

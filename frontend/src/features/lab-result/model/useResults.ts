@@ -93,7 +93,6 @@ export const useResults = () => {
 			}
 		}
 
-		//console.log('useResults: total:', total, 'correct:', correct)
 		setTotalAnswers(total)
 		setCorrectAnswers(correct)
 	}

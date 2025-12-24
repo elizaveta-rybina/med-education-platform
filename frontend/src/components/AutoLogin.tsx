@@ -18,7 +18,6 @@ export const AutoLogin = () => {
 
 			try {
 				setHasAttemptedLogin(true)
-				console.log('🔐 Auto-logging in with admin credentials...')
 
 				await login({
 					email: 'admin@example.com',

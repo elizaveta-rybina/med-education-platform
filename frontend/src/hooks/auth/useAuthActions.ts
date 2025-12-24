@@ -24,7 +24,6 @@ export const useAuthActions = () => {
 			try {
 				const loginResult = await dispatch(login(data)).unwrap()
 				setAuthToken(loginResult.loginData.token)
-				console.log('Token set after login:', localStorage.getItem('token'))
 
 				const userResult = (await dispatch(fetchUser()).unwrap()) as User
 

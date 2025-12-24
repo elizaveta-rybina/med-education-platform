@@ -106,10 +106,6 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 		}
 	}
 
-	useEffect(() => {
-		console.log('chapterHash in DropdownTableComponent:', chapterHash)
-	}, [chapterHash])
-
 	// Модифицированный resetAnswers
 	const handleResetAnswers = () => {
 		if (!isLocked) {
