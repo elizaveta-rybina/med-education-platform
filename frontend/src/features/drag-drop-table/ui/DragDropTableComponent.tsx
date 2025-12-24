@@ -76,16 +76,12 @@ export const DragDropTableComponent: React.FC<
 	return (
 		<div className='max-w-10xl mx-auto bg-white'>
 			<div className='mb-4 whitespace-pre-line'>
-				{block.tableTitle.split('\n').map((paragraph, i) => (
-					<p key={i} className='mb-2'>
-						{paragraph}
-					</p>
-				))}
+				"Заполните"
 			</div>
 
-			<h4 className='text-2xl font-semibold mb-4 text-gray-800'>
+			<h5 className='text-2xl font-semibold mb-4 text-gray-800'>
 				{block.title}
-			</h4>
+			</h5>
 			<DndContext
 				collisionDetection={closestCenter}
 				onDragStart={handleDragStart}

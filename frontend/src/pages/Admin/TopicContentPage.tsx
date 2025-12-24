@@ -519,7 +519,11 @@ const TopicContentPage = () => {
 					</h1>
 					<div className='flex gap-2'>
 						<button
-							onClick={() => setShowTopicForm(true)}
+							onClick={() => {
+								setShowTopicForm(true)
+								// Прокручиваем страницу наверх, чтобы форма была видна
+								window.scrollTo({ top: 0, behavior: 'smooth' })
+							}}
 							className='flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm'
 							title='Редактировать тему'
 							disabled={saving}
@@ -670,6 +674,8 @@ const TopicContentPage = () => {
 										setEditingLecture(null)
 										setShowLectureForm(true)
 										setShowQuizForm(false)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors'
 									title='Добавить лекцию'
@@ -697,6 +703,8 @@ const TopicContentPage = () => {
 										setEditingLecture(null)
 										setEditingQuiz(null)
 										setQuizType(null)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors'
 									title='Добавить тест'
@@ -838,6 +846,8 @@ const TopicContentPage = () => {
 										setQuizType('standard')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-500 transition-colors hover:bg-blue-50 dark:hover:bg-blue-900/20'
 								>
@@ -853,6 +863,8 @@ const TopicContentPage = () => {
 										setQuizType('table')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 dark:hover:border-green-500 transition-colors hover:bg-green-50 dark:hover:bg-green-900/20'
 								>
@@ -868,6 +880,8 @@ const TopicContentPage = () => {
 										setQuizType('interactive')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-purple-500 dark:hover:border-purple-500 transition-colors hover:bg-purple-50 dark:hover:bg-purple-900/20'
 								>
@@ -883,6 +897,8 @@ const TopicContentPage = () => {
 										setQuizType('input')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
 									}}
 									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-orange-500 dark:hover:border-orange-500 transition-colors hover:bg-orange-50 dark:hover:bg-orange-900/20'
 								>
@@ -902,24 +918,28 @@ const TopicContentPage = () => {
 						onEditLecture={lec => {
 							setEditingLecture(lec)
 							setShowLectureForm(true)
+							// Прокручиваем страницу наверх, чтобы форма была видна
+							window.scrollTo({ top: 0, behavior: 'smooth' })
 						}}
 						onDeleteLecture={handleDeleteLecture}
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
-							// Determine quiz type based on question type first, then quiz_type
+							// Determine quiz type based on question type first, then presence of game files
 							if (quiz.questions?.some(q => q.question_type === 'table')) {
 								setQuizType('table')
 							} else if (
 								quiz.questions?.some(q => q.question_type === 'input_answer')
 							) {
 								setQuizType('input')
-							} else if (quiz.quiz_type === 'additional') {
+							} else if (quiz.file_name || quiz.game_path) {
 								setQuizType('interactive')
 							} else {
 								setQuizType('standard')
 							}
 							setShowQuizForm(true)
 							setShowLectureForm(false)
+							// Прокручиваем страницу наверх, чтобы форма была видна
+							window.scrollTo({ top: 0, behavior: 'smooth' })
 						}}
 						onDeleteQuiz={handleDeleteQuiz}
 						isLoading={saving}

@@ -265,7 +265,7 @@ const DynamicTopicContent: React.FC = () => {
 		if (quiz.questions?.some(q => q.question_type === 'table')) return 'table'
 		if (quiz.questions?.some(q => q.question_type === 'input_answer'))
 			return 'input'
-		if (quiz.quiz_type === 'additional') return 'interactive'
+		if (quiz.file_name || quiz.game_path) return 'interactive'
 		return 'standard'
 	}
 
@@ -347,9 +347,6 @@ const DynamicTopicContent: React.FC = () => {
 					<div className='mt-4'>
 						<div className='mb-4'>
 							<div className='flex items-center justify-between'>
-								<h3 className='text-xl font-semibold text-gray-800'>
-									Таблица {currentTableIndex + 1} из {tableBlocks.length}
-								</h3>
 								{tableBlocks.length > 1 && (
 									<div className='flex gap-2'>
 										<button
@@ -402,7 +399,8 @@ const DynamicTopicContent: React.FC = () => {
 					<div className='mt-4'>
 						<div className='p-6 bg-gray-50 rounded-lg'>
 							<h3 className='text-lg font-medium mb-4'>
-								Пройдите интерактивное задание, а после заполните таблицу под ним.
+								Пройдите интерактивное задание, а после заполните таблицу под
+								ним.
 							</h3>
 							{displayedQuiz.game_path || displayedQuiz.file_name ? (
 								<div className='space-y-2'>

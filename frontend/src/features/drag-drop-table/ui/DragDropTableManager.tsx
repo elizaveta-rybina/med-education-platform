@@ -65,12 +65,6 @@ export const DragDropTableManager: React.FC<DragDropTableManagerProps> = ({
 	return (
 		<div className='max-w-10xl mx-auto'>
 			<div className='mb-4'>
-				<h3 className='text-xl font-semibold text-gray-800'>
-					{t('dnd.taskProgress', {
-						current: currentBlockIndex + 1,
-						total: blocks.length
-					})}
-				</h3>
 			</div>
 			<DragDropTableComponent
 				block={currentBlock}
