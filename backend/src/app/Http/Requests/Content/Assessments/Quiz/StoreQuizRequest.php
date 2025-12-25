@@ -233,23 +233,73 @@ class StoreQuizRequest extends FormRequest
         }
 
         $options = $this->input("questions.{$index}.options", []);
-        $optionIds = array_column($options, 'order');
+        $optionCount = count($options);
 
         foreach ($metadata['rows'] as $rowIndex => $row) {
-            if (!isset($row['cells']) || !is_array($row['cells']) || !isset($row['correct_option_ids'])) {
-                $fail("Строка {$rowIndex} в table должна содержать 'cells' и 'correct_option_ids'.");
+            if (!isset($row['cells']) || !is_array($row['cells'])) {
+                $fail("Строка {$rowIndex} должна содержать 'cells'.");
                 return;
             }
-            foreach ($row['correct_option_ids'] ?? [] as $id) {
-                if (!in_array($id, $optionIds)) {
-                    $fail("Недопустимый correct_option_id {$id} в строке {$rowIndex} table.");
+
+            // Новый формат: correct_answers по cell_key
+            if (isset($row['correct_answers'])) {
+                foreach ($row['correct_answers'] as $cellKey => $correctIndices) {
+                    // Находим ячейку с этим cell_key
+                    $cell = collect($row['cells'])->firstWhere('cell_key', $cellKey);
+                    if (!$cell) {
+                        $fail("correct_answers ссылается на несуществующую ячейку {$cellKey} в строке {$rowIndex}.");
+                        continue;
+                    }
+
+                    $available = $cell['available_option_ids'] ?? [];
+                    if (empty($available)) {
+                        $fail("Ячейка {$cellKey} имеет correct_answers, но нет available_option_ids.");
+                        continue;
+                    }
+
+                    foreach ($correctIndices as $idx) {
+                        if (!in_array($idx, $available)) {
+                            $fail("Правильный ответ {$idx} для ячейки {$cellKey} не входит в доступные опции.");
+                        }
+                        if ($idx < 0 || $idx >= $optionCount) {
+                            $fail("Индекс {$idx} выходит за пределы options.");
+                        }
+                    }
+                }
+            }
+
+            // Старый формат: correct_option_ids на строку (общий пул)
+            if (isset($row['correct_option_ids'])) {
+                foreach ($row['correct_option_ids'] as $id) {
+                    if ($id < 0 || $id >= $optionCount) {
+                        $fail("Недопустимый correct_option_id {$id} в строке {$rowIndex}.");
+                    }
+                }
+            }
+
+            // Валидация ячеек
+            foreach ($row['cells'] as $cellIndex => $cell) {
+                if (!isset($cell['type'])) {
+                    $fail("Ячейка {$rowIndex}.{$cellIndex} должна иметь 'type'.");
+                    continue;
+                }
+
+                if ($cell['type'] === 'select') {
+                    if (isset($cell['available_option_ids'])) {
+                        foreach ($cell['available_option_ids'] as $idx) {
+                            if ($idx < 0 || $idx >= $optionCount) {
+                                $fail("available_option_ids содержит недопустимый индекс {$idx} в ячейке {$rowIndex}.{$cellIndex}.");
+                            }
+                        }
+                    }
+                    // Если нет available_option_ids — это допустимо (будет общий пул)
                 }
             }
         }
 
         foreach ($metadata['columns'] as $columnIndex => $column) {
             if (!isset($column['name']) || !isset($column['type'])) {
-                $fail("Столбец {$columnIndex} в table должен содержать 'name' и 'type'.");
+                $fail("Столбец {$columnIndex} должен содержать 'name' и 'type'.");
             }
         }
     }

@@ -20,7 +20,11 @@ class StudentQuestionResource extends JsonResource
         }
         if ($this->question_type === 'table' && isset($metadata['rows'])) {
             $metadata['rows'] = array_map(function ($row) {
+                // Удаляем старый формат правильных ответов
                 unset($row['correct_option_ids']);
+
+                unset($row['correct_answers']);
+
                 return $row;
             }, $metadata['rows']);
         }

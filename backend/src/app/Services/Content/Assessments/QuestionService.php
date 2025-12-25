@@ -39,22 +39,24 @@ class QuestionService implements QuestionServiceInterface
                 Log::info('Creating question for quiz', ['quiz_id' => $quiz->id, 'data' => $data]);
 
                 $optionsData = $data['options'] ?? [];
-                $metadataRaw = $data['metadata'] ?? null;  // Сохраняем оригинал
+                $metadataRaw = $data['metadata'] ?? null;
 
-                // Убираем options из данных вопроса (metadata оставляем!)
                 unset($data['options']);
 
-                // 1. Создаём вопрос (с metadata, если он есть)
+                // 1. Создаём вопрос
                 $question = $this->questionRepository->create($quiz, $data);
 
                 $createdOptions = null;
 
-                // 2. Создаём опции, если есть
+                // 2. Создаём опции
                 if (!empty($optionsData)) {
                     $createdOptions = $this->questionOptionService->createMultipleOptions($quiz, $question, $optionsData);
                 }
 
-                // Для matching и других типов — metadata уже сохранён на шаге 1, ничего не трогаем
+                // 3. Обработка table — старый и новый формат
+                if ($metadataRaw && $question->question_type === 'table' && $createdOptions) {
+                    $this->processTableMetadata($question, $metadataRaw, $createdOptions, $optionsData);
+                }
 
                 return $question->fresh(['options']);
 
@@ -85,19 +87,30 @@ class QuestionService implements QuestionServiceInterface
                 Log::info('Updating question', ['quiz_id' => $quiz->id, 'question_id' => $question->id, 'data' => $data]);
 
                 $options = $data['options'] ?? [];
+                $metadataRaw = $data['metadata'] ?? null;
+
                 unset($data['options']);
 
                 // Обновляем вопрос
                 $this->questionRepository->update($question, $data);
 
                 // Синхронизируем опции
+                $syncedOptions = null;
                 if (!empty($options)) {
-                    $this->questionOptionService->syncOptions($quiz, $question, $options);
+                    $syncedOptions = $this->questionOptionService->syncOptions($quiz, $question, $options);
                 } else {
                     $question->options()->delete();
                 }
 
+                // Обработка table — если есть метаданные и опции
+                if ($metadataRaw && $question->question_type === 'table' && ($syncedOptions || $question->options()->exists())) {
+                    // Если опции были удалены — используем существующие
+                    $currentOptions = $syncedOptions ?? $question->options()->get();
+                    $this->processTableMetadata($question, $metadataRaw, $currentOptions, $options);
+                }
+
                 return $question->fresh(['options']);
+
             } catch (Exception $e) {
                 Log::error('Failed to update question: ' . $e->getMessage(), [
                     'quiz_id' => $quiz->id,
@@ -108,6 +121,68 @@ class QuestionService implements QuestionServiceInterface
                 throw new Exception('Failed to update question', 0, $e);
             }
         });
+    }
+
+    /**
+     * Общая обработка metadata для table — замена индексов на реальные ID опций
+     */
+    private function processTableMetadata(Question $question, $metadataRaw, $optionsCollection, array $originalOptionsData = []): void
+    {
+        $metadataArray = is_string($metadataRaw) ? json_decode($metadataRaw, true) : $metadataRaw;
+
+        if (!is_array($metadataArray) || !isset($metadataArray['rows'])) {
+            return;
+        }
+
+        // Создаём маппинг: индекс в исходном массиве options[] → реальный ID
+        $indexToIdMap = [];
+        foreach ($optionsCollection as $index => $option) {
+            $indexToIdMap[$index] = $option->id;
+        }
+
+        foreach ($metadataArray['rows'] as &$row) {
+            // Новый формат: correct_answers по ячейкам
+            if (isset($row['correct_answers'])) {
+                foreach ($row['correct_answers'] as $cellKey => &$indices) {
+                    $realIds = [];
+                    foreach ($indices as $index) {
+                        if (isset($indexToIdMap[$index])) {
+                            $realIds[] = $indexToIdMap[$index];
+                        }
+                    }
+                    $indices = $realIds;
+                }
+            }
+
+            // Старый формат: correct_option_ids на всю строку
+            if (isset($row['correct_option_ids'])) {
+                $realIds = [];
+                foreach ($row['correct_option_ids'] as $index) {
+                    if (isset($indexToIdMap[$index])) {
+                        $realIds[] = $indexToIdMap[$index];
+                    }
+                }
+                $row['correct_option_ids'] = $realIds;
+            }
+
+            // available_option_ids в ячейках (для per-cell вариантов)
+            if (isset($row['cells'])) {
+                foreach ($row['cells'] as &$cell) {
+                    if (isset($cell['available_option_ids'])) {
+                        $realIds = [];
+                        foreach ($cell['available_option_ids'] as $index) {
+                            if (isset($indexToIdMap[$index])) {
+                                $realIds[] = $indexToIdMap[$index];
+                            }
+                        }
+                        $cell['available_option_ids'] = $realIds;
+                    }
+                }
+            }
+        }
+
+        $question->metadata = $metadataArray;
+        $question->save();
     }
 
     /**
@@ -133,3 +208,4 @@ class QuestionService implements QuestionServiceInterface
         }
     }
 }
+

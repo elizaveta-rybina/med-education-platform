@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Content\{Assessments\QuizAttemptController,
     Assessments\QuizController,
     CourseController,
+    LectureAttachmentController,
     LectureController,
     LectureImageController,
     ModuleController,
@@ -82,5 +83,10 @@ Route::middleware(['auth.api', 'role:admin'])->prefix('admin')->group(function (
             Route::post('{quiz}/submit-answers', [QuizAttemptController::class, 'submitAnswers']);
 
         });
+
+        Route::post(
+            '/lectures/{lectureId}/attachments/add-game',
+            [LectureAttachmentController::class, 'addGameAttachment']
+        );
     });
 });
