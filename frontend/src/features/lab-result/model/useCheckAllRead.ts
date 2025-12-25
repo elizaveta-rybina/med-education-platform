@@ -15,9 +15,9 @@ export const useCheckAllRead = () => {
 
 		try {
 			const readStatus = JSON.parse(savedReadStatus) as Record<string, boolean>
-			const allChapters = course.modules.flatMap(m => m.chapters)
+			const allChapters = course.modules.flatMap((m: any) => m.chapters)
 			const allChaptersRead = allChapters.every(
-				chapter => readStatus[chapter.hash] === true
+				(chapter: any) => readStatus[chapter.hash] === true
 			)
 			setIsAllRead(allChaptersRead)
 		} catch (error) {

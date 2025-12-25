@@ -18,6 +18,8 @@ class Question extends Model
         'metadata',
         'is_auto_graded',
         'points',
+        'max_length',
+        'placeholder',
     ];
 
     protected $casts = [

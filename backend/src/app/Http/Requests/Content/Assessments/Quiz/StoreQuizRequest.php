@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 class StoreQuizRequest extends FormRequest
 {
     private const ENTITY_TYPES = ['module', 'topic', 'lecture', 'assignment'];
-    private const QUIZ_TYPES = ['topic_final', 'additional', 'embedded', 'module_final'];
+    private const QUIZ_TYPES = ['topic_final', 'additional', 'embedded', 'module_final', 'standard', 'table', 'interactive', 'input', 'free-input'];
     private const QUESTION_TYPES = [
         'single_choice' => [
             'requires_options' => true,
@@ -49,6 +49,16 @@ class StoreQuizRequest extends FormRequest
             'metadata_required' => true,
             'metadata_validator' => 'validateTableMetadata',
         ],
+        'input_answer' => [
+            'requires_options' => false,
+            'requires_correct' => false,
+            'metadata_required' => false,
+        ],
+        'free-input' => [
+            'requires_options' => false,
+            'requires_correct' => false,
+            'metadata_required' => false,
+        ],
     ];
 
     public function authorize(): bool
@@ -65,6 +75,7 @@ class StoreQuizRequest extends FormRequest
             'max_attempts' => ['nullable', 'integer', 'min:1'],
             'passing_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1'],
+            'time_limit_seconds' => ['nullable', 'integer', 'min:1'],
             'file_name' => ['nullable', 'string', 'max:255'],
             'game_path' => ['nullable', 'string', 'max:512'],
             'entity_type' => ['required', Rule::in(self::ENTITY_TYPES), $this->validateQuizTypeEntityCompatibility()],
@@ -81,6 +92,8 @@ class StoreQuizRequest extends FormRequest
             'questions.*.metadata' => ['nullable', $this->validateMetadata()],
             'questions.*.is_auto_graded' => ['boolean'],
             'questions.*.points' => ['required', 'integer', 'min:1'],
+            'questions.*.max_length' => ['nullable', 'integer', 'min:1'],
+            'questions.*.placeholder' => ['nullable', 'string', 'max:255'],
             'questions.*.options' => ['nullable', 'array', $this->validateOptions()],
             'questions.*.options.*.text' => ['required_if:questions.*.question_type,' . implode(',', array_keys(array_filter(self::QUESTION_TYPES, fn($type) => $type['requires_options']))), 'string'],
             'questions.*.options.*.is_correct' => ['required_if:questions.*.question_type,' . implode(',', array_keys(array_filter(self::QUESTION_TYPES, fn($type) => $type['requires_correct']))), 'boolean'],

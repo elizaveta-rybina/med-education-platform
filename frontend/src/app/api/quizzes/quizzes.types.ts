@@ -1,4 +1,15 @@
-export type QuizEntityType = 'module' | 'topic' | 'lecture'
+export type QuizEntityType = 'module' | 'topic' | 'lecture' | 'assignment'
+
+export type QuizType =
+	| 'topic_final'
+	| 'module_final'
+	| 'additional'
+	| 'embedded'
+	| 'standard'
+	| 'table'
+	| 'interactive'
+	| 'input'
+	| 'free-input'
 
 export type QuizQuestionType =
 	| 'single_choice'
@@ -6,6 +17,10 @@ export type QuizQuestionType =
 	| 'table'
 	| 'interactive_experience'
 	| 'input_answer'
+	| 'text_input'
+	| 'matching'
+	| 'ordering'
+	| 'free-input'
 
 export interface QuizOptionPayload {
 	text: string
@@ -29,23 +44,29 @@ export interface QuizTableMetadata {
 }
 
 export interface QuizQuestionPayload {
+	id?: number
 	text: string
 	question_type: QuizQuestionType
 	points: number
 	is_auto_graded?: boolean
 	options?: QuizOptionPayload[]
-	metadata?: QuizTableMetadata | string
+	metadata?: QuizTableMetadata | string | Record<string, unknown>
 	order_number?: number
+	max_length?: number | null
+	placeholder?: string | null
+	created_at?: string
+	updated_at?: string
 }
 
 export interface Quiz {
 	id?: number
 	title?: string
 	description?: string | null
-	quiz_type?: string | null
+	quiz_type?: QuizType | null
 	max_attempts?: number | null
 	passing_score?: number | null
 	time_limit_minutes?: number | null
+	time_limit_seconds?: number | null
 	entity_type?: QuizEntityType | null
 	quizable_id?: number | null
 	module_id?: number | null
@@ -53,8 +74,8 @@ export interface Quiz {
 	topic_id?: number | null
 	order_number?: number | null
 	is_published?: boolean | number
-	file_name?: string
-	game_path?: string
+	file_name?: string | null
+	game_path?: string | null
 	created_at?: string
 	updated_at?: string
 	questions?: QuizQuestionPayload[]
@@ -63,13 +84,14 @@ export interface Quiz {
 export interface QuizPayload {
 	title: string
 	description?: string | null
-	quiz_type: string
+	quiz_type: QuizType
 	max_attempts?: number
 	passing_score?: number
-	time_limit_minutes?: number
+	time_limit_minutes?: number | null
+	time_limit_seconds?: number | null
 	entity_type: QuizEntityType
 	quizable_id: number
-	questions: QuizQuestionPayload[]
+	questions?: QuizQuestionPayload[]
 	order_number?: number
 	is_published?: boolean | number
 	file_name?: string | null

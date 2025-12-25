@@ -22,6 +22,8 @@ class QuestionResource extends JsonResource
             'metadata' => $this->metadata,
             'is_auto_graded' => $this->is_auto_graded,
             'points' => $this->points,
+            'max_length' => $this->max_length,
+            'placeholder' => $this->placeholder,
             'options' => QuestionOptionResource::collection($this->whenLoaded('options')),
             'created_at' => $this->created_at->toISOString(),
             'updated_at' => $this->updated_at->toISOString(),

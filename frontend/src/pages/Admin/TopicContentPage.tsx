@@ -327,7 +327,16 @@ const TopicContentPage = () => {
 						...updatePayload
 					}
 				setQuizzes(prev =>
-					prev.map(q => (q.id === editingQuiz.id ? { ...q, ...updated } : q))
+					prev.map(q =>
+						q.id === editingQuiz.id
+							? {
+									...q,
+									...updated,
+									file_name: updated.file_name ?? undefined,
+									game_path: updated.game_path ?? undefined
+							  }
+							: q
+					)
 				)
 				setEditingQuiz(null)
 				setShowQuizForm(false)

@@ -21,6 +21,7 @@ class Quiz extends Model
         'passing_score',
         'questions_count',
         'time_limit_minutes',
+        'time_limit_seconds',
         'quizable_type',
         'quizable_id',
         'file_name',

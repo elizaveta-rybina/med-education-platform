@@ -45,7 +45,7 @@ export const createBaseApi = (): AxiosInstance => {
 				status: error.response?.status,
 				url: error.config?.url,
 				baseURL: error.config?.baseURL,
-				fullUrl: error.config?.baseURL + error.config?.url
+				fullUrl: `${error.config?.baseURL || ''}${error.config?.url || ''}`
 			})
 			// Handle 401 Unauthorized errors (token expired)
 			if (error.response?.status === 401) {

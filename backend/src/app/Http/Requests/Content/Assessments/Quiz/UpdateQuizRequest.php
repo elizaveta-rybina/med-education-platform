@@ -32,16 +32,18 @@ class UpdateQuizRequest extends FormRequest
     public function rules(): array
     {
         $entityTypes = ['module', 'topic', 'lecture', 'assignment'];
-        $questionTypes = ['single_choice', 'multiple_choice', 'text_input', 'matching', 'ordering', 'table'];
+        $questionTypes = ['single_choice', 'multiple_choice', 'text_input', 'matching', 'ordering', 'table', 'input_answer', 'free-input'];
+        $quizTypes = ['topic_final', 'module_final', 'practice', 'additional', 'embedded', 'standard', 'table', 'interactive', 'input', 'free-input'];
 
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'quiz_type' => ['required', Rule::in(['topic_final', 'module_final', 'practice', 'additional', 'embedded'])],
+            'quiz_type' => ['required', Rule::in($quizTypes)],
             'max_attempts' => ['nullable', 'integer', 'min:1'],
             'passing_score' => ['nullable', 'integer', 'min:0', 'max:100'],
             'questions_count' => ['nullable', 'integer', 'min:0'],
             'time_limit_minutes' => ['nullable', 'integer', 'min:1'],
+            'time_limit_seconds' => ['nullable', 'integer', 'min:1'],
             'file_name' => ['nullable', 'string', 'max:255'],
             'game_path' => ['nullable', 'string', 'max:512'],
             'entity_type' => ['required', Rule::in($entityTypes)],
@@ -125,6 +127,8 @@ class UpdateQuizRequest extends FormRequest
             ],
             'questions.*.is_auto_graded' => ['boolean'],
             'questions.*.points' => ['required', 'integer', 'min:1'],
+            'questions.*.max_length' => ['nullable', 'integer', 'min:1'],
+            'questions.*.placeholder' => ['nullable', 'string', 'max:255'],
             'questions.*.options' => [
                 'nullable',
                 'array',

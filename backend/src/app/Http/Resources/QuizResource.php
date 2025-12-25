@@ -23,6 +23,7 @@ class QuizResource extends JsonResource
             'passing_score' => $this->passing_score,
             'questions_count' => $this->questions_count,
             'time_limit_minutes' => $this->time_limit_minutes,
+            'time_limit_seconds' => $this->time_limit_seconds,
             'entity_type' => $this->quizable_type, // возвращаем как entity_type
             'quizable_id' => $this->quizable_id,
             'file_name' => $this->file_name,
