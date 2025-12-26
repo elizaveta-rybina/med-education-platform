@@ -313,7 +313,7 @@ const DynamicTopicContent: React.FC = () => {
 					type: 'drag-drop-table' as const,
 					title: q.text || 'Таблица',
 					tableTitle: q.text || '',
-					description: (q as any).description || (q as any).context || '',
+					description: quiz.description || '',
 					columns: (metadata.columns || []).map((col: any, i: number) => ({
 						id: `col_${i}`,
 						title: col.name || `Колонка ${i + 1}`,

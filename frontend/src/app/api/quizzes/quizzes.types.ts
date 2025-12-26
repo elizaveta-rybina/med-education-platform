@@ -15,6 +15,7 @@ export type QuizQuestionType =
 	| 'single_choice'
 	| 'multiple_choice'
 	| 'table'
+	| 'select-table'
 	| 'interactive_experience'
 	| 'input_answer'
 	| 'text_input'

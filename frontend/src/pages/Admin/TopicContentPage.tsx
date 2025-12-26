@@ -14,6 +14,7 @@ import { InputAnswerForm } from '@/features/topic-content/ui/InputAnswerForm'
 import { InteractiveExperienceForm } from '@/features/topic-content/ui/InteractiveExperienceForm'
 import { LectureForm } from '@/features/topic-content/ui/LectureForm'
 import { QuizForm } from '@/features/topic-content/ui/QuizForm'
+import { SelectTableForm } from '@/features/topic-content/ui/SelectTableForm'
 import { Modal } from '@/shared/ui/modal'
 import { resizeImage } from '@/shared/utils/imageResize'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -143,7 +144,7 @@ const TopicContentPage = () => {
 	const [showQuizForm, setShowQuizForm] = useState(false)
 	const [showQuizTypeSelection, setShowQuizTypeSelection] = useState(false)
 	const [quizType, setQuizType] = useState<
-		'standard' | 'table' | 'interactive' | 'input' | null
+		'standard' | 'table' | 'select-table' | 'interactive' | 'input' | null
 	>(null)
 	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
@@ -292,6 +293,27 @@ const TopicContentPage = () => {
 		}
 	}
 
+	const handleDeleteImage = async (imageId: number): Promise<void> => {
+		const imageToDelete = uploadedImages.find(img => img.id === imageId)
+		if (!imageToDelete) return
+
+		try {
+			// Если есть attachment_id и editingLecture, удаляем через API лекции
+			if (imageToDelete.attachment_id && editingLecture?.id) {
+				await lecturesApi.deleteImage(
+					editingLecture.id,
+					imageToDelete.attachment_id
+				)
+			}
+
+			// Удаляем из локального состояния
+			setUploadedImages(prev => prev.filter(img => img.id !== imageId))
+		} catch (e) {
+			console.error('Ошибка удаления изображения:', e)
+			throw e
+		}
+	}
+
 	const handleSaveQuiz = async (payload: QuizPayload) => {
 		if (!topicId) return
 		setSaving(true)
@@ -299,7 +321,7 @@ const TopicContentPage = () => {
 			if (editingQuiz?.id) {
 				const updatePayload = {
 					title: payload.title,
-					description: payload.description,
+					description: payload.description ?? '',
 					quiz_type: payload.quiz_type,
 					max_attempts: payload.max_attempts,
 					passing_score: payload.passing_score,
@@ -784,6 +806,7 @@ const TopicContentPage = () => {
 									}}
 									initialValues={editingQuiz || undefined}
 									onImageUpload={handleImageUpload}
+									onDeleteImage={handleDeleteImage}
 									uploadedImages={uploadedImages}
 								/>
 							)}
@@ -801,11 +824,12 @@ const TopicContentPage = () => {
 									}}
 									initialValues={editingQuiz || undefined}
 									onImageUpload={handleImageUpload}
+									onDeleteImage={handleDeleteImage}
 									uploadedImages={uploadedImages}
 								/>
 							)}{' '}
 							{quizType === 'select-table' && (
-								<DragDropQuizForm
+								<SelectTableForm
 									topicId={Number(topicId)}
 									defaultOrderNumber={nextOrder}
 									isLoading={saving}
@@ -818,6 +842,7 @@ const TopicContentPage = () => {
 									}}
 									initialValues={editingQuiz || undefined}
 									onImageUpload={handleImageUpload}
+									onDeleteImage={handleDeleteImage}
 									uploadedImages={uploadedImages}
 								/>
 							)}
@@ -845,8 +870,12 @@ const TopicContentPage = () => {
 										setShowQuizForm(false)
 										setEditingQuiz(null)
 										setQuizType(null)
+										setUploadedImages([])
 									}}
 									initialValues={editingQuiz || undefined}
+									onImageUpload={handleImageUpload}
+									onDeleteImage={handleDeleteImage}
+									uploadedImages={uploadedImages}
 								/>
 							)}{' '}
 						</div>
@@ -966,9 +995,15 @@ const TopicContentPage = () => {
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
 							// Determine quiz type based on question type first, then presence of game files
-							if (quiz.questions?.some(q => q.question_type === 'select-table')) {
+							if (
+								quiz.questions?.some(
+									(q: any) => q.question_type === 'select-table'
+								)
+							) {
 								setQuizType('select-table')
-							} else if (quiz.questions?.some(q => q.question_type === 'table')) {
+							} else if (
+								quiz.questions?.some(q => q.question_type === 'table')
+							) {
 								setQuizType('table')
 							} else if (
 								quiz.questions?.some(q => q.question_type === 'free-input')

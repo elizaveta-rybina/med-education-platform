@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import ReactMarkdown from 'react-markdown'
 import { DragDropTableBlock } from '../model/types'
 import { DragDropTableComponent } from './DragDropTableComponent'
 
@@ -65,80 +64,6 @@ export const DragDropTableManager: React.FC<DragDropTableManagerProps> = ({
 
 	return (
 		<div className='max-w-10xl mx-auto'>
-			<div className='mb-4'></div>
-			{currentBlock.description && (
-				<div className='mb-6 prose prose-sm max-w-none'>
-					<ReactMarkdown
-						components={{
-							p: ({ children }) => (
-								<p className='mb-2 text-gray-700 leading-relaxed'>{children}</p>
-							),
-							img: ({ src, alt }) => (
-								<img
-									src={src}
-									alt={alt || 'Description image'}
-									className='max-w-full h-auto rounded-lg my-3'
-								/>
-							),
-							h1: ({ children }) => (
-								<h1 className='text-2xl font-bold mb-3 mt-4 text-gray-800'>
-									{children}
-								</h1>
-							),
-							h2: ({ children }) => (
-								<h2 className='text-xl font-bold mb-2 mt-3 text-gray-800'>
-									{children}
-								</h2>
-							),
-							h3: ({ children }) => (
-								<h3 className='text-lg font-semibold mb-2 mt-2 text-gray-800'>
-									{children}
-								</h3>
-							),
-							ul: ({ children }) => (
-								<ul className='list-disc list-inside mb-2 ml-4 text-gray-700'>
-									{children}
-								</ul>
-							),
-							ol: ({ children }) => (
-								<ol className='list-decimal list-inside mb-2 ml-4 text-gray-700'>
-									{children}
-								</ol>
-							),
-							li: ({ children }) => <li className='mb-1'>{children}</li>,
-							code: ({ children, className }) => {
-								const isInline = !className?.includes('language-')
-								return isInline ? (
-									<code className='bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono text-red-600'>
-										{children}
-									</code>
-								) : (
-									<pre className='bg-gray-900 text-gray-100 p-3 rounded-lg mb-3 overflow-x-auto'>
-										<code className='font-mono text-sm'>{children}</code>
-									</pre>
-								)
-							},
-							blockquote: ({ children }) => (
-								<blockquote className='border-l-4 border-purple-400 pl-4 italic text-gray-600 my-2'>
-									{children}
-								</blockquote>
-							),
-							a: ({ href, children }) => (
-								<a
-									href={href}
-									target='_blank'
-									rel='noopener noreferrer'
-									className='text-purple-600 hover:text-purple-700 underline'
-								>
-									{children}
-								</a>
-							)
-						}}
-					>
-						{currentBlock.description}
-					</ReactMarkdown>
-				</div>
-			)}
 			<DragDropTableComponent
 				block={currentBlock}
 				onComplete={handleComplete}

@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import MarkdownEditor from 'react-markdown-editor-lite'
 import 'react-markdown-editor-lite/lib/index.css'
 import remarkGfm from 'remark-gfm'
+import { UploadedImagesDisplay } from './UploadedImagesDisplay'
 
 import type {
 	Quiz,
@@ -18,6 +19,7 @@ interface QuizFormProps {
 	onCancel: () => void
 	initialValues?: Partial<Quiz>
 	onImageUpload?: (file: File) => Promise<string>
+	onDeleteImage?: (imageId: number) => Promise<void>
 	uploadedImages?: Array<{ id: number; url: string; filename: string }>
 }
 
@@ -62,6 +64,7 @@ export const QuizForm = ({
 	onCancel,
 	initialValues,
 	onImageUpload,
+	onDeleteImage,
 	uploadedImages = []
 }: QuizFormProps) => {
 	const [title, setTitle] = useState('')
@@ -263,7 +266,7 @@ export const QuizForm = ({
 
 		return {
 			title: title.trim(),
-			description: description.trim() || null,
+			description: description.trim(),
 			quiz_type: quizType,
 			max_attempts: parsedMaxAttempts,
 			passing_score: parsedPassingScore,
@@ -392,41 +395,12 @@ export const QuizForm = ({
 			</div>
 
 			{uploadedImages.length > 0 && (
-				<div>
-					<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-						✓ Загруженные изображения ({uploadedImages.length})
-					</label>
-					<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3'>
-						{uploadedImages.map(image => (
-							<div
-								key={image.id}
-								className='relative group border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:ring-2 hover:ring-green-500 transition-all'
-							>
-								<img
-									src={image.url}
-									alt={image.filename}
-									className='w-full h-32 object-cover'
-									onError={() => {
-										console.error(
-											`Не удалось загрузить изображение: ${image.url}`
-										)
-									}}
-								/>
-								<div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center'>
-									<div className='text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity px-2'>
-										{image.filename}
-									</div>
-								</div>
-								<div className='absolute top-1 right-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity'>
-									✓ Сохранено
-								</div>
-							</div>
-						))}
-					</div>
-					<p className='text-xs text-gray-500 dark:text-gray-400 mt-2'>
-						Все изображения успешно загружены и сохранены в тесте.
-					</p>
-				</div>
+				<UploadedImagesDisplay
+					images={uploadedImages}
+					message='Все изображения успешно загружены и сохранены в тесте.'
+					isLoading={isLoading || saving}
+					onDeleteImage={onDeleteImage}
+				/>
 			)}
 
 			<div>
