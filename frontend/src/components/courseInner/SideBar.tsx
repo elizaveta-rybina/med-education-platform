@@ -88,9 +88,12 @@ const SideBarCourse = () => {
 							q?.quiz_type === 'additional' ||
 							(Array.isArray(q?.questions) &&
 								q.questions.some((qq: any) =>
-									['table', 'input_answer', 'interactive_experience'].includes(
-										qq?.question_type
-									)
+									[
+										'table',
+										'input_answer',
+										'interactive_experience',
+										'free-input'
+									].includes(qq?.question_type)
 								))
 						if (!typeMatch) return false
 						const t = (q?.title || '').trim().toLowerCase()

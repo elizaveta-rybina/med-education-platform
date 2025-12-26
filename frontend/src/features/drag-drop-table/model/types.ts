@@ -3,6 +3,7 @@ export interface DragDropTableBlock {
 	type: 'drag-drop-table'
 	title: string
 	tableTitle: string
+	description?: string // Описание с поддержкой markdown и изображений
 	columns: {
 		id: string
 		title: string

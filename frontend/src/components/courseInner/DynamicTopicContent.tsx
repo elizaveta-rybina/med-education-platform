@@ -4,12 +4,15 @@ import { quizzesApi } from '@/app/api/quizzes/quizzes.api'
 import type { Quiz } from '@/app/api/quizzes/quizzes.types'
 import { topicsApi } from '@/app/api/topics/topics.api'
 import type { Topic } from '@/app/api/topics/topics.types'
+import { FreeInputBlock } from '@/components/courseInner/block/FreeInputBlock'
 import { ChapterHeader } from '@/components/courseInner/ChapterHeader'
 import { MarkAsReadButton } from '@/components/courseInner/MarkAsReadButton'
 import { DragDropTableManager } from '@/features/drag-drop-table'
 import type { DragDropTableBlock } from '@/features/drag-drop-table/model/types'
 import React, { useEffect, useMemo, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useSearchParams } from 'react-router-dom'
+import remarkGfm from 'remark-gfm'
 import { LectureContent } from './dynamic/LectureContent'
 import { LectureNavigation } from './dynamic/LectureNavigation'
 import { QuizView } from './dynamic/QuizView'
@@ -123,9 +126,6 @@ const DynamicTopicContent: React.FC = () => {
 				let quizData =
 					(quizResp as any).data || (quizResp as any).quiz || quizResp
 				quizData = quizData as Quiz
-
-				// Debug: выводим полученные данные
-				console.log('Loaded quiz:', quizData)
 
 				setAssignmentQuiz(quizData)
 				setCurrentTableIndex(0)
@@ -260,9 +260,11 @@ const DynamicTopicContent: React.FC = () => {
 	// Определяем тип отображаемого задания
 	const getAssignmentType = (
 		quiz: Quiz
-	): 'table' | 'interactive' | 'input' | 'standard' | null => {
+	): 'table' | 'interactive' | 'input' | 'free-input' | 'standard' | null => {
 		// Сначала проверяем тип вопроса - это более надежный индикатор
 		if (quiz.questions?.some(q => q.question_type === 'table')) return 'table'
+		if (quiz.questions?.some(q => q.question_type === 'free-input'))
+			return 'free-input'
 		if (quiz.questions?.some(q => q.question_type === 'input_answer'))
 			return 'input'
 		if (quiz.file_name || quiz.game_path) return 'interactive'
@@ -272,6 +274,15 @@ const DynamicTopicContent: React.FC = () => {
 	// Конвертируем quiz с table вопросами в DragDropTableBlock
 	const convertQuizToTableBlocks = (quiz: Quiz): DragDropTableBlock[] => {
 		if (!quiz.questions) return []
+
+		// Вспомогательная функция для безопасного получения значения ячейки
+		const getCellValue = (cell: any): string => {
+			if (typeof cell === 'object' && cell !== null && 'value' in cell) {
+				return String(cell.value)
+			}
+			return String(cell || '')
+		}
+
 		return quiz.questions
 			.filter(q => q.question_type === 'table' && q.metadata)
 			.map((q, idx) => {
@@ -302,6 +313,7 @@ const DynamicTopicContent: React.FC = () => {
 					type: 'drag-drop-table' as const,
 					title: q.text || 'Таблица',
 					tableTitle: q.text || '',
+					description: (q as any).description || (q as any).context || '',
 					columns: (metadata.columns || []).map((col: any, i: number) => ({
 						id: `col_${i}`,
 						title: col.name || `Колонка ${i + 1}`,
@@ -309,8 +321,8 @@ const DynamicTopicContent: React.FC = () => {
 					})),
 					rows: (metadata.rows || []).map((row: any, i: number) => ({
 						id: `row_${i}`,
-						title: row.cells?.[0] || '',
-						characteristic: row.cells?.[1] || ''
+						title: getCellValue(row.cells?.[0]),
+						characteristic: getCellValue(row.cells?.[1])
 					})),
 					answers: (metadata.answers || q.options || []).map(
 						(ans: any, i: number) => ({
@@ -429,7 +441,57 @@ const DynamicTopicContent: React.FC = () => {
 					</div>
 				)}
 
-				{/* Задание с вводом ответа */}
+				{/* Задание с вводом ответа (Free Input) */}
+				{assignmentType === 'free-input' && displayedQuiz && (
+					<div className='mt-4'>
+						<div className='p-1 rounded-lg'>
+							{/* Описание в Markdown */}
+							{displayedQuiz.description && (
+								<div className='mb-6 p-4 bg-white rounded-lg border border-gray-200 prose prose-sm max-w-none'>
+									<ReactMarkdown remarkPlugins={[remarkGfm]}>
+										{displayedQuiz.description}
+									</ReactMarkdown>
+								</div>
+							)}
+
+							{/* Free Input Block с вопросами */}
+							{displayedQuiz.questions &&
+								displayedQuiz.questions.length > 0 && (
+									<FreeInputBlock
+										block={{
+											id: `free-input-${displayedQuiz.id}`,
+											type: 'free-input' as const,
+											title: displayedQuiz.title || '',
+											description: displayedQuiz.description || '',
+											submissionText:
+												'Ваш ответ отправлен на проверку преподавателю.',
+											questions: displayedQuiz.questions.map((q, idx) => ({
+												id: `q_${q.id || idx}`,
+												text: q.text,
+												maxLength: q.max_length ?? undefined,
+												placeholder: q.placeholder || undefined
+											}))
+										}}
+										onComplete={() => {
+											// Mark quiz as completed
+											if (displayedQuiz.id) {
+												localStorage.setItem(
+													`quizResults_${displayedQuiz.id}`,
+													JSON.stringify({
+														userAnswers: {},
+														quizScore: null,
+														showResults: true
+													})
+												)
+											}
+										}}
+									/>
+								)}
+						</div>
+					</div>
+				)}
+
+				{/* Задание с вводом ответа (старый формат - input_answer) */}
 				{assignmentType === 'input' && displayedQuiz && (
 					<div className='mt-4'>
 						<div className='p-6 bg-gray-50 rounded-lg'>

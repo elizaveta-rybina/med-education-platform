@@ -2,9 +2,14 @@ import type {
 	Quiz,
 	QuizPayload,
 	QuizQuestionPayload,
-	QuizTableMetadataColumn
+	QuizTableMetadataColumn,
+	QuizType
 } from '@/app/api/quizzes/quizzes.types'
 import { useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import MarkdownEditor from 'react-markdown-editor-lite'
+import 'react-markdown-editor-lite/lib/index.css'
+import remarkGfm from 'remark-gfm'
 
 interface DragDropQuizFormProps {
 	topicId: number
@@ -13,6 +18,8 @@ interface DragDropQuizFormProps {
 	onSubmit: (payload: QuizPayload) => Promise<void>
 	onCancel: () => void
 	initialValues?: Partial<Quiz>
+	onImageUpload?: (file: File) => Promise<string>
+	uploadedImages?: Array<{ id: number; url: string; filename: string }>
 }
 
 type OptionState = {
@@ -58,11 +65,13 @@ export const DragDropQuizForm = ({
 	isLoading = false,
 	onSubmit,
 	onCancel,
-	initialValues
+	initialValues,
+	onImageUpload,
+	uploadedImages = []
 }: DragDropQuizFormProps) => {
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
-	const [quizType, setQuizType] = useState('topic_final')
+	const [quizType, setQuizType] = useState<QuizType>('topic_final')
 	const [maxAttempts, setMaxAttempts] = useState('1')
 	const [passingScore, setPassingScore] = useState('80')
 	const [timeLimit, setTimeLimit] = useState('30')
@@ -141,12 +150,17 @@ export const DragDropQuizForm = ({
 						return byIndex?.id || ''
 					})
 					.filter((id: string) => id !== '')
-				
+
 				return {
 					id: generateId(),
-					cells: row.cells.map((cell: unknown) =>
-						Array.isArray(cell) ? '' : String(cell)
-					),
+					cells: row.cells.map((cell: unknown) => {
+						// Если это объект (новая структура), достаем value
+						if (typeof cell === 'object' && cell !== null && 'value' in cell) {
+							return (cell as any).value
+						}
+						// Если это строка (старая структура), используем как есть
+						return Array.isArray(cell) ? '' : String(cell)
+					}),
 					correctOptions,
 					answerMode: (row.answer_mode as 'all' | 'any') || 'all'
 				}
@@ -162,6 +176,19 @@ export const DragDropQuizForm = ({
 			})
 		}
 	}, [initialValues])
+
+	const handleImageUpload = async (file: File): Promise<string> => {
+		if (!onImageUpload) {
+			throw new Error('Image upload not configured')
+		}
+		try {
+			const url = await onImageUpload(file)
+			return url
+		} catch (e) {
+			console.error('Image upload failed:', e)
+			throw e
+		}
+	}
 
 	const handleAddColumn = () => {
 		const newColumnType: 'text' | 'multi_select' =
@@ -286,7 +313,6 @@ export const DragDropQuizForm = ({
 	}
 
 	const handleRowCorrectOptionsChange = (rowId: string, value: string[]) => {
-
 		setQuestion(prev => ({
 			...prev,
 			tableRows: prev.tableRows.map(row =>
@@ -348,7 +374,31 @@ export const DragDropQuizForm = ({
 						.filter((index: number) => index >= 0)
 
 					return {
-						cells: row.cells.map(cell => cell.trim()),
+						cells: row.cells.map((cell, cellIndex) => {
+							const column = question.columns[cellIndex]
+							const cellValue =
+								typeof cell === 'string' ? cell.trim() : String(cell)
+							const cellObj: any = {
+								type: column?.type || 'text',
+								value: cellValue
+							}
+
+							// Если это select ячейка и она содержит правильные ответы
+							if (
+								column?.type === 'multi_select' &&
+								correctOptionIds.length > 0
+							) {
+								cellObj.available_option_ids = Array.from(
+									{ length: question.options.length },
+									(_, i) => i
+								)
+								cellObj.correct_answers = {
+									[cellIndex]: correctOptionIds
+								}
+							}
+
+							return cellObj
+						}),
 						correct_option_ids: correctOptionIds,
 						answer_mode: row.answerMode
 					}
@@ -359,7 +409,7 @@ export const DragDropQuizForm = ({
 		return {
 			title: title.trim(),
 			description: description.trim() || null,
-			quiz_type: quizType,
+			quiz_type: quizType as QuizType,
 			max_attempts: parsedMaxAttempts,
 			passing_score: parsedPassingScore,
 			time_limit_minutes: parsedTimeLimit,
@@ -414,7 +464,7 @@ export const DragDropQuizForm = ({
 					</label>
 					<select
 						value={quizType}
-						onChange={e => setQuizType(e.target.value)}
+						onChange={e => setQuizType(e.target.value as QuizType)}
 						disabled={isLoading || saving}
 						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
 					>
@@ -478,18 +528,103 @@ export const DragDropQuizForm = ({
 				</div>
 			</div>
 
+			{uploadedImages.length > 0 && (
+				<div>
+					<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+						✓ Загруженные изображения ({uploadedImages.length})
+					</label>
+					<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3'>
+						{uploadedImages.map(image => (
+							<div
+								key={image.id}
+								className='relative group border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:ring-2 hover:ring-green-500 transition-all'
+							>
+								<img
+									src={image.url}
+									alt={image.filename}
+									className='w-full h-32 object-cover'
+									onError={() => {
+										console.error(
+											`Не удалось загрузить изображение: ${image.url}`
+										)
+									}}
+								/>
+								<div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center'>
+									<div className='text-white text-xs text-center opacity-0 group-hover:opacity-100 transition-opacity px-2'>
+										{image.filename}
+									</div>
+								</div>
+								<div className='absolute top-1 right-1 bg-green-500 text-white text-xs px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity'>
+									✓ Сохранено
+								</div>
+							</div>
+						))}
+					</div>
+					<p className='text-xs text-gray-500 dark:text-gray-400 mt-2'>
+						Все изображения успешно загружены и сохранены в тесте.
+					</p>
+				</div>
+			)}
+
 			<div>
-				<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+				<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
 					Описание
 				</label>
-				<textarea
-					value={description}
-					onChange={e => setDescription(e.target.value)}
-					disabled={isLoading || saving}
-					className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
-					rows={3}
-					placeholder='Краткое описание теста'
-				/>
+				<div className='border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden'>
+					<MarkdownEditor
+						value={description}
+						style={{ height: '300px' }}
+						onChange={({ text }) => setDescription(text)}
+						onImageUpload={handleImageUpload}
+						renderHTML={text => (
+							<div className='markdown-preview'>
+								<ReactMarkdown
+									remarkPlugins={[remarkGfm]}
+									components={{
+										ol: props => (
+											<ol
+												style={{
+													listStyle: 'decimal',
+													paddingLeft: '1.5rem',
+													marginTop: '0.5rem',
+													marginBottom: '0.5rem'
+												}}
+												{...props}
+											/>
+										),
+										ul: props => (
+											<ul
+												style={{
+													listStyle: 'disc',
+													paddingLeft: '1.5rem',
+													marginTop: '0.5rem',
+													marginBottom: '0.5rem'
+												}}
+												{...props}
+											/>
+										)
+									}}
+								>
+									{text}
+								</ReactMarkdown>
+							</div>
+						)}
+						config={{
+							view: { menu: true, md: true, html: false },
+							canView: {
+								menu: true,
+								md: true,
+								html: true,
+								fullScreen: true,
+								hideMenu: true
+							}
+						}}
+					/>
+				</div>
+				<p className='text-xs text-gray-500 dark:text-gray-400 mt-1'>
+					Поддерживается Markdown для форматирования описания и добавления
+					картинок.
+				</p>
 			</div>
 
 			<div className='border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40'>

@@ -167,7 +167,7 @@ class QuizService implements QuizServiceInterface
             Log::error("Failed to {$action}: {$e->getMessage()}", array_merge($logContext, [
                 'trace' => $e->getTraceAsString()
             ]));
-            throw new Exception("Failed to {$action}", $e->getCode() ?: 500, $e);
+            throw new Exception("Failed to {$action}", 0, $e);
         }
     }
 }

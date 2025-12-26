@@ -102,14 +102,6 @@ const TopicContentPage = () => {
 
 	const nextOrder = useMemo(
 		() =>
-			lectures.length > 0
-				? Math.max(...lectures.map(l => l.order_number ?? 0)) + 1
-				: 1,
-		[lectures]
-	)
-
-	const nextQuizOrder = useMemo(
-		() =>
 			contentItems.length > 0
 				? Math.max(...contentItems.map(item => item.order_number ?? 0)) + 1
 				: 1,
@@ -781,35 +773,58 @@ const TopicContentPage = () => {
 							{quizType === 'standard' && (
 								<QuizForm
 									topicId={Number(topicId)}
-									defaultOrderNumber={nextQuizOrder}
+									defaultOrderNumber={nextOrder}
 									isLoading={saving}
 									onSubmit={handleSaveQuiz}
 									onCancel={() => {
 										setShowQuizForm(false)
 										setEditingQuiz(null)
 										setQuizType(null)
+										setUploadedImages([])
 									}}
 									initialValues={editingQuiz || undefined}
+									onImageUpload={handleImageUpload}
+									uploadedImages={uploadedImages}
 								/>
 							)}
 							{quizType === 'table' && (
 								<DragDropQuizForm
 									topicId={Number(topicId)}
-									defaultOrderNumber={nextQuizOrder}
+									defaultOrderNumber={nextOrder}
 									isLoading={saving}
 									onSubmit={handleSaveQuiz}
 									onCancel={() => {
 										setShowQuizForm(false)
 										setEditingQuiz(null)
 										setQuizType(null)
+										setUploadedImages([])
 									}}
 									initialValues={editingQuiz || undefined}
+									onImageUpload={handleImageUpload}
+									uploadedImages={uploadedImages}
 								/>
 							)}{' '}
+							{quizType === 'select-table' && (
+								<DragDropQuizForm
+									topicId={Number(topicId)}
+									defaultOrderNumber={nextOrder}
+									isLoading={saving}
+									onSubmit={handleSaveQuiz}
+									onCancel={() => {
+										setShowQuizForm(false)
+										setEditingQuiz(null)
+										setQuizType(null)
+										setUploadedImages([])
+									}}
+									initialValues={editingQuiz || undefined}
+									onImageUpload={handleImageUpload}
+									uploadedImages={uploadedImages}
+								/>
+							)}
 							{quizType === 'interactive' && (
 								<InteractiveExperienceForm
 									topicId={Number(topicId)}
-									defaultOrderNumber={nextQuizOrder}
+									defaultOrderNumber={nextOrder}
 									isLoading={saving}
 									onSubmit={handleSaveQuiz}
 									onCancel={() => {
@@ -823,7 +838,7 @@ const TopicContentPage = () => {
 							{quizType === 'input' && (
 								<InputAnswerForm
 									topicId={Number(topicId)}
-									defaultOrderNumber={nextQuizOrder}
+									defaultOrderNumber={nextOrder}
 									isLoading={saving}
 									onSubmit={handleSaveQuiz}
 									onCancel={() => {
@@ -886,6 +901,23 @@ const TopicContentPage = () => {
 								</button>{' '}
 								<button
 									onClick={() => {
+										setQuizType('select-table')
+										setShowQuizTypeSelection(false)
+										setShowQuizForm(true)
+										// Прокручиваем страницу наверх, чтобы форма была видна
+										window.scrollTo({ top: 0, behavior: 'smooth' })
+									}}
+									className='w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 dark:hover:border-green-500 transition-colors hover:bg-green-50 dark:hover:bg-green-900/20'
+								>
+									<div className='font-semibold text-gray-900 dark:text-white'>
+										Таблица с выбором ответов
+									</div>
+									<div className='text-sm text-gray-600 dark:text-gray-400 mt-1'>
+										Таблица с выбором опций из выпадающих списков по ячейкам
+									</div>
+								</button>{' '}
+								<button
+									onClick={() => {
 										setQuizType('interactive')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
@@ -934,8 +966,14 @@ const TopicContentPage = () => {
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
 							// Determine quiz type based on question type first, then presence of game files
-							if (quiz.questions?.some(q => q.question_type === 'table')) {
+							if (quiz.questions?.some(q => q.question_type === 'select-table')) {
+								setQuizType('select-table')
+							} else if (quiz.questions?.some(q => q.question_type === 'table')) {
 								setQuizType('table')
+							} else if (
+								quiz.questions?.some(q => q.question_type === 'free-input')
+							) {
+								setQuizType('input')
 							} else if (
 								quiz.questions?.some(q => q.question_type === 'input_answer')
 							) {

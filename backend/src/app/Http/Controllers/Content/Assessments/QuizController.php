@@ -53,7 +53,7 @@ class QuizController extends Controller
             $quiz = $this->quizService->createQuiz($request->validated());
             return (new QuizResource($quiz))->response()->setStatusCode(201);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to create quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+            return response()->json(['error' => 'Failed to create quiz: ' . $e->getMessage()], 500);
         }
     }
 
@@ -69,7 +69,7 @@ class QuizController extends Controller
             $quiz = $this->quizService->getQuizById($quiz->id);
             return (new QuizResource($quiz))->response();
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to retrieve quiz: ' . $e->getMessage()], $e->getCode() ?: 404);
+            return response()->json(['error' => 'Failed to retrieve quiz: ' . $e->getMessage()], 500);
         }
     }
 
@@ -85,7 +85,7 @@ class QuizController extends Controller
             $quiz = $this->quizService->getQuizForStudent($quiz->id);
             return (new StudentQuizResource($quiz))->response();
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to retrieve quiz for student: ' . $e->getMessage()], $e->getCode() ?: 404);
+            return response()->json(['error' => 'Failed to retrieve quiz for student: ' . $e->getMessage()], 500);
         }
     }
 
@@ -102,7 +102,7 @@ class QuizController extends Controller
             $quiz = $this->quizService->updateQuiz($quiz, $request->validated());
             return (new QuizResource($quiz))->response();
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to update quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+            return response()->json(['error' => 'Failed to update quiz: ' . $e->getMessage()], 500);
         }
     }
 
@@ -118,7 +118,7 @@ class QuizController extends Controller
             $this->quizService->deleteQuiz($quiz);
             return response()->json(null, 204);
         } catch (Exception $e) {
-            return response()->json(['error' => 'Failed to delete quiz: ' . $e->getMessage()], $e->getCode() ?: 500);
+            return response()->json(['error' => 'Failed to delete quiz: ' . $e->getMessage()], 500);
         }
     }
 
