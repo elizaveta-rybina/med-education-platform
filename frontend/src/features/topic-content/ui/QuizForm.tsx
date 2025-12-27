@@ -8,7 +8,8 @@ import { UploadedImagesDisplay } from './UploadedImagesDisplay'
 import type {
 	Quiz,
 	QuizPayload,
-	QuizQuestionPayload
+	QuizQuestionPayload,
+	QuizType
 } from '@/app/api/quizzes/quizzes.types'
 
 interface QuizFormProps {
@@ -69,7 +70,7 @@ export const QuizForm = ({
 }: QuizFormProps) => {
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
-	const [quizType, setQuizType] = useState('topic_final')
+	const [quizType, setQuizType] = useState<QuizType>('topic_final')
 	const [maxAttempts, setMaxAttempts] = useState('1')
 	const [passingScore, setPassingScore] = useState('80')
 	const [timeLimit, setTimeLimit] = useState('30')
@@ -329,14 +330,11 @@ export const QuizForm = ({
 						Тип теста
 					</label>
 					<select
-						value={quizType}
-						onChange={e => setQuizType(e.target.value)}
-						disabled={isLoading || saving}
+						value='additional'
+						disabled
 						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
 					>
-						<option value='topic_final'>Итоговый по теме</option>
 						<option value='additional'>Дополнительный</option>
-						<option value='practice'>Практический</option>
 					</select>
 				</div>
 				<div>

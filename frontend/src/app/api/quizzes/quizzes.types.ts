@@ -10,6 +10,7 @@ export type QuizType =
 	| 'interactive'
 	| 'input'
 	| 'free-input'
+	| 'select-table'
 
 export type QuizQuestionType =
 	| 'single_choice'

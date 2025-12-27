@@ -1,6 +1,13 @@
 import { quizzesApi } from '@/app/api/quizzes/quizzes.api'
 import type { Quiz, QuizPayload } from '@/app/api/quizzes/quizzes.types'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import MarkdownEditor from 'react-markdown-editor-lite'
+import 'react-markdown-editor-lite/lib/index.css'
+import remarkGfm from 'remark-gfm'
+import { UploadedImagesDisplay } from './UploadedImagesDisplay'
+
+// --- Types ---
 
 interface SelectTableFormProps {
 	topicId: number
@@ -14,14 +21,16 @@ interface SelectTableFormProps {
 	uploadedImages?: Array<{ id: number; url: string; filename: string }>
 }
 
+type ColumnType = 'text' | 'select'
+
 interface Column {
 	id: string
 	name: string
-	type: 'text' | 'select'
+	type: ColumnType
 }
 
 interface Cell {
-	type: 'text' | 'select'
+	type: ColumnType
 	value?: string
 	cell_key?: string
 	available_option_ids?: number[]
@@ -36,8 +45,40 @@ interface Row {
 interface Option {
 	id: string
 	text: string
-	order: number
+	order: number // В нашем случае это будет выступать как "Internal ID"
 }
+
+interface MetaDataStructure {
+	columns: { name: string; type: string }[]
+	rows: {
+		cells: Cell[]
+		// Бэкенд возвращает правильные ответы именно в correct_answers, а не в _ui_...
+		correct_answers?: Record<string, number[]>
+		correct_option_ids?: number[]
+	}[]
+}
+
+// --- Helpers ---
+
+const generateId = (prefix: string, items: { id: string }[]): string => {
+	const maxId = items.reduce((max, item) => {
+		const num = parseInt(item.id.split('_')[1] || '0', 10)
+		return num > max ? num : max
+	}, -1)
+	return `${prefix}_${maxId + 1}`
+}
+
+const safeJsonParse = <T,>(jsonString: string | any, fallback: T): T => {
+	if (typeof jsonString !== 'string') return jsonString || fallback
+	try {
+		return JSON.parse(jsonString)
+	} catch (e) {
+		console.warn('Failed to parse metadata JSON', e)
+		return fallback
+	}
+}
+
+// --- Component ---
 
 export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 	topicId,
@@ -45,23 +86,34 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 	isLoading,
 	onSubmit,
 	onCancel,
-	initialValues
+	initialValues,
+	onImageUpload,
+	onDeleteImage,
+	uploadedImages = []
 }) => {
+	// -- State Initialization --
 	const [title, setTitle] = useState(initialValues?.title || '')
 	const [description, setDescription] = useState(
 		initialValues?.description || ''
 	)
-	const [questionText, setQuestionText] = useState(
-		initialValues?.questions?.[0]?.text || ''
-	)
+	const [error, setError] = useState<string | null>(null)
+
+	const [selectedCell, setSelectedCell] = useState<{
+		rowId: string
+		cellIndex: number
+	} | null>(null)
+
+	// 1. Columns
 	const [columns, setColumns] = useState<Column[]>(() => {
-		const meta = initialValues?.questions?.[0]?.metadata
-		const metadata = typeof meta === 'string' ? JSON.parse(meta) : meta
-		if (metadata?.columns) {
-			return (metadata.columns as any[]).map((col, idx) => ({
+		const meta = safeJsonParse<MetaDataStructure>(
+			initialValues?.questions?.[0]?.metadata,
+			{ columns: [], rows: [] }
+		)
+		if (meta?.columns && meta.columns.length > 0) {
+			return meta.columns.map((col, idx) => ({
 				id: `col_${idx}`,
 				name: col.name || '',
-				type: col.type || 'text'
+				type: (col.type as ColumnType) || 'text'
 			}))
 		}
 		return [
@@ -70,14 +122,39 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 		]
 	})
 
+	// 2. Options
+	// !!! ИСПРАВЛЕНИЕ ЗДЕСЬ !!!
+	const [options, setOptions] = useState<Option[]>(() => {
+		if (initialValues?.questions?.[0]?.options) {
+			return (initialValues.questions[0].options as any[]).map((opt, idx) => ({
+				id: `opt_${idx}`,
+				text: opt.text || '',
+				// ЕСЛИ есть реальный ID из базы (opt.id), используем его как order.
+				// Потому что метаданные (correct_answers) ссылаются именно на ID базы данных.
+				order: opt.id ? Number(opt.id) : idx
+			}))
+		}
+		return [
+			{ id: 'opt_0', text: 'Опция 1', order: 0 },
+			{ id: 'opt_1', text: 'Опция 2', order: 1 }
+		]
+	})
+
+	// 3. Rows
 	const [rows, setRows] = useState<Row[]>(() => {
-		const meta = initialValues?.questions?.[0]?.metadata
-		const metadata = typeof meta === 'string' ? JSON.parse(meta) : meta
-		if (metadata?.rows) {
-			return (metadata.rows as any[]).map((row, idx) => ({
+		const meta = safeJsonParse<MetaDataStructure>(
+			initialValues?.questions?.[0]?.metadata,
+			{ columns: [], rows: [] }
+		)
+
+		if (meta?.rows && meta.rows.length > 0) {
+			return meta.rows.map((row, idx) => ({
 				id: `row_${idx}`,
 				cells: row.cells || [],
-				correct_answers: row.correct_answers
+				// !!! ИСПРАВЛЕНИЕ ЗДЕСЬ !!!
+				// Бэкенд QuestionService сохраняет и возвращает данные в поле 'correct_answers'
+				// Мы читаем его напрямую.
+				correct_answers: row.correct_answers || {}
 			}))
 		}
 		return [
@@ -92,35 +169,24 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 		]
 	})
 
-	const [options, setOptions] = useState<Option[]>(() => {
-		if (initialValues?.questions?.[0]?.options) {
-			return (initialValues.questions[0].options as any[]).map((opt, idx) => ({
-				id: `opt_${idx}`,
-				text: opt.text || '',
-				order: opt.order || idx
-			}))
-		}
-		return [
-			{ id: 'opt_0', text: 'Опция 1', order: 0 },
-			{ id: 'opt_1', text: 'Опция 2', order: 1 }
-		]
-	})
+	// --- Helpers for Display ---
+	const getOptionByOrder = (orderId: number) => {
+		return options.find(o => o.order === orderId)
+	}
 
-	const [selectedCell, setSelectedCell] = useState<{
-		rowId: string
-		cellIndex: number
-	} | null>(null)
+	// --- Handlers ---
+
+	const handleImageUpload = async (file: File): Promise<string> => {
+		if (!onImageUpload) throw new Error('Image upload not configured')
+		return await onImageUpload(file)
+	}
 
 	const handleAddColumn = () => {
-		const newId = `col_${
-			Math.max(0, ...columns.map(c => parseInt(c.id.split('_')[1]))) + 1
-		}`
+		const newId = generateId('col', columns)
 		setColumns([
 			...columns,
 			{ id: newId, name: `Колонка ${columns.length + 1}`, type: 'text' }
 		])
-
-		// Добавляем ячейку в каждую строку
 		setRows(
 			rows.map(row => ({
 				...row,
@@ -142,21 +208,23 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 
 	const handleUpdateColumn = (
 		colIndex: number,
-		field: 'name' | 'type',
+		field: keyof Column,
 		value: string
 	) => {
 		const newColumns = [...columns]
 		newColumns[colIndex] = { ...newColumns[colIndex], [field]: value }
 		setColumns(newColumns)
 
-		// Обновляем тип ячеек в строках
 		if (field === 'type') {
+			const newType = value as ColumnType
 			setRows(
 				rows.map(row => {
 					const newCells = [...row.cells]
 					newCells[colIndex] = {
-						type: value as 'text' | 'select',
-						...(value === 'text' ? { value: '' } : { available_option_ids: [] })
+						type: newType,
+						...(newType === 'text'
+							? { value: '' }
+							: { available_option_ids: [] })
 					}
 					return { ...row, cells: newCells }
 				})
@@ -165,11 +233,9 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 	}
 
 	const handleAddRow = () => {
-		const newId = `row_${
-			Math.max(0, ...rows.map(r => parseInt(r.id.split('_')[1]))) + 1
-		}`
-		const newCells = columns.map(col => ({
-			type: col.type as 'text' | 'select',
+		const newId = generateId('row', rows)
+		const newCells: Cell[] = columns.map(col => ({
+			type: col.type,
 			...(col.type === 'text' ? { value: '' } : { available_option_ids: [] })
 		}))
 		setRows([...rows, { id: newId, cells: newCells, correct_answers: {} }])
@@ -183,95 +249,108 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 	const handleUpdateCell = (
 		rowIndex: number,
 		cellIndex: number,
-		field: string,
+		field: keyof Cell,
 		value: any
 	) => {
-		const newRows = [...rows]
-		if (field === 'value') {
-			newRows[rowIndex].cells[cellIndex] = {
-				...newRows[rowIndex].cells[cellIndex],
-				value
-			}
-		} else if (field === 'available_option_ids') {
-			newRows[rowIndex].cells[cellIndex] = {
-				...newRows[rowIndex].cells[cellIndex],
-				available_option_ids: value
-			}
-		}
-		setRows(newRows)
+		setRows(prevRows => {
+			const newRows = [...prevRows]
+			const cell = { ...newRows[rowIndex].cells[cellIndex] }
+
+			if (field === 'value') cell.value = value
+			if (field === 'available_option_ids') cell.available_option_ids = value
+
+			newRows[rowIndex].cells[cellIndex] = cell
+			return newRows
+		})
 	}
 
 	const handleSetCorrectAnswer = (
 		rowIndex: number,
 		cellIndex: number,
-		optionIndex: number
+		optionOrder: number
 	) => {
-		const newRows = [...rows]
-		const cellKey = `row${rowIndex}_col${cellIndex}`
-		if (!newRows[rowIndex].correct_answers) {
-			newRows[rowIndex].correct_answers = {}
-		}
+		setRows(prevRows => {
+			const newRows = [...prevRows]
+			const currentRow = { ...newRows[rowIndex] }
+			const cellKey = `row${rowIndex}_col${cellIndex}`
 
-		if (newRows[rowIndex].correct_answers![cellKey]?.includes(optionIndex)) {
-			newRows[rowIndex].correct_answers![cellKey] = newRows[
-				rowIndex
-			].correct_answers![cellKey]!.filter(i => i !== optionIndex)
-		} else {
-			newRows[rowIndex].correct_answers![cellKey] = [
-				...(newRows[rowIndex].correct_answers![cellKey] || []),
-				optionIndex
-			]
-		}
-		setRows(newRows)
+			const currentAnswers = currentRow.correct_answers?.[cellKey] || []
+			const isSelected = currentAnswers.includes(optionOrder)
+
+			const newAnswers = isSelected
+				? currentAnswers.filter(id => id !== optionOrder)
+				: [...currentAnswers, optionOrder]
+
+			currentRow.correct_answers = {
+				...currentRow.correct_answers,
+				[cellKey]: newAnswers
+			}
+
+			newRows[rowIndex] = currentRow
+			return newRows
+		})
 	}
 
 	const handleAddOption = () => {
-		const newId = `opt_${
-			Math.max(0, ...options.map(o => parseInt(o.id.split('_')[1]))) + 1
-		}`
+		const newId = generateId('opt', options)
+		// Генерируем новый order: берем максимальный текущий order + 1
+		// Это гарантирует, что мы не пересечемся с существующими ID базы данных (271, 272 и т.д.)
+		const maxOrder = options.reduce(
+			(max, o) => (o.order > max ? o.order : max),
+			-1
+		)
+		const newOrder = maxOrder + 1
+
 		setOptions([
 			...options,
-			{ id: newId, text: `Опция ${options.length + 1}`, order: options.length }
+			{ id: newId, text: `Опция ${options.length + 1}`, order: newOrder }
 		])
 	}
 
 	const handleUpdateOption = (
-		optIndex: number,
-		field: 'text' | 'order',
+		index: number,
+		field: keyof Option,
 		value: any
 	) => {
 		const newOptions = [...options]
-		newOptions[optIndex] = { ...newOptions[optIndex], [field]: value }
+		newOptions[index] = { ...newOptions[index], [field]: value }
 		setOptions(newOptions)
 	}
 
-	const handleRemoveOption = (optIndex: number) => {
-		setOptions(options.filter((_, idx) => idx !== optIndex))
+	const handleRemoveOption = (index: number) => {
+		setOptions(options.filter((_, idx) => idx !== index))
 	}
 
 	const handleSubmit = async () => {
-		if (!title.trim()) {
-			alert('Заполните название теста')
-			return
-		}
-		if (!questionText.trim()) {
-			alert('Заполните текст вопроса')
-			return
-		}
-		if (columns.length < 2) {
-			alert('Минимум 2 колонки')
-			return
-		}
-		if (rows.length < 1) {
-			alert('Минимум 1 строка')
-			return
-		}
-		if (options.length < 1) {
-			alert('Минимум 1 опция')
-			return
+		if (!title.trim()) return setError('Название теста обязательно')
+		if (columns.length < 2) return setError('Минимум 2 колонки')
+		if (rows.length < 1) return setError('Минимум 1 строка')
+		if (options.length < 1) return setError('Минимум 1 опция')
+		setError(null)
+
+		// 1. Подготовка опций для отправки
+		// order = index. Бэкенд будет использовать индексы массива (0, 1, 2) для маппинга.
+		const payloadOptions = options.map((opt, index) => ({
+			text: opt.text,
+			order: index, // Для удовлетворения TS и логики бэкенда
+			is_correct: false,
+			matching_data: null
+		}))
+
+		// 2. Карта перевода "Текущий UI order" -> "Будущий индекс массива"
+		// "Текущий UI order" может быть ID из базы (271) или временным (0, 1).
+		const orderToIndexMap: Record<number, number> = {}
+		options.forEach((opt, index) => {
+			orderToIndexMap[opt.order] = index
+		})
+
+		const remapIds = (ids: number[] = []) => {
+			return ids
+				.map(oldOrder => orderToIndexMap[oldOrder])
+				.filter(idx => idx !== undefined)
 		}
 
-		const payload: any = {
+		const payload: QuizPayload = {
 			title,
 			description: description.trim(),
 			quiz_type: 'additional',
@@ -283,328 +362,404 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 			order_number: defaultOrderNumber,
 			questions: [
 				{
-					text: questionText,
+					text: 'Заполните таблицу',
 					question_type: 'table',
 					is_auto_graded: true,
 					points: 10,
-					metadata: {
-						columns: columns.map(col => ({
-							name: col.name,
-							type: col.type
-						})),
+					options: payloadOptions,
+					metadata: JSON.stringify({
+						columns: columns.map(col => ({ name: col.name, type: col.type })),
 						rows: rows.map((row, rowIdx) => {
-							const rowCells: Cell[] = row.cells.map((cell, cellIdx) => {
-								if (columns[cellIdx].type === 'text') {
-									return { type: 'text', value: cell.value || '' }
-								} else {
-									return {
-										type: 'select',
-										cell_key: `row${rowIdx}_col${cellIdx}`,
-										available_option_ids: cell.available_option_ids || []
+							// 3. Обработка ячеек
+							const rowCells = row.cells.map((cell, cellIdx) => ({
+								type: columns[cellIdx].type,
+								value:
+									columns[cellIdx].type === 'text'
+										? cell.value || ''
+										: undefined,
+								cell_key:
+									columns[cellIdx].type === 'select'
+										? `row${rowIdx}_col${cellIdx}`
+										: undefined,
+								available_option_ids:
+									columns[cellIdx].type === 'select'
+										? remapIds(cell.available_option_ids)
+										: undefined
+							}))
+
+							// 4. Пересчет ключей правильных ответов
+							const remappedCorrectAnswers: Record<string, number[]> = {}
+							if (row.correct_answers) {
+								Object.entries(row.correct_answers).forEach(([key, ids]) => {
+									const newIds = remapIds(ids)
+									if (newIds.length > 0) {
+										remappedCorrectAnswers[key] = newIds
 									}
-								}
-							})
+								})
+							}
+
+							// 5. Плоский массив для валидатора
+							const flatCorrectIds = Object.values(
+								remappedCorrectAnswers
+							).flat()
+
 							return {
 								cells: rowCells,
-								correct_answers: row.correct_answers || {}
+								correct_answers: remappedCorrectAnswers,
+								correct_option_ids: flatCorrectIds
 							}
 						})
-					},
-					options: options.map(opt => ({
-						text: opt.text,
-						order: opt.order
-					}))
+					})
 				}
 			]
 		}
 
 		try {
+			let response
 			if (initialValues?.id) {
-				await quizzesApi.update(initialValues.id, payload)
+				response = await quizzesApi.update(initialValues.id, payload)
+				console.log('✅ Ответ сервера (Update):', response)
 			} else {
-				await quizzesApi.create(payload)
+				response = await quizzesApi.create(payload)
+				console.log('✅ Ответ сервера (Create):', response)
 			}
+
 			onSubmit(payload)
-		} catch (error) {
-			console.error('Failed to save quiz:', error)
-			alert('Ошибка при сохранении теста')
+		} catch (error: any) {
+			console.error('❌ Ошибка при сохранении:', error)
+			const msg =
+				error?.response?.data?.message ||
+				error?.message ||
+				'Ошибка при сохранении'
+			setError(msg)
 		}
 	}
 
-	return (
-		<div className='bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-6'>
-			<h2 className='text-2xl font-bold text-gray-900 dark:text-white mb-6'>
-				{initialValues
-					? 'Редактировать тест'
-					: 'Таблица с выбором'}
-			</h2>
+	const renderDescriptionEditor = useMemo(
+		() => (
+			<div>
+				<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
+					Описание
+				</label>
+				<div className='border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden'>
+					<MarkdownEditor
+						value={description}
+						style={{ height: '300px' }}
+						onChange={({ text }) => setDescription(text)}
+						onImageUpload={handleImageUpload}
+						renderHTML={text => (
+							<div className='markdown-preview'>
+								<ReactMarkdown remarkPlugins={[remarkGfm]}>
+									{text}
+								</ReactMarkdown>
+							</div>
+						)}
+						config={{
+							view: { menu: true, md: true, html: false },
+							canView: {
+								menu: true,
+								md: true,
+								html: true,
+								fullScreen: true,
+								hideMenu: true
+							}
+						}}
+					/>
+				</div>
+			</div>
+		),
+		[description]
+	)
 
-			<div className='space-y-6'>
-				{/* Title */}
+	return (
+		<form
+			onSubmit={e => {
+				e.preventDefault()
+				handleSubmit()
+			}}
+			className='space-y-6'
+		>
+			<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
 				<div>
 					<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-						Название теста
+						Название теста *
 					</label>
 					<input
 						type='text'
 						value={title}
 						onChange={e => setTitle(e.target.value)}
-						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
-						placeholder='Название теста'
+						disabled={isLoading}
+						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
+						required
 					/>
 				</div>
-
-				{/* Description */}
 				<div>
 					<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-						Описание теста (Markdown)
+						Тип теста
 					</label>
-					<textarea
-						value={description}
-						onChange={e => setDescription(e.target.value)}
-						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white h-32 align-top'
-						placeholder='Описание теста (поддерживает Markdown)'
-					/>
+					<select
+						disabled
+						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500'
+					>
+						<option>Дополнительный</option>
+					</select>
 				</div>
+			</div>
 
-				{/* Question Text */}
-				<div>
-					<label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-						Текст вопроса (Markdown)
-					</label>
-					<textarea
-						value={questionText}
-						onChange={e => setQuestionText(e.target.value)}
-						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white h-24 align-top'
-						placeholder='Текст вопроса'
-					/>
-				</div>
+			{uploadedImages.length > 0 && (
+				<UploadedImagesDisplay
+					images={uploadedImages}
+					message='Все изображения успешно загружены.'
+					isLoading={isLoading}
+					onDeleteImage={onDeleteImage}
+				/>
+			)}
 
-				{/* Columns */}
-				<div className='border-t pt-6'>
-					<div className='flex justify-between items-center mb-4'>
-						<h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
-							Колонки таблицы
-						</h3>
+			{renderDescriptionEditor}
+
+			<div className='border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-800/40'>
+				<h3 className='text-lg font-semibold text-gray-800 dark:text-white mb-4'>
+					Настройки таблицы
+				</h3>
+
+				{/* Колонки */}
+				<div className='mb-6'>
+					<div className='flex items-center justify-between mb-2'>
+						<h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+							Колонки
+						</h4>
 						<button
+							type='button'
 							onClick={handleAddColumn}
-							className='px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm'
+							disabled={isLoading}
+							className='px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50'
 						>
-							+ Добавить колонку
+							+ Колонка
 						</button>
 					</div>
-
-					<div className='space-y-3'>
-						{columns.map((col, colIdx) => (
+					<div className='space-y-2'>
+						{columns.map((col, idx) => (
 							<div
 								key={col.id}
-								className='flex gap-3 items-center bg-gray-50 dark:bg-gray-700 p-3 rounded'
+								className='flex items-center gap-2 bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-2'
 							>
 								<input
 									type='text'
 									value={col.name}
 									onChange={e =>
-										handleUpdateColumn(colIdx, 'name', e.target.value)
+										handleUpdateColumn(idx, 'name', e.target.value)
 									}
-									placeholder='Название колонки'
-									className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-600 text-gray-900 dark:text-white'
+									className='flex-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded dark:bg-gray-700 dark:text-white text-sm'
+									placeholder='Название'
 								/>
 								<select
 									value={col.type}
 									onChange={e =>
-										handleUpdateColumn(colIdx, 'type', e.target.value)
+										handleUpdateColumn(idx, 'type', e.target.value)
 									}
-									className='px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-600 text-gray-900 dark:text-white'
+									className='px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded dark:bg-gray-700 dark:text-white text-sm'
 								>
 									<option value='text'>Текст</option>
 									<option value='select'>Выбор</option>
 								</select>
-								{columns.length > 1 && (
-									<button
-										onClick={() => handleRemoveColumn(colIdx)}
-										className='px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm'
-									>
-										Удалить
-									</button>
-								)}
+								<button
+									type='button'
+									onClick={() => handleRemoveColumn(idx)}
+									disabled={columns.length <= 1}
+									className='text-red-500 hover:text-red-700 px-2 disabled:opacity-30'
+								>
+									✕
+								</button>
 							</div>
 						))}
 					</div>
 				</div>
 
-				{/* Rows */}
-				<div className='border-t pt-6'>
-					<div className='flex justify-between items-center mb-4'>
-						<h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
-							Строки таблицы
-						</h3>
+				{/* Строки */}
+				<div className='mb-6'>
+					<div className='flex items-center justify-between mb-2'>
+						<h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
+							Строки и ячейки
+						</h4>
 						<button
+							type='button'
 							onClick={handleAddRow}
-							className='px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm'
+							disabled={isLoading}
+							className='px-3 py-1 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 disabled:opacity-50'
 						>
-							+ Добавить строку
+							+ Строка
 						</button>
 					</div>
 
-					<div className='space-y-4 overflow-x-auto'>
+					<div className='space-y-4'>
 						{rows.map((row, rowIdx) => (
 							<div
 								key={row.id}
-								className='bg-gray-50 dark:bg-gray-700 p-4 rounded'
+								className='bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-3'
 							>
-								<div className='flex justify-between items-center mb-3'>
-									<span className='font-medium text-gray-900 dark:text-white'>
+								<div className='flex justify-between items-center mb-2'>
+									<span className='text-xs font-bold text-gray-500 uppercase'>
 										Строка {rowIdx + 1}
 									</span>
-									{rows.length > 1 && (
-										<button
-											onClick={() => handleRemoveRow(rowIdx)}
-											className='px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm'
-										>
-											Удалить
-										</button>
-									)}
+									<button
+										type='button'
+										onClick={() => handleRemoveRow(rowIdx)}
+										className='text-red-500 text-xs hover:underline'
+									>
+										Удалить
+									</button>
 								</div>
 
-								<div className='space-y-2'>
-									{row.cells.map((cell, cellIdx) => (
-										<div
-											key={`${rowIdx}_${cellIdx}`}
-											className={`p-3 border rounded cursor-pointer transition ${
-												selectedCell?.rowId === row.id &&
-												selectedCell?.cellIndex === cellIdx
-													? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-													: 'border-gray-300 dark:border-gray-600'
-											}`}
-											onClick={() =>
-												setSelectedCell({ rowId: row.id, cellIndex: cellIdx })
-											}
-										>
-											<div className='flex justify-between items-start'>
-												<div className='flex-1'>
-													<p className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-														{columns[cellIdx]?.name || `Колонка ${cellIdx + 1}`}
-													</p>
-													{columns[cellIdx]?.type === 'text' && (
-														<input
-															type='text'
-															value={cell.value || ''}
-															onChange={e =>
-																handleUpdateCell(
-																	rowIdx,
-																	cellIdx,
-																	'value',
-																	e.target.value
-																)
-															}
-															placeholder='Введите текст'
-															className='w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-600 text-gray-900 dark:text-white text-sm'
-														/>
-													)}
+								<div className='grid gap-3'>
+									{row.cells.map((cell, cellIdx) => {
+										const isSelected =
+											selectedCell?.rowId === row.id &&
+											selectedCell?.cellIndex === cellIdx
+										const colType = columns[cellIdx]?.type
 
-													{columns[cellIdx]?.type === 'select' && (
-														<div className='space-y-2'>
-															<div className='flex flex-wrap gap-1 mb-2'>
-																{(cell.available_option_ids || []).length ===
-																0 ? (
-																	<span className='text-sm text-gray-500 dark:text-gray-400'>
-																		Опции не выбраны
-																	</span>
-																) : (
-																	(cell.available_option_ids || []).map(
-																		optIdx => (
-																			<span
-																				key={optIdx}
-																				className='bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs'
-																			>
-																				{options[optIdx]?.text ||
-																					`Опция ${optIdx}`}
-																			</span>
-																		)
-																	)
-																)}
-															</div>
-
-															<div className='space-y-1'>
-																<p className='text-xs font-medium text-gray-600 dark:text-gray-400'>
-																	Доступные опции:
-																</p>
-																{options.map((opt, optIdx) => (
-																	<label
-																		key={opt.id}
-																		className='flex items-center gap-2 text-sm'
-																	>
-																		<input
-																			type='checkbox'
-																			checked={(
-																				cell.available_option_ids || []
-																			).includes(optIdx)}
-																			onChange={e => {
-																				const currentIds =
-																					cell.available_option_ids || []
-																				const newIds = e.target.checked
-																					? [...currentIds, optIdx]
-																					: currentIds.filter(
-																							id => id !== optIdx
-																					  )
-																				handleUpdateCell(
-																					rowIdx,
-																					cellIdx,
-																					'available_option_ids',
-																					newIds
-																				)
-																			}}
-																			className='rounded'
-																		/>
-																		<span className='text-gray-700 dark:text-gray-300'>
-																			{opt.text}
-																		</span>
-																	</label>
-																))}
-															</div>
-														</div>
-													)}
+										return (
+											<div
+												key={`${row.id}_c${cellIdx}`}
+												onClick={() =>
+													setSelectedCell({ rowId: row.id, cellIndex: cellIdx })
+												}
+												className={`p-3 border rounded-lg cursor-pointer transition-all ${
+													isSelected
+														? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20 ring-1 ring-purple-500'
+														: 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
+												}`}
+											>
+												<div className='mb-2 text-xs font-semibold text-gray-500'>
+													{columns[cellIdx]?.name || `Колонка ${cellIdx + 1}`}
 												</div>
-											</div>
 
-											{/* Correct answers for select cells */}
-											{columns[cellIdx]?.type === 'select' &&
-												selectedCell?.rowId === row.id &&
-												selectedCell?.cellIndex === cellIdx && (
-													<div className='mt-3 pt-3 border-t border-gray-300 dark:border-gray-600'>
-														<p className='text-xs font-medium text-gray-600 dark:text-gray-400 mb-2'>
-															Правильные ответы:
-														</p>
-														{(cell.available_option_ids || []).map(optIdx => (
-															<label
-																key={optIdx}
-																className='flex items-center gap-2 text-sm'
-															>
-																<input
-																	type='checkbox'
-																	checked={(
-																		row.correct_answers?.[
-																			`row${rowIdx}_col${cellIdx}`
-																		] || []
-																	).includes(optIdx)}
-																	onChange={() =>
-																		handleSetCorrectAnswer(
-																			rowIdx,
-																			cellIdx,
-																			optIdx
-																		)
-																	}
-																	className='rounded'
-																/>
-																<span className='text-gray-700 dark:text-gray-300'>
-																	{options[optIdx]?.text || `Опция ${optIdx}`}
+												{colType === 'text' ? (
+													<input
+														type='text'
+														value={cell.value || ''}
+														onChange={e =>
+															handleUpdateCell(
+																rowIdx,
+																cellIdx,
+																'value',
+																e.target.value
+															)
+														}
+														className='w-full px-2 py-1 border rounded text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600'
+														placeholder='Текст ячейки'
+													/>
+												) : (
+													<div className='space-y-3'>
+														{/* Selected Chips */}
+														<div className='flex flex-wrap gap-1 min-h-[24px]'>
+															{!cell.available_option_ids?.length ? (
+																<span className='text-xs text-gray-400 italic'>
+																	Нет опций
 																</span>
-															</label>
-														))}
+															) : (
+																cell.available_option_ids.map(optOrder => {
+																	const opt = getOptionByOrder(optOrder)
+																	return (
+																		<span
+																			key={optOrder}
+																			className='px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-200 text-xs rounded'
+																		>
+																			{opt?.text || `#${optOrder}`}
+																		</span>
+																	)
+																})
+															)}
+														</div>
+
+														{/* Options Selector */}
+														<div className='grid grid-cols-2 gap-4 border-t pt-2 border-gray-200 dark:border-gray-700'>
+															<div>
+																<p className='text-[10px] uppercase text-gray-500 mb-1'>
+																	Показывать в списке:
+																</p>
+																<div className='space-y-1 max-h-32 overflow-y-auto'>
+																	{options.map(opt => (
+																		<label
+																			key={opt.id}
+																			className='flex items-center gap-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-800 p-1 rounded'
+																		>
+																			<input
+																				type='checkbox'
+																				checked={(
+																					cell.available_option_ids || []
+																				).includes(opt.order)}
+																				onChange={e => {
+																					const current =
+																						cell.available_option_ids || []
+																					const next = e.target.checked
+																						? [...current, opt.order]
+																						: current.filter(
+																								id => id !== opt.order
+																						  )
+																					handleUpdateCell(
+																						rowIdx,
+																						cellIdx,
+																						'available_option_ids',
+																						next
+																					)
+																				}}
+																				className='rounded text-blue-600'
+																			/>
+																			<span className='truncate dark:text-gray-300'>
+																				{opt.text}
+																			</span>
+																		</label>
+																	))}
+																</div>
+															</div>
+
+															{isSelected && (
+																<div className='border-l pl-4 border-gray-200 dark:border-gray-700'>
+																	<p className='text-[10px] uppercase text-green-600 mb-1'>
+																		Правильный ответ:
+																	</p>
+																	<div className='space-y-1 max-h-32 overflow-y-auto'>
+																		{(cell.available_option_ids || []).map(
+																			optOrder => {
+																				const opt = getOptionByOrder(optOrder)
+																				if (!opt) return null
+																				return (
+																					<label
+																						key={`correct_${optOrder}`}
+																						className='flex items-center gap-2 text-xs hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded'
+																					>
+																						<input
+																							type='checkbox'
+																							checked={(
+																								row.correct_answers?.[
+																									`row${rowIdx}_col${cellIdx}`
+																								] || []
+																							).includes(optOrder)}
+																							onChange={() =>
+																								handleSetCorrectAnswer(
+																									rowIdx,
+																									cellIdx,
+																									optOrder
+																								)
+																							}
+																							className='rounded text-green-600'
+																						/>
+																						<span className='truncate dark:text-gray-300'>
+																							{opt.text}
+																						</span>
+																					</label>
+																				)
+																			}
+																		)}
+																	</div>
+																</div>
+															)}
+														</div>
 													</div>
 												)}
-										</div>
-									))}
+											</div>
+										)
+									})}
 								</div>
 							</div>
 						))}
@@ -612,27 +767,28 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 				</div>
 
 				{/* Options */}
-				<div className='border-t pt-6'>
-					<div className='flex justify-between items-center mb-4'>
-						<h3 className='text-lg font-semibold text-gray-900 dark:text-white'>
+				<div>
+					<div className='flex items-center justify-between mb-2'>
+						<h4 className='text-sm font-medium text-gray-700 dark:text-gray-300'>
 							Варианты ответов
-						</h3>
+						</h4>
 						<button
+							type='button'
 							onClick={handleAddOption}
-							className='px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm'
+							disabled={isLoading}
+							className='px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50'
 						>
-							+ Добавить опцию
+							+ Опция
 						</button>
 					</div>
-
-					<div className='space-y-2'>
+					<div className='grid grid-cols-1 gap-2'>
 						{options.map((opt, idx) => (
 							<div
 								key={opt.id}
-								className='flex gap-3 items-center bg-gray-50 dark:bg-gray-700 p-3 rounded'
+								className='flex items-center gap-2 bg-white dark:bg-gray-900/40 border border-gray-200 dark:border-gray-700 rounded-lg p-2'
 							>
-								<span className='text-sm font-medium text-gray-600 dark:text-gray-400 min-w-8'>
-									#{idx}
+								<span className='text-xs font-mono text-gray-400 w-6 text-center'>
+									{idx + 1}
 								</span>
 								<input
 									type='text'
@@ -640,14 +796,15 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 									onChange={e =>
 										handleUpdateOption(idx, 'text', e.target.value)
 									}
-									placeholder='Текст опции'
-									className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-600 text-gray-900 dark:text-white'
+									className='flex-1 px-3 py-1.5 border border-gray-200 dark:border-gray-700 rounded dark:bg-gray-700 dark:text-white text-sm'
+									placeholder={`Текст опции ${idx + 1}`}
 								/>
 								<button
+									type='button'
 									onClick={() => handleRemoveOption(idx)}
-									className='px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 text-sm'
+									className='text-red-500 hover:text-red-700 px-2'
 								>
-									Удалить
+									✕
 								</button>
 							</div>
 						))}
@@ -655,26 +812,33 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 				</div>
 			</div>
 
-			{/* Submit/Cancel */}
-			<div className='flex gap-3 mt-8 pt-6 border-t'>
+			{error && (
+				<div className='p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm'>
+					⚠️ {error}
+				</div>
+			)}
+
+			<div className='flex items-center gap-4 pt-4 border-t dark:border-gray-700'>
 				<button
-					onClick={handleSubmit}
+					type='submit'
 					disabled={isLoading}
-					className='px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:bg-gray-400'
+					className='px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium'
 				>
 					{isLoading
 						? 'Сохранение...'
 						: initialValues
 						? 'Обновить тест'
-						: 'Создать тест'}
+						: 'Сохранить тест'}
 				</button>
 				<button
+					type='button'
 					onClick={onCancel}
-					className='px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors'
+					disabled={isLoading}
+					className='px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors disabled:opacity-50'
 				>
 					Отмена
 				</button>
 			</div>
-		</div>
+		</form>
 	)
 }

@@ -466,14 +466,11 @@ export const DragDropQuizForm = ({
 						Тип теста
 					</label>
 					<select
-						value={quizType}
-						onChange={e => setQuizType(e.target.value as QuizType)}
-						disabled={isLoading || saving}
+						value='additional'
+						disabled
 						className='w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent dark:bg-gray-700 dark:text-white disabled:opacity-50'
 					>
-						<option value='topic_final'>Итоговый по теме</option>
 						<option value='additional'>Дополнительный</option>
-						<option value='practice'>Практический</option>
 					</select>
 				</div>
 				<div>

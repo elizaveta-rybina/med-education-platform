@@ -81,7 +81,6 @@ const SideBarCourse = () => {
 						.filter(Boolean)
 				)
 
-				// Фильтруем задания (квизы): берем только нужные типы и исключаем дубликаты по названию
 				const filteredAssignments = (quizzes as any[])
 					.filter(q => {
 						const typeMatch =
@@ -92,7 +91,7 @@ const SideBarCourse = () => {
 										'table',
 										'input_answer',
 										'interactive_experience',
-										'free-input'
+										'free-input',
 									].includes(qq?.question_type)
 								))
 						if (!typeMatch) return false

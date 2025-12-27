@@ -994,29 +994,65 @@ const TopicContentPage = () => {
 						onDeleteLecture={handleDeleteLecture}
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
-							// Determine quiz type based on question type first, then presence of game files
-							if (
-								quiz.questions?.some(
-									(q: any) => q.question_type === 'select-table'
-								)
-							) {
-								setQuizType('select-table')
-							} else if (
-								quiz.questions?.some(q => q.question_type === 'table')
-							) {
-								setQuizType('table')
-							} else if (
-								quiz.questions?.some(q => q.question_type === 'free-input')
-							) {
-								setQuizType('input')
-							} else if (
-								quiz.questions?.some(q => q.question_type === 'input_answer')
-							) {
-								setQuizType('input')
-							} else if (quiz.file_name || quiz.game_path) {
-								setQuizType('interactive')
-							} else {
-								setQuizType('standard')
+							// Determine quiz type: prefer select-table when metadata columns indicate multi/select choices
+							const question = quiz.questions?.[0]
+							try {
+								if (question?.question_type === 'select-table') {
+									setQuizType('select-table')
+								} else if (
+									question?.question_type === 'table' &&
+									question.metadata
+								) {
+									const meta =
+										typeof question.metadata === 'string'
+											? JSON.parse(question.metadata)
+											: question.metadata
+									const hasSelectCol =
+										Array.isArray(meta?.columns) &&
+										meta.columns.some(
+											(c: any) =>
+												c.type === 'multi_select' || c.type === 'select'
+										)
+									if (hasSelectCol) {
+										setQuizType('select-table')
+									} else {
+										setQuizType('table')
+									}
+								} else if (
+									question?.question_type === 'free-input' ||
+									question?.question_type === 'input_answer'
+								) {
+									setQuizType('input')
+								} else if (quiz.file_name || quiz.game_path) {
+									setQuizType('interactive')
+								} else {
+									setQuizType('standard')
+								}
+							} catch (err) {
+								// Fallback: if metadata parsing fails, fall back to previous checks
+								if (
+									quiz.questions?.some(
+										(q: any) => q.question_type === 'select-table'
+									)
+								) {
+									setQuizType('select-table')
+								} else if (
+									quiz.questions?.some((q: any) => q.question_type === 'table')
+								) {
+									setQuizType('table')
+								} else if (
+									quiz.questions?.some(
+										(q: any) =>
+											q.question_type === 'free-input' ||
+											q.question_type === 'input_answer'
+									)
+								) {
+									setQuizType('input')
+								} else if (quiz.file_name || quiz.game_path) {
+									setQuizType('interactive')
+								} else {
+									setQuizType('standard')
+								}
 							}
 							setShowQuizForm(true)
 							setShowLectureForm(false)

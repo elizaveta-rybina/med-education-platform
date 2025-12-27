@@ -1,346 +1,54 @@
-import { lecturesApi } from '@/app/api/lectures/lectures.api'
-import type { Lecture } from '@/app/api/lectures/lectures.types'
-import { quizzesApi } from '@/app/api/quizzes/quizzes.api'
-import type { Quiz } from '@/app/api/quizzes/quizzes.types'
-import { topicsApi } from '@/app/api/topics/topics.api'
-import type { Topic } from '@/app/api/topics/topics.types'
+import React from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+// UI Components
 import { FreeInputBlock } from '@/components/courseInner/block/FreeInputBlock'
 import { ChapterHeader } from '@/components/courseInner/ChapterHeader'
 import { MarkAsReadButton } from '@/components/courseInner/MarkAsReadButton'
 import { DragDropTableManager } from '@/features/drag-drop-table'
-import type { DragDropTableBlock } from '@/features/drag-drop-table/model/types'
-import React, { useEffect, useMemo, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { useSearchParams } from 'react-router-dom'
-import remarkGfm from 'remark-gfm'
+import { DropdownTableComponent } from '@/features/dropdown-table/ui/DropdownTableComponent'
 import { LectureContent } from './dynamic/LectureContent'
 import { LectureNavigation } from './dynamic/LectureNavigation'
 import { QuizView } from './dynamic/QuizView'
 import { ResultsButton } from './dynamic/ResultsButton'
 
+// Hook
+import { useDynamicTopicContent } from './useDynamicTopicContent'
+
 const DynamicTopicContent: React.FC = () => {
-	const [searchParams, setSearchParams] = useSearchParams()
-	const topicIdParam = searchParams.get('topic')
-	const lectureIdParam = searchParams.get('lecture')
-	const assignmentIdParam = searchParams.get('assignment')
-	const [topic, setTopic] = useState<Topic | null>(null)
-	const [lectures, setLectures] = useState<Lecture[]>([])
-	const [loading, setLoading] = useState<boolean>(true)
-	const [error, setError] = useState<string | null>(null)
-	const [lectureReadStatus, setLectureReadStatus] = useState<
-		Record<string, boolean>
-	>({})
-	const [quizzes, setQuizzes] = useState<Quiz[]>([])
-	const [activeQuiz, setActiveQuiz] = useState<Quiz | null>(null)
-	const [assignmentQuiz, setAssignmentQuiz] = useState<Quiz | null>(null)
-	const [currentTableIndex, setCurrentTableIndex] = useState(0)
-	const [userAnswers, setUserAnswers] = useState<Record<number, number[]>>({})
-	const [showResults, setShowResults] = useState(false)
-	const [_quizScore, setQuizScore] = useState<{
-		correct: number
-		total: number
-	} | null>(null)
+	const {
+		topic,
+		loading,
+		error,
+		selectedLecture,
+		displayedQuiz,
+		activeQuiz,
+		assignmentQuiz,
+		assignmentType,
+		quizzes,
+		isSelectedRead,
+		showResults,
+		userAnswers,
+		currentTableIndex,
+		setCurrentTableIndex,
+		dndTableBlocks,
+		allTableQuestionsInTopic,
 
-	// Фильтруем только markdown лекции (всегда одинаковый порядок хуков)
-	const markdownLectures = lectures.filter(
-		l => (l.content_type || '').toLowerCase() === 'markdown'
-	)
+		handleMarkAsRead,
+		handleAnswerSelect,
+		handleSubmitQuiz,
+		navigateLecture,
+		resetActiveQuiz,
+		setActiveQuiz,
+		handleTableComplete
+	} = useDynamicTopicContent()
 
-	// Выбор текущей лекции по параметру URL или первая доступная
-	const selectedLecture = lectureIdParam
-		? markdownLectures.find(l => String(l.id) === String(lectureIdParam)) ||
-		  markdownLectures[0]
-		: markdownLectures[0]
-
-	const isSelectedRead = useMemo(() => {
-		if (!selectedLecture?.id) return false
-		return !!lectureReadStatus[String(selectedLecture.id)]
-	}, [lectureReadStatus, selectedLecture])
-
-	useEffect(() => {
-		const load = async () => {
-			const topicId = Number(topicIdParam)
-			if (!topicId) {
-				setError('Тема не указана')
-				setLoading(false)
-				return
-			}
-			try {
-				setLoading(true)
-				setError(null)
-				const topicResp = await topicsApi.getById(topicId)
-				const topicData =
-					(topicResp as any).data || (topicResp as any).topic || topicResp
-				setTopic(topicData as Topic)
-
-				const contentsResp = await lecturesApi.getByTopicId(topicId)
-				const lecturesData = (contentsResp as any).data?.lectures || []
-				setLectures(lecturesData as Lecture[])
-
-				// Загружаем тесты для темы
-				try {
-					const quizzesResponse = await quizzesApi.getAll()
-					const quizzesData =
-						(quizzesResponse as { data?: Quiz[] }).data ||
-						(quizzesResponse as Quiz[])
-					const topicQuizzes = (quizzesData || []).filter(
-						q => q.topic_id === topicId || q.quizable_id === topicId
-					) as Quiz[]
-					setQuizzes(topicQuizzes)
-				} catch (e) {
-					console.warn('Не удалось загрузить тесты:', e)
-					setQuizzes([])
-				}
-			} catch (e) {
-				console.error('Failed to load topic contents', e)
-				setError('Не удалось загрузить содержание темы')
-			} finally {
-				setLoading(false)
-			}
-		}
-		void load()
-	}, [topicIdParam])
-
-	useEffect(() => {
-		const saved = localStorage.getItem('lectureReadStatus')
-		setLectureReadStatus(saved ? JSON.parse(saved) : {})
-		const handler = () => {
-			const refreshed = localStorage.getItem('lectureReadStatus')
-			setLectureReadStatus(refreshed ? JSON.parse(refreshed) : {})
-		}
-		window.addEventListener('lectureReadStatusUpdated', handler)
-		return () => window.removeEventListener('lectureReadStatusUpdated', handler)
-	}, [])
-
-	// Загружаем задание по assignmentId из URL
-	useEffect(() => {
-		const loadAssignment = async () => {
-			const assignmentId = Number(assignmentIdParam)
-			if (!assignmentId) {
-				setAssignmentQuiz(null)
-				setCurrentTableIndex(0)
-				return
-			}
-			try {
-				const quizResp = await quizzesApi.getById(assignmentId)
-				let quizData =
-					(quizResp as any).data || (quizResp as any).quiz || quizResp
-				quizData = quizData as Quiz
-
-				setAssignmentQuiz(quizData)
-				setCurrentTableIndex(0)
-			} catch (e) {
-				console.error('Failed to load assignment quiz:', e)
-				setAssignmentQuiz(null)
-				setCurrentTableIndex(0)
-			}
-		}
-		void loadAssignment()
-	}, [assignmentIdParam])
-
-	// Загружаем результаты теста при изменении activeQuiz
-	useEffect(() => {
-		if (!activeQuiz?.id) return
-		const savedResults = localStorage.getItem(`quizResults_${activeQuiz.id}`)
-		if (savedResults) {
-			const parsed = JSON.parse(savedResults)
-			setUserAnswers(parsed.userAnswers || {})
-			setQuizScore(parsed.quizScore || null)
-			setShowResults(parsed.showResults || false)
-		}
-	}, [activeQuiz?.id])
-
-	if (loading) {
+	if (loading)
 		return <div className='p-6 text-center text-gray-500'>Загрузка...</div>
-	}
-
-	if (error) {
-		return <div className='p-6 text-center text-red-600'>{error}</div>
-	}
-
-	if (!topic) {
+	if (error) return <div className='p-6 text-center text-red-600'>{error}</div>
+	if (!topic)
 		return <div className='p-6 text-center text-gray-500'>Тема не найдена</div>
-	}
-
-	const handleMarkAsRead = () => {
-		if (!selectedLecture?.id) return
-		const key = 'lectureReadStatus'
-		const saved = localStorage.getItem(key)
-		const status = saved ? JSON.parse(saved) : {}
-		status[String(selectedLecture.id)] = true
-		localStorage.setItem(key, JSON.stringify(status))
-		setLectureReadStatus(status)
-		window.dispatchEvent(new Event('lectureReadStatusUpdated'))
-
-		// Ищем тест с таким же названием и активируем его
-		const matchingQuiz = quizzes.find(
-			q => q.title?.toLowerCase() === selectedLecture.title?.toLowerCase()
-		)
-		if (matchingQuiz) {
-			setActiveQuiz(matchingQuiz)
-			setUserAnswers({})
-			setShowResults(false)
-			setQuizScore(null)
-		}
-	}
-
-	const handleAnswerSelect = (questionIndex: number, optionIndex: number) => {
-		if (showResults) return
-
-		const question = activeQuiz?.questions?.[questionIndex]
-		if (!question) return
-
-		setUserAnswers(prev => {
-			const current = prev[questionIndex] || []
-
-			if (question.question_type === 'single_choice') {
-				// Для single choice - заменяем ответ
-				return { ...prev, [questionIndex]: [optionIndex] }
-			} else {
-				// Для multiple choice - добавляем/удаляем
-				if (current.includes(optionIndex)) {
-					return {
-						...prev,
-						[questionIndex]: current.filter(i => i !== optionIndex)
-					}
-				} else {
-					return { ...prev, [questionIndex]: [...current, optionIndex] }
-				}
-			}
-		})
-	}
-
-	const handleSubmitQuiz = () => {
-		if (!activeQuiz?.questions) return
-
-		let correct = 0
-		activeQuiz.questions.forEach((q, idx) => {
-			const userAnswer = userAnswers[idx] || []
-			const correctIndices = (q.options || [])
-				.map((opt, i) => (opt.is_correct ? i : -1))
-				.filter(i => i !== -1)
-
-			// Проверяем, что все правильные ответы выбраны и нет лишних
-			const isCorrect =
-				userAnswer.length === correctIndices.length &&
-				userAnswer.every(a => correctIndices.includes(a))
-
-			if (isCorrect) correct++
-		})
-
-		const score = { correct, total: activeQuiz.questions.length }
-		setQuizScore(score)
-		setShowResults(true)
-
-		// Сохраняем результаты в localStorage
-		if (activeQuiz.id) {
-			localStorage.setItem(
-				`quizResults_${activeQuiz.id}`,
-				JSON.stringify({
-					userAnswers,
-					quizScore: score,
-					showResults: true
-				})
-			)
-		}
-	}
-
-	const navigateLecture = (direction: 'prev' | 'next') => {
-		if (!selectedLecture) return
-		const idx = markdownLectures.findIndex(l => l.id === selectedLecture.id)
-		if (idx < 0) return
-		const nextIdx = direction === 'prev' ? idx - 1 : idx + 1
-		if (nextIdx < 0 || nextIdx >= markdownLectures.length) return
-		const nextLecture = markdownLectures[nextIdx]
-		const nextParams = new URLSearchParams(searchParams)
-		nextParams.set('lecture', String(nextLecture.id))
-		setSearchParams(nextParams)
-	}
-
-	// Определяем тип отображаемого задания
-	const getAssignmentType = (
-		quiz: Quiz
-	): 'table' | 'interactive' | 'input' | 'free-input' | 'standard' | null => {
-		// Сначала проверяем тип вопроса - это более надежный индикатор
-		if (quiz.questions?.some(q => q.question_type === 'table')) return 'table'
-		if (quiz.questions?.some(q => q.question_type === 'free-input'))
-			return 'free-input'
-		if (quiz.questions?.some(q => q.question_type === 'input_answer'))
-			return 'input'
-		if (quiz.file_name || quiz.game_path) return 'interactive'
-		return 'standard'
-	}
-
-	// Конвертируем quiz с table вопросами в DragDropTableBlock
-	const convertQuizToTableBlocks = (quiz: Quiz): DragDropTableBlock[] => {
-		if (!quiz.questions) return []
-
-		// Вспомогательная функция для безопасного получения значения ячейки
-		const getCellValue = (cell: any): string => {
-			if (typeof cell === 'object' && cell !== null && 'value' in cell) {
-				return String(cell.value)
-			}
-			return String(cell || '')
-		}
-
-		return quiz.questions
-			.filter(q => q.question_type === 'table' && q.metadata)
-			.map((q, idx) => {
-				const rawMeta = q.metadata as any
-				const metadata =
-					typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta
-
-				const correctAnswers: Record<string, string[] | { anyOf: string[] }> =
-					{}
-				;(metadata.rows || []).forEach((row: any, rowIdx: number) => {
-					const cellId = `row_${rowIdx}_effects`
-					const correctOptionIds = row.correct_option_ids || []
-					const answerMode = row.answer_mode || 'all'
-
-					const correctAnswerIds = correctOptionIds.map(
-						(idx: number) => `ans_${idx}`
-					)
-
-					if (answerMode === 'any') {
-						correctAnswers[cellId] = { anyOf: correctAnswerIds }
-					} else {
-						correctAnswers[cellId] = correctAnswerIds
-					}
-				})
-
-				return {
-					id: `table_${quiz.id}_${idx}`,
-					type: 'drag-drop-table' as const,
-					title: q.text || 'Таблица',
-					tableTitle: q.text || '',
-					description: quiz.description || '',
-					columns: (metadata.columns || []).map((col: any, i: number) => ({
-						id: `col_${i}`,
-						title: col.name || `Колонка ${i + 1}`,
-						width: col.width
-					})),
-					rows: (metadata.rows || []).map((row: any, i: number) => ({
-						id: `row_${i}`,
-						title: getCellValue(row.cells?.[0]),
-						characteristic: getCellValue(row.cells?.[1])
-					})),
-					answers: (metadata.answers || q.options || []).map(
-						(ans: any, i: number) => ({
-							id: `ans_${i}`,
-							content: ans.text || ans.content || ''
-						})
-					),
-					correctAnswers
-				}
-			})
-	}
-
-	const displayedQuiz = assignmentQuiz || activeQuiz
-	const assignmentType = displayedQuiz ? getAssignmentType(displayedQuiz) : null
-	const tableBlocks =
-		assignmentType === 'table' && displayedQuiz
-			? convertQuizToTableBlocks(displayedQuiz)
-			: []
 
 	return (
 		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t-1'>
@@ -349,64 +57,13 @@ const DynamicTopicContent: React.FC = () => {
 					title={assignmentQuiz?.title || selectedLecture?.title || topic.title}
 					isRead={false}
 				/>
-				{/* Лекция */}
+
+				{/* --- ЛЕКЦИЯ --- */}
 				{!displayedQuiz && selectedLecture?.content ? (
 					<LectureContent lecture={selectedLecture} />
 				) : null}
 
-				{/* DND Таблица */}
-				{assignmentType === 'table' && tableBlocks.length > 0 && (
-					<div className='mt-4'>
-						<div className='mb-4'>
-							<div className='flex items-center justify-between'>
-								{tableBlocks.length > 1 && (
-									<div className='flex gap-2'>
-										<button
-											onClick={() =>
-												setCurrentTableIndex(prev => Math.max(0, prev - 1))
-											}
-											disabled={currentTableIndex === 0}
-											className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-										>
-											← Предыдущая
-										</button>
-										<button
-											onClick={() =>
-												setCurrentTableIndex(prev =>
-													Math.min(tableBlocks.length - 1, prev + 1)
-												)
-											}
-											disabled={currentTableIndex === tableBlocks.length - 1}
-											className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-										>
-											Следующая →
-										</button>
-									</div>
-								)}
-							</div>
-						</div>
-						<DragDropTableManager
-							blocks={[tableBlocks[currentTableIndex]]}
-							chapterHash={
-								displayedQuiz?.id ? `quiz_${displayedQuiz.id}` : undefined
-							}
-							onComplete={isCorrect => {
-								if (displayedQuiz?.id) {
-									localStorage.setItem(
-										`quizResults_${displayedQuiz.id}`,
-										JSON.stringify({
-											userAnswers: {},
-											quizScore: { correct: isCorrect ? 1 : 0, total: 1 },
-											showResults: true
-										})
-									)
-								}
-							}}
-						/>
-					</div>
-				)}
-
-				{/* Интерактивное задание (игра) */}
+				{/* --- 1. ИНТЕРАКТИВНОЕ ЗАДАНИЕ (ИГРА + ТАБЛИЦА) --- */}
 				{assignmentType === 'interactive' && displayedQuiz && (
 					<div className='mt-4'>
 						<div className='p-6 bg-gray-50 rounded-lg'>
@@ -414,6 +71,8 @@ const DynamicTopicContent: React.FC = () => {
 								Пройдите интерактивное задание, а после заполните таблицу под
 								ним.
 							</h3>
+
+							{/* Iframe игры */}
 							{displayedQuiz.game_path || displayedQuiz.file_name ? (
 								<div className='space-y-2'>
 									<div className='flex gap-2'>
@@ -430,22 +89,160 @@ const DynamicTopicContent: React.FC = () => {
 								</div>
 							) : (
 								<div className='p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-yellow-800'>
-									<p>
-										Не удалось загрузить игру: отсутствуют данные пути
-										(game_path или file_name)
-									</p>
+									<p>Не удалось загрузить игру: отсутствуют данные пути</p>
 									<p className='text-sm mt-2'>Quiz ID: {displayedQuiz.id}</p>
 								</div>
 							)}
+
+							{/* Рендерим таблицы, найденные в теме */}
+							{allTableQuestionsInTopic.length > 0
+								? allTableQuestionsInTopic.map(q => {
+										let metadata: any = q.metadata
+										if (typeof metadata === 'string') {
+											try {
+												metadata = JSON.parse(metadata)
+											} catch (e) {
+												return null
+											}
+										}
+										const questionWithMeta = { ...q, metadata }
+
+										return (
+											<div key={q.id} className='mt-8 border-t pt-6'>
+												<DropdownTableComponent
+													question={questionWithMeta as any}
+													chapterHash={`quiz_q_${q.id}`}
+													onComplete={isCorrect => {
+														console.log('Table completed:', isCorrect)
+														if (displayedQuiz.id)
+															handleTableComplete(displayedQuiz.id)
+													}}
+												/>
+											</div>
+										)
+								  })
+								: // Fallback: рендер таблиц внутри самого квиза
+								  displayedQuiz.questions?.map(q => {
+										if (
+											q.question_type !== 'select-table' &&
+											q.question_type !== 'table'
+										)
+											return null
+										let metadata: any = q.metadata
+										if (typeof metadata === 'string') {
+											try {
+												metadata = JSON.parse(metadata)
+											} catch (e) {
+												return null
+											}
+										}
+										if (
+											!metadata?.rows?.[0]?.cells?.some(
+												(c: any) => c.available_option_ids
+											)
+										)
+											return null
+
+										const questionWithMeta = { ...q, metadata }
+										return (
+											<div key={q.id} className='mt-8 border-t pt-6'>
+												<DropdownTableComponent
+													question={questionWithMeta as any}
+													chapterHash={`quiz_${displayedQuiz.id}`}
+												/>
+											</div>
+										)
+								  })}
 						</div>
 					</div>
 				)}
 
-				{/* Задание с вводом ответа (Free Input) */}
+				{/* --- 2. НОВАЯ ТАБЛИЦА БЕЗ ИГРЫ (Select Table) --- */}
+				{(assignmentType === 'select-table' ||
+					(assignmentType === 'table' && dndTableBlocks.length === 0)) &&
+					displayedQuiz && (
+						<div className='mt-4 space-y-8'>
+							{displayedQuiz.questions?.map(q => {
+								let metadata: any = q.metadata
+								if (typeof metadata === 'string') {
+									try {
+										metadata = JSON.parse(metadata)
+									} catch (e) {
+										return null
+									}
+								}
+
+								// Фильтр только для Dropdown формата
+								if (
+									!metadata?.rows?.[0]?.cells?.some(
+										(c: any) => c.available_option_ids
+									)
+								)
+									return null
+
+								const questionWithMeta = { ...q, metadata }
+								return (
+									<DropdownTableComponent
+										key={q.id}
+										question={questionWithMeta as any}
+										chapterHash={`quiz_${displayedQuiz.id}`}
+										onComplete={isCorrect => {
+											if (displayedQuiz.id)
+												handleTableComplete(displayedQuiz.id)
+										}}
+									/>
+								)
+							})}
+						</div>
+					)}
+
+				{/* --- 3. СТАРАЯ DND ТАБЛИЦА --- */}
+				{assignmentType === 'table' && dndTableBlocks.length > 0 && (
+					<div className='mt-4'>
+						<div className='mb-4'>
+							<div className='flex items-center justify-between'>
+								{dndTableBlocks.length > 1 && (
+									<div className='flex gap-2'>
+										<button
+											onClick={() =>
+												setCurrentTableIndex(prev => Math.max(0, prev - 1))
+											}
+											disabled={currentTableIndex === 0}
+											className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50'
+										>
+											← Предыдущая
+										</button>
+										<button
+											onClick={() =>
+												setCurrentTableIndex(prev =>
+													Math.min(dndTableBlocks.length - 1, prev + 1)
+												)
+											}
+											disabled={currentTableIndex === dndTableBlocks.length - 1}
+											className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50'
+										>
+											Следующая →
+										</button>
+									</div>
+								)}
+							</div>
+						</div>
+						<DragDropTableManager
+							blocks={[dndTableBlocks[currentTableIndex]]}
+							chapterHash={
+								displayedQuiz?.id ? `quiz_${displayedQuiz.id}` : undefined
+							}
+							onComplete={isCorrect => {
+								if (displayedQuiz?.id) handleTableComplete(displayedQuiz.id)
+							}}
+						/>
+					</div>
+				)}
+
+				{/* --- 4. FREE INPUT --- */}
 				{assignmentType === 'free-input' && displayedQuiz && (
 					<div className='mt-4'>
 						<div className='p-1 rounded-lg'>
-							{/* Описание в Markdown */}
 							{displayedQuiz.description && (
 								<div className='mb-6 p-4 bg-white rounded-lg border border-gray-200 prose prose-sm max-w-none'>
 									<ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -453,8 +250,6 @@ const DynamicTopicContent: React.FC = () => {
 									</ReactMarkdown>
 								</div>
 							)}
-
-							{/* Free Input Block с вопросами */}
 							{displayedQuiz.questions &&
 								displayedQuiz.questions.length > 0 && (
 									<FreeInputBlock
@@ -473,17 +268,8 @@ const DynamicTopicContent: React.FC = () => {
 											}))
 										}}
 										onComplete={() => {
-											// Mark quiz as completed
-											if (displayedQuiz.id) {
-												localStorage.setItem(
-													`quizResults_${displayedQuiz.id}`,
-													JSON.stringify({
-														userAnswers: {},
-														quizScore: null,
-														showResults: true
-													})
-												)
-											}
+											if (displayedQuiz.id)
+												handleTableComplete(displayedQuiz.id)
 										}}
 									/>
 								)}
@@ -491,7 +277,7 @@ const DynamicTopicContent: React.FC = () => {
 					</div>
 				)}
 
-				{/* Задание с вводом ответа (старый формат - input_answer) */}
+				{/* --- 5. INPUT (OLD) --- */}
 				{assignmentType === 'input' && displayedQuiz && (
 					<div className='mt-4'>
 						<div className='p-6 bg-gray-50 rounded-lg'>
@@ -505,7 +291,7 @@ const DynamicTopicContent: React.FC = () => {
 					</div>
 				)}
 
-				{/* Стандартный тест (прикреплен к лекции) */}
+				{/* --- 6. STANDARD QUIZ --- */}
 				{assignmentType === 'standard' && activeQuiz && (
 					<div className='mt-4'>
 						<QuizView
@@ -515,16 +301,10 @@ const DynamicTopicContent: React.FC = () => {
 							onSelect={handleAnswerSelect}
 							onSubmit={handleSubmitQuiz}
 						/>
-						{/* Кнопка возврата к лекции после завершения теста */}
 						{showResults && (
 							<div className='mt-6 pt-4 border-t border-gray-200'>
 								<button
-									onClick={() => {
-										setActiveQuiz(null)
-										setShowResults(false)
-										setUserAnswers({})
-										setQuizScore(null)
-									}}
+									onClick={resetActiveQuiz}
 									className='px-6 py-2 bg-gray-600 text-white rounded-xl shadow-sm hover:bg-gray-700 transition-colors'
 								>
 									Вернуться к лекции
@@ -533,12 +313,14 @@ const DynamicTopicContent: React.FC = () => {
 						)}
 					</div>
 				)}
+
+				{/* --- FOOTER / NAVIGATION --- */}
 				{!displayedQuiz && !selectedLecture?.content && (
 					<div className='text-gray-500'>
 						Для темы пока нет лекций в формате markdown.
 					</div>
 				)}
-				{/* Кнопки только для лекций (не для заданий) */}
+
 				{selectedLecture && !activeQuiz && !assignmentQuiz && (
 					<div className='mt-6 pt-4 border-t border-gray-200 flex items-center gap-3'>
 						<MarkAsReadButton

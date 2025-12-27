@@ -1,231 +1,265 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useDropdownTable } from '../model/hooks/useDropdownTable'
-import { DropdownOption, DropdownTableBlock } from '../model/types'
+import { QuizQuestion } from '../model/types'
 import { DropdownCell } from './DropdownCell'
 
 interface DropdownTableComponentProps {
-	block: DropdownTableBlock
+	question: QuizQuestion
 	onComplete?: (isCorrect: boolean) => void
-	chapterHash?: string // Для обновления chapterReadStatus, если нужно
+	chapterHash?: string
 }
 
 export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
-	block,
+	question,
 	onComplete = () => {},
 	chapterHash
 }) => {
-	const { t } = useTranslation('courseInner')
-	const {
-		selectedAnswers,
-		errors,
-		isCompleted,
-		handleSelectChange,
-		checkAnswers,
-		resetAnswers
-	} = useDropdownTable({ block, onComplete })
+	const { t } = useTranslation('courseInner') // Или ваш namespace
+
+	// Состояние: ключом является cell_key (например, "row0_col1"), значением - ID опции (строкой)
+	const [selectedAnswers, setSelectedAnswers] = useState<
+		Record<string, string>
+	>({})
+
+	// Состояние проверки
+	const [isChecked, setIsChecked] = useState(false)
+	const [errors, setErrors] = useState<Record<string, boolean>>({}) // cell_key -> true (если ошибка)
 	const [isLocked, setIsLocked] = useState(false)
 
-	// Мемоизация groupedRows, чтобы избежать пересоздания на каждом рендере
-	const groupedRows = useMemo(
-		() =>
-			block.rows.reduce<
-				{
-					title: string | React.ReactNode
-					subRows: {
-						id: string
-						values: (string | React.ReactNode)[]
-						cellOptions?: Record<string, DropdownOption[]>
-					}[]
-				}[]
-			>((acc, row) => {
-				const title = row.values[0] || 'Без названия'
-				const existingGroup = acc.find(group => group.title === title)
-				if (existingGroup) {
-					existingGroup.subRows.push({
-						id: row.id,
-						values: row.values,
-						cellOptions: row.cellOptions
-					})
-				} else {
-					acc.push({
-						title,
-						subRows: [
-							{ id: row.id, values: row.values, cellOptions: row.cellOptions }
-						]
-					})
-				}
-				return acc
-			}, []),
-		[block.rows] // Зависимость только от block.rows, чтобы пересоздавать только при изменении данных
-	)
+	const { metadata, options } = question
 
-	// Загрузка сохранённых ответов из localStorage только при монтировании (пустой массив зависимостей)
+	// --- Logic: Local Storage ---
+
+	const storageKey = `quiz_table_${question.id}`
+
 	useEffect(() => {
-		const savedAnswers = localStorage.getItem('ddtAnswers')
-		if (savedAnswers) {
-			const parsedAnswers = JSON.parse(savedAnswers)
-			const blockAnswers = parsedAnswers[block.id] || {}
-			if (Object.keys(blockAnswers).length > 0) {
-				// Проверяем, не загружены ли уже ответы (избегаем повторного вызова)
-				if (Object.keys(selectedAnswers).length === 0) {
-					Object.entries(blockAnswers).forEach(([cellId, answerId]) => {
-						const [rowId, colPart] = cellId.split('-col')
-						const colIndex = parseInt(colPart, 10)
-						if (rowId && !isNaN(colIndex)) {
-							handleSelectChange(rowId, colIndex, answerId as string)
-						}
-					})
+		const saved = localStorage.getItem(storageKey)
+		if (saved) {
+			try {
+				const parsed = JSON.parse(saved)
+				if (parsed.answers && Object.keys(parsed.answers).length > 0) {
+					setSelectedAnswers(parsed.answers)
+					// Если ответы были сохранены, считаем их "залоченными" или просто восстановленными
+					// Если нужно блокировать сразу после перезагрузки - раскомментируйте:
+					// setIsLocked(parsed.locked)
+					// if (parsed.checked) checkAnswers(parsed.answers)
 				}
-				setIsLocked(true)
+			} catch (e) {
+				console.error('Failed to parse saved answers', e)
 			}
 		}
-	}, []) // Пустой массив зависимостей: выполняется только при монтировании
+	}, [question.id])
 
-	// Модифицированный checkAnswers
+	const saveToStorage = (
+		answers: Record<string, string>,
+		locked: boolean,
+		checked: boolean
+	) => {
+		localStorage.setItem(
+			storageKey,
+			JSON.stringify({ answers, locked, checked })
+		)
+	}
+
+	// --- Logic: Handlers ---
+
+	const handleSelectChange = (cellKey: string, value: string) => {
+		if (isLocked) return
+
+		const newAnswers = { ...selectedAnswers, [cellKey]: value }
+		setSelectedAnswers(newAnswers)
+
+		// Сбрасываем состояние проверки при изменении ответа
+		if (isChecked) {
+			setIsChecked(false)
+			setErrors({})
+		}
+	}
+
 	const handleCheckAnswers = () => {
-		try {
-			checkAnswers()
-			const savedAnswers = JSON.parse(
-				localStorage.getItem('ddtAnswers') || '{}'
-			)
-			savedAnswers[block.id] = selectedAnswers
-			localStorage.setItem('ddtAnswers', JSON.stringify(savedAnswers))
+		const newErrors: Record<string, boolean> = {}
+		let hasError = false
+		let allFilled = true
+
+		// Проходим по всем строкам и ячейкам
+		metadata.rows.forEach(row => {
+			row.cells.forEach(cell => {
+				if (cell.type === 'select' && cell.cell_key) {
+					const userAnswer = selectedAnswers[cell.cell_key]
+					const correctOptions = row.correct_answers?.[cell.cell_key] || []
+
+					// 1. Проверяем, заполнен ли ответ
+					if (!userAnswer) {
+						allFilled = false
+					}
+
+					// 2. Проверяем правильность
+					// userAnswer - это string, correctOptions - number[]
+					const isCorrect =
+						userAnswer && correctOptions.includes(parseInt(userAnswer))
+
+					if (!isCorrect) {
+						newErrors[cell.cell_key] = true
+						hasError = true
+					}
+				}
+			})
+		})
+
+		setErrors(newErrors)
+		setIsChecked(true)
+
+		const isSuccess = !hasError && allFilled
+
+		// Если всё верно, блокируем и сохраняем успех
+		if (isSuccess) {
 			setIsLocked(true)
+			saveToStorage(selectedAnswers, true, true)
+
+			// Обновляем статус главы, если передан хэш
 			if (chapterHash) {
 				const savedReadStatus = localStorage.getItem('chapterReadStatus')
 				const readStatus = savedReadStatus ? JSON.parse(savedReadStatus) : {}
 				readStatus[chapterHash] = true
 				localStorage.setItem('chapterReadStatus', JSON.stringify(readStatus))
 				window.dispatchEvent(new Event('chapterReadStatusUpdated'))
-			} else {
-				console.warn('DropdownTable: chapterHash is undefined')
 			}
-		} catch (error) {
-			console.error('DropdownTable: Error in handleCheckAnswers:', error)
 		}
+
+		onComplete(isSuccess)
 	}
 
-	// Модифицированный resetAnswers
 	const handleResetAnswers = () => {
-		if (!isLocked) {
-			resetAnswers()
-			const savedAnswers = JSON.parse(
-				localStorage.getItem('ddtAnswers') || '{}'
-			)
-			delete savedAnswers[block.id]
-			localStorage.setItem('ddtAnswers', JSON.stringify(savedAnswers))
-		}
+		if (isLocked) return
+		setSelectedAnswers({})
+		setIsChecked(false)
+		setErrors({})
+		localStorage.removeItem(storageKey)
 	}
+
+	// --- Render ---
 
 	return (
-		<div className='max-w-6xl mx-auto bg-white p-6 shadow border border-gray-200 rounded-md'>
-			<div className='mb-4 text-gray-700 space-y-2'>
-				{block.tableTitle.split('\n').map((paragraph, i) => (
-					<p key={i}>{paragraph}</p>
-				))}
-			</div>
-
-			<h4 className='text-xl font-semibold mb-4 text-gray-800'>
-				{block.title}
+		<div className='max-w-6xl mx-auto bg-white p-6 shadow-sm border border-gray-200 rounded-lg'>
+			<h4 className='text-xl font-semibold mb-6 text-gray-800'>
+				{question.text}
 			</h4>
 
-			<div className='overflow-x-auto'>
+			<div className='overflow-x-auto rounded-lg border border-gray-200'>
 				<table className='w-full table-auto border-collapse text-sm'>
 					<thead>
 						<tr className='bg-gray-100 text-gray-700'>
-							{block.columns.map(column => (
+							{metadata.columns.map((column, idx) => (
 								<th
-									key={column.id}
-									style={{ width: column.width }}
-									className='text-left px-4 py-2 border-b border-gray-300 font-medium'
+									key={idx}
+									className='text-left px-4 py-3 border-b border-gray-300 font-semibold uppercase text-xs tracking-wider'
 								>
-									{column.title}
+									{column.name}
 								</th>
 							))}
 						</tr>
 					</thead>
 					<tbody>
-						{groupedRows.map(group => (
-							<React.Fragment key={`group-${group.title}`}>
-								{group.subRows.map((subRow, index) => (
-									<tr
-										key={subRow.id}
-										className='border-b border-gray-200 hover:bg-gray-50 transition-colors'
-									>
-										{index === 0 && (
-											<td
-												className='px-4 py-2 border-b border-gray-200 text-gray-700'
-												rowSpan={group.subRows.length}
-											>
-												{group.title}
-											</td>
-										)}
-										{subRow.values.slice(1).map((value, colIndex) => {
-											const actualColIndex = colIndex + 1
-											const cellId = `${subRow.id}-col${actualColIndex}`
-											const columnId = block.columns[actualColIndex].id
-											const options =
-												subRow.cellOptions?.[`col${actualColIndex}`] ||
-												block.columnOptions?.[columnId] ||
-												[]
-											return (
-												<DropdownCell
-													key={cellId}
-													rowId={subRow.id}
-													colIndex={actualColIndex}
-													value={value}
-													columnId={columnId}
-													options={options}
-													selectedAnswer={selectedAnswers[cellId]}
-													hasError={errors[cellId]}
-													onSelectChange={
-														isLocked ? () => {} : handleSelectChange
-													}
-													disabled={isLocked}
-												/>
-											)
-										})}
-									</tr>
-								))}
-							</React.Fragment>
+						{metadata.rows.map((row, rowIdx) => (
+							<tr key={rowIdx} className='hover:bg-gray-50 transition-colors'>
+								{row.cells.map((cell, cellIdx) => {
+									const uniqueKey = cell.cell_key || `text-${rowIdx}-${cellIdx}`
+									return (
+										<DropdownCell
+											key={uniqueKey}
+											cell={cell}
+											allOptions={options}
+											selectedAnswer={
+												cell.cell_key
+													? selectedAnswers[cell.cell_key]
+													: undefined
+											}
+											// Состояния валидации
+											isChecked={isChecked}
+											hasError={cell.cell_key ? errors[cell.cell_key] : false}
+											isCorrect={cell.cell_key ? !errors[cell.cell_key] : false}
+											onSelectChange={handleSelectChange}
+											disabled={isLocked}
+										/>
+									)
+								})}
+							</tr>
 						))}
 					</tbody>
 				</table>
 			</div>
 
+			{/* Кнопки управления */}
 			<div className='flex gap-3 mt-6'>
 				<button
 					onClick={handleCheckAnswers}
-					className={`px-4 py-2 bg-purple-600 text-white rounded-md transition ${
-						isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700'
-					}`}
 					disabled={isLocked}
+					className={`px-5 py-2.5 font-medium rounded-md transition-all shadow-sm ${
+						isLocked
+							? 'bg-purple-300 text-white cursor-not-allowed'
+							: 'bg-purple-600 hover:bg-purple-700 text-white active:transform active:scale-95'
+					}`}
 				>
-					{t('checkAnswers')}
+					{t('checkAnswers', 'Проверить')}
 				</button>
+
 				<button
 					onClick={handleResetAnswers}
-					className={`px-4 py-2 border border-gray-300 text-gray-700 rounded-md transition ${
-						isLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
-					}`}
 					disabled={isLocked}
+					className={`px-5 py-2.5 font-medium rounded-md transition-all border ${
+						isLocked
+							? 'border-gray-200 text-gray-400 cursor-not-allowed'
+							: 'border-gray-300 text-gray-700 hover:bg-gray-50 active:bg-gray-100'
+					}`}
 				>
-					{t('resetAnswers')}
+					{t('resetAnswers', 'Сбросить')}
 				</button>
 			</div>
 
-			{isCompleted && Object.keys(errors).length > 0 && (
+			{/* Сообщение о статусе */}
+			{isChecked && (
 				<div
-					className={`mt-4 px-4 py-3 rounded-md text-sm ${
-						Object.values(errors).some(e => e)
+					className={`mt-4 px-4 py-3 rounded-md text-sm font-medium flex items-center gap-2 ${
+						Object.keys(errors).length > 0
 							? 'bg-red-50 text-red-700 border border-red-200'
 							: 'bg-green-50 text-green-700 border border-green-200'
 					}`}
 				>
-					{Object.values(errors).some(e => e)
-						? t('answersIncorrect')
-						: t('answersCorrect')}
+					{Object.keys(errors).length > 0 ? (
+						<>
+							<svg
+								className='w-5 h-5'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+								/>
+							</svg>
+							{t('answersIncorrect', 'Есть ошибки. Попробуйте еще раз.')}
+						</>
+					) : (
+						<>
+							<svg
+								className='w-5 h-5'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+							>
+								<path
+									strokeLinecap='round'
+									strokeLinejoin='round'
+									strokeWidth={2}
+									d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+								/>
+							</svg>
+							{t('answersCorrect', 'Все верно! Молодец!')}
+						</>
+					)}
 				</div>
 			)}
 		</div>
