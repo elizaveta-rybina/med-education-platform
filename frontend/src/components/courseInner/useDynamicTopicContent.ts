@@ -286,6 +286,7 @@ export const useDynamicTopicContent = () => {
 		})
 	}
 
+	console.log('displayedQuiz', displayedQuiz)	
 	const handleSubmitQuiz = () => {
 		if (!activeQuiz?.questions) return
 		let correct = 0

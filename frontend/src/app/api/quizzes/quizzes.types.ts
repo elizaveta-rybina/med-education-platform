@@ -4,6 +4,7 @@ export type QuizType =
 	| 'topic_final'
 	| 'module_final'
 	| 'additional'
+	| 'practice'
 	| 'embedded'
 	| 'standard'
 	| 'table'

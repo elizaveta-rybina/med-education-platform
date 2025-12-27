@@ -83,6 +83,17 @@ const SideBarCourse = () => {
 
 				const filteredAssignments = (quizzes as any[])
 					.filter(q => {
+						// --- НОВАЯ ПРОВЕРКА НА ИСКЛЮЧЕНИЕ ---
+						// Если тип теста 'module_final' И в нем есть вопросы типа 'table' — пропускаем его
+						if (
+							q?.quiz_type === 'module_final' &&
+							Array.isArray(q?.questions) &&
+							q.questions.some((qq: any) => qq?.question_type === 'table')
+						) {
+							return false
+						}
+						// ------------------------------------
+
 						const typeMatch =
 							q?.quiz_type === 'additional' ||
 							(Array.isArray(q?.questions) &&
@@ -91,10 +102,12 @@ const SideBarCourse = () => {
 										'table',
 										'input_answer',
 										'interactive_experience',
-										'free-input',
+										'free-input'
 									].includes(qq?.question_type)
 								))
+
 						if (!typeMatch) return false
+
 						const t = (q?.title || '').trim().toLowerCase()
 						if (!t) return false
 						return !lectureTitleSet.has(t)

@@ -1,9 +1,8 @@
-import { Content, SideBarCourse } from '@/components/courseInner'
+import { SideBarCourse } from '@/components/courseInner'
 import DynamicTopicContent from '@/components/courseInner/DynamicTopicContent'
 import { Header } from '@/components/navigation/ui/Header'
 import { CourseProvider } from '@/context/CourseContext'
 import { SidebarProvider, useSidebar } from '@/context/SidebarContext'
-import { useSearchParams } from 'react-router-dom'
 
 const Backdrop: React.FC = () => {
 	const { isMobileOpen, toggleMobileSidebar } = useSidebar()
@@ -20,9 +19,6 @@ const Backdrop: React.FC = () => {
 
 const CourseLayoutContent: React.FC = () => {
 	const { isExpanded, isHovered, isMobileOpen } = useSidebar()
-	const [searchParams] = useSearchParams()
-	const hasDynamicTopic = !!searchParams.get('topic')
-
 	return (
 		<div className='min-h-screen xl:flex'>
 			<div>
@@ -36,7 +32,7 @@ const CourseLayoutContent: React.FC = () => {
 			>
 				<Header backgroundColor='#fff' />
 				<div className='max-w-[1536px]'>
-					{hasDynamicTopic ? <DynamicTopicContent /> : <Content />}
+					<DynamicTopicContent />
 				</div>
 			</div>
 		</div>

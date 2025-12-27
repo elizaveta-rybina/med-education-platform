@@ -776,3 +776,60 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+/* --- index.css --- */
+
+/* 1. Скрываем верхнюю панель и сдвиг контента */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+body {
+    top: 0px !important;
+}
+
+/* 2. Скрываем логотип Google, ссылки и лишний текст */
+.goog-logo-link {
+    display: none !important;
+}
+.goog-te-gadget {
+    color: transparent !important;
+    font-size: 0 !important;
+}
+.goog-te-gadget span {
+    display: none !important;
+}
+
+select.goog-te-combo {
+    /* Сбрасываем стандартный вид браузера */
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+
+    /* Дизайн кнопки */
+    background-color: transparent !important; /* Прозрачный фон (берет цвет родителя) */
+    border: none !important; /* Без рамок (если рамка нужна - задайте её родителю div) */
+    
+    /* Текст */
+    color: inherit !important; /* Цвет текста как у родителя (для темной темы) */
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    
+    /* Размеры */
+    height: 100% !important;
+    padding: 0 24px 0 8px !important; /* Справа отступ под стрелочку */
+    margin: 0 !important;
+    cursor: pointer !important;
+    outline: none !important;
+
+    /* Кастомная стрелочка (SVG) */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 0 center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.2em 1.2em !important;
+}
+
+/* Цвет стрелочки для темной темы (если используется Tailwind класс 'dark') */
+.dark select.goog-te-combo {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+}

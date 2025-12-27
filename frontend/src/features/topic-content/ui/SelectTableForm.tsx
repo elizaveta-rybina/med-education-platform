@@ -353,7 +353,7 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 		const payload: QuizPayload = {
 			title,
 			description: description.trim(),
-			quiz_type: 'additional',
+			quiz_type: 'module_final',
 			max_attempts: 3,
 			passing_score: 70,
 			time_limit_minutes: 30,
