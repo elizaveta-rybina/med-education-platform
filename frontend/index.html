@@ -8,10 +8,81 @@
 			href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap"
 			rel="stylesheet"
 		/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 		<title>Doctor VR</title>
 	</head>
 	<body>
 		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>
+		<script>
+			window.addEventListener('DOMContentLoaded', () => {
+				if (typeof window.jQuery === 'undefined') return
+				const $ = window.jQuery
+
+				const styleMenu = () => {
+					const $frame = $('iframe.goog-te-menu-frame')
+					if (!$frame.length) return false
+					const $contents = $frame.contents()
+					const $menu = $contents.find('.goog-te-menu2')
+					if (!$menu.length) return false
+
+					$menu.css({
+						border: '1px solid #d50000',
+						'background-color': '#ffebee'
+					})
+					$contents.find('body').css('background-color', '#ffebee')
+					$contents
+						.find(
+							'.goog-te-menu2-item div, .goog-te-menu2-item:link div, .goog-te-menu2-item:visited div, .goog-te-menu2-item:active div'
+						)
+						.css({
+							color: '#000000',
+							'background-color': '#ffebee',
+							'font-family': '"Open Sans",Helvetica,Arial,sans-serif'
+						})
+
+					$contents
+						.find('.goog-te-menu2-item div')
+						.off('mouseenter.gt hover.gt')
+						.hover(
+							function () {
+								$(this)
+									.css('background-color', '#d50000')
+									.find('span.text')
+									.css('color', '#ffffff')
+							},
+							function () {
+								$(this)
+									.css('background-color', '#ffebee')
+									.find('span.text')
+									.css('color', '#000000')
+							}
+						)
+
+					$frame.css({
+						'-moz-box-shadow': '0 3px 8px 2px #666666',
+						'-webkit-box-shadow': '0 3px 8px 2px #666',
+						'box-shadow': '0 3px 8px 2px #666'
+					})
+
+					return true
+				}
+
+				const attachClick = () => {
+					$('#google_translate_element')
+						.off('click.gt-style')
+						.on('click.gt-style', () => {
+							setTimeout(() => styleMenu(), 0)
+						})
+				}
+
+				const observer = new MutationObserver(() => {
+					attachClick()
+					if (styleMenu()) observer.disconnect()
+				})
+
+				observer.observe(document.body, { childList: true, subtree: true })
+			})
+		</script>
 	</body>
 </html>
