@@ -104,25 +104,7 @@ const ModuleViewPage = () => {
 					console.log('No cover image to upload')
 				}
 			} else {
-				const createResult = await topicsApi.bulkCreate({
-					module_id: Number(moduleId),
-					topics: [
-						{
-							title: values.title,
-							description: values.description,
-							order_number: values.order_number,
-							is_published: values.is_published
-						}
-					]
-				})
 				// Получаем ID созданной темы
-				const createdTopic = (createResult as any).data?.[0]
-				if (createdTopic?.id && values.cover_image) {
-					const uploadResult = await topicsApi.uploadCover(
-						createdTopic.id,
-						values.cover_image
-					)
-				}
 			}
 
 			// Небольшая задержка чтобы backend успел обработать файл
