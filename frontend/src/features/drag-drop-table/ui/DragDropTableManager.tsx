@@ -5,7 +5,10 @@ import { DragDropTableComponent } from './DragDropTableComponent'
 
 interface DragDropTableManagerProps {
 	blocks: DragDropTableBlock[]
-	onComplete: (isCorrect: boolean) => void
+	onComplete: (
+		isCorrect: boolean,
+		stats?: { correct: number; total: number }
+	) => void
 	chapterHash?: string
 }
 
@@ -30,23 +33,35 @@ export const DragDropTableManager: React.FC<DragDropTableManagerProps> = ({
 		return blockData.isLocked || false
 	}
 
-	const handleComplete = () => {
+	const handleComplete = (
+		isCorrect: boolean,
+		stats?: { correct: number; total: number }
+	) => {
 		const savedData = JSON.parse(localStorage.getItem(storageKey) || '{}')
 		const blockData = savedData[currentBlock.id] || {}
 		if (blockData.attempts >= 2 && currentBlockIndex < blocks.length - 1) {
 			setCurrentBlockIndex(prev => prev + 1)
+			return
 		}
-		// Если все таблицы заблокированы, вызываем onComplete
-		const allTablesLocked = blocks.every(table => {
-			const tableData = savedData[table.id] || {}
-			return tableData.isLocked || false
-		})
-		if (allTablesLocked) {
-			const allCorrect = blocks.every(table => {
-				const tableData = savedData[table.id] || {}
-				return tableData.correctCount === table.rows.length
-			})
-			onComplete(allCorrect)
+
+		// Если это единственная таблица, вызываем onComplete сразу
+		if (blocks.length === 1) {
+			onComplete(isCorrect, stats)
+			return
+		}
+
+		// Если это последняя таблица, вызываем onComplete с суммарным результатом
+		if (currentBlockIndex === blocks.length - 1) {
+			const totals = blocks.reduce(
+				(acc, table) => {
+					const tableData = savedData[table.id] || {}
+					acc.correct += Number(tableData.correctCount || 0)
+					acc.total += table.rows.length
+					return acc
+				},
+				{ correct: 0, total: 0 }
+			)
+			onComplete(isCorrect, totals)
 		}
 	}
 

@@ -4,7 +4,10 @@ import { DragDropTableBlock } from '../types'
 
 export const useDragDropTable = (
 	block: DragDropTableBlock,
-	onComplete: (isCorrect: boolean) => void
+	onComplete: (
+		isCorrect: boolean,
+		stats?: { correct: number; total: number }
+	) => void
 ) => {
 	const [assigned, setAssigned] = useState<Record<string, string[]>>({})
 	const [availableAnswers, setAvailableAnswers] = useState(block.answers)
@@ -103,28 +106,95 @@ export const useDragDropTable = (
 		let localCorrectCount = 0
 		let allCorrect = true
 
+		console.log('=== CHECKING ANSWERS ===')
+		console.log('block.answers:', block.answers)
+		console.log('block.correctAnswers:', block.correctAnswers)
+		console.log('assigned:', assigned)
+
+		// Создаем маппинг DB ID -> индекс
+		const dbIdToIndex: Record<number | string, number> = {}
+		block.answers.forEach((ans, idx) => {
+			dbIdToIndex[(ans as any).id] = idx
+		})
+		console.log('dbIdToIndex маппинг:', dbIdToIndex)
+
 		block.rows.forEach(row => {
 			const cellId = `${row.id}_effects`
 			const userAnswers = (assigned[cellId] || []).map(String)
 			const correctValue = block.correctAnswers[cellId]
 
+			console.log(`\n--- Row: ${row.id} (cellId: ${cellId}) ---`)
+			console.log('userAnswers (ваши ответы):', userAnswers)
+			console.log('correctValue (из блока):', correctValue)
+			console.log('correctValue type:', typeof correctValue)
+
 			let isCorrect = false
 
 			if (correctValue) {
 				if (Array.isArray(correctValue)) {
+					// correctValue содержит индексы (0, 1, 2...), конвертируем их в ID ответов
+					const correctAnswerIds = correctValue.map(index => {
+						// Если это число (индекс), берем ID из block.answers[index]
+						if (typeof index === 'number' && block.answers[index]) {
+							return String(block.answers[index].id)
+						}
+						// Если это уже ID, используем как есть
+						return String(index)
+					})
+
+					console.log('correctAnswerIds (после конвертации):', correctAnswerIds)
+
 					isCorrect =
-						userAnswers.length === correctValue.length &&
-						correctValue.every(id => userAnswers.includes(id)) &&
-						userAnswers.every(id => correctValue.includes(id))
+						userAnswers.length === correctAnswerIds.length &&
+						correctAnswerIds.every(id => userAnswers.includes(id)) &&
+						userAnswers.every(id => correctAnswerIds.includes(id))
+
+					console.log('Сравнение:', {
+						'длины совпадают': userAnswers.length === correctAnswerIds.length,
+						'все правильные есть в ответах': correctAnswerIds.every(id =>
+							userAnswers.includes(id)
+						),
+						'нет лишних ответов': userAnswers.every(id =>
+							correctAnswerIds.includes(id)
+						),
+						isCorrect
+					})
 				} else if ('anyOf' in correctValue) {
-					isCorrect = correctValue.anyOf.some(id => userAnswers.includes(id))
+					const anyOfIds = (correctValue as any).anyOf.map(
+						(index: any): string => {
+							if (typeof index === 'number' && block.answers[index]) {
+								return String(block.answers[index].id)
+							}
+							return String(index)
+						}
+					)
+					isCorrect = anyOfIds.some((id: string) => userAnswers.includes(id))
+					console.log(
+						'anyOf mode - anyOfIds:',
+						anyOfIds,
+						'isCorrect:',
+						isCorrect
+					)
 				}
+			} else {
+				console.log('correctValue не найден!')
 			}
+
+			console.log('Результат:', isCorrect ? '✓ ПРАВИЛЬНО' : '✗ НЕПРАВИЛЬНО')
 
 			newErrors[cellId] = !isCorrect
 			if (!isCorrect) allCorrect = false
 			if (isCorrect) localCorrectCount++
 		})
+
+		console.log('\n=== ИТОГО ===')
+		console.log(
+			'Правильно ответено строк:',
+			localCorrectCount,
+			'из',
+			block.rows.length
+		)
+		console.log('allCorrect:', allCorrect)
 
 		setErrors(newErrors)
 		setIsCompleted(true)
@@ -132,7 +202,10 @@ export const useDragDropTable = (
 		setAttempts(prev => prev + 1)
 		const newIsLocked = attempts + 1 >= 2
 		setIsLocked(newIsLocked)
-		onComplete(allCorrect)
+		onComplete(allCorrect, {
+			correct: localCorrectCount,
+			total: block.rows.length
+		})
 	}
 
 	const resetAnswers = () => {

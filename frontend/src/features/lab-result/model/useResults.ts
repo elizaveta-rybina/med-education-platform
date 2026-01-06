@@ -1,98 +1,55 @@
 import { useEffect, useState } from 'react'
 
+export type QuizResult = {
+	id: string
+	title?: string
+	quizType?: string
+	correct: number
+	total: number
+}
+
 export const useResults = () => {
 	const [correctAnswers, setCorrectAnswers] = useState(0)
 	const [totalAnswers, setTotalAnswers] = useState(0)
+	const [quizResults, setQuizResults] = useState<QuizResult[]>([])
 
 	const calculateResults = () => {
-		const testResults = localStorage.getItem('testResults')
-		const ddtAnswers = localStorage.getItem('ddtAnswers')
-		const dndResults = localStorage.getItem('dndResults')
-
 		let total = 0
 		let correct = 0
+		const perQuiz: QuizResult[] = []
 
-		// Process testResults (для question-блоков)
-		if (testResults) {
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i)
+			if (!key || !key.startsWith('quizResults_')) continue
 			try {
-				const results = JSON.parse(testResults) as Record<
-					string,
-					{ totalCorrect: number; totalQuestions: number }
-				>
-				Object.values(results).forEach(({ totalCorrect, totalQuestions }) => {
-					total += totalQuestions // Учитываем все вопросы из testResults
-					correct += totalCorrect // Учитываем только правильные ответы
+				const stored = JSON.parse(localStorage.getItem(key) || '{}') as {
+					quizScore?: { correct?: number; total?: number }
+					title?: string
+					quizType?: string
+				}
+				const quizId = key.replace('quizResults_', '')
+				const quizCorrect = stored.quizScore?.correct ?? 0
+				const quizTotal = stored.quizScore?.total ?? 0
+				perQuiz.push({
+					id: quizId,
+					title: stored.title,
+					quizType: stored.quizType,
+					correct: quizCorrect,
+					total: quizTotal
 				})
+				correct += quizCorrect
+				total += quizTotal
 			} catch (error) {
-				console.error('useResults: Error parsing testResults:', error)
+				console.error(
+					'useResults: Error parsing quizResults entry:',
+					key,
+					error
+				)
 			}
 		}
 
-		// Process ddtAnswers (предполагаемый dropdown-table)
-		if (ddtAnswers) {
-			try {
-				const results = JSON.parse(ddtAnswers) as Record<
-					string,
-					| { answers: Record<string, string>; isCorrect?: boolean }
-					| Record<string, string>
-				>
-				Object.values(results).forEach(block => {
-					if ('answers' in block) {
-						// Учитываем все ячейки (кроме col0) как вопросы
-						const questionCount = Object.keys(block.answers).filter(
-							key => !key.endsWith('-col0')
-						).length
-						total += questionCount
-						// Если isCorrect есть и равно true, добавляем все ячейки в correct
-						if ('isCorrect' in block && block.isCorrect) {
-							correct += questionCount
-						}
-					} else {
-						// Учитываем все ячейки (кроме col0) как вопросы
-						const questionCount = Object.keys(block).filter(
-							key => !key.endsWith('-col0')
-						).length
-						total += questionCount
-					}
-				})
-			} catch (error) {
-				console.error('useResults: Error parsing ddtAnswers:', error)
-			}
-		}
-
-		// Process dndResults (для drag-drop-table)
-		if (dndResults) {
-			try {
-				const results = JSON.parse(dndResults) as Record<
-					string,
-					{
-						correctCount?: number
-						isLocked?: boolean
-						errors?: Record<string, boolean>
-						isCompleted?: boolean
-						assigned?: Record<string, string[]>
-					}
-				>
-				Object.values(results).forEach(block => {
-					if (block.correctCount !== undefined && block.assigned) {
-						// Считаем количество строк из assigned
-						const rowCount = Object.keys(block.assigned).length
-						total += rowCount // Каждая строка — один вопрос
-						correct += block.correctCount // Учитываем правильные ответы
-					} else if (block.errors && typeof block.errors === 'object') {
-						// Считаем количество строк из errors
-						const rowCount = Object.keys(block.errors).length
-						total += rowCount
-						correct += Object.values(block.errors).every(err => !err)
-							? rowCount
-							: 0
-					}
-				})
-			} catch (error) {
-				console.error('useResults: Error parsing dndResults:', error)
-			}
-		}
-
+		perQuiz.sort((a, b) => a.id.localeCompare(b.id))
+		setQuizResults(perQuiz)
 		setTotalAnswers(total)
 		setCorrectAnswers(correct)
 	}
@@ -103,5 +60,5 @@ export const useResults = () => {
 		return () => window.removeEventListener('resultsUpdated', calculateResults)
 	}, []) // Без зависимости от course
 
-	return { correctAnswers, totalAnswers }
+	return { correctAnswers, totalAnswers, quizResults }
 }

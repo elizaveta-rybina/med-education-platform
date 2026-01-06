@@ -1,4 +1,4 @@
-import React, { JSX, useState } from 'react'
+import React, { JSX, cloneElement, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { useCheckAllRead } from './model/useCheckAllRead'
@@ -15,13 +15,31 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 }) => {
 	const { t } = useTranslation('courseInner')
 	const { isAllRead: _isAllRead, resetReadStatus } = useCheckAllRead()
-	const { correctAnswers, totalAnswers } = useResults()
+	const { correctAnswers, totalAnswers, quizResults } = useResults()
 	const [isModalOpen, setIsModalOpen] = useState(false)
+
+	const typeLabels: Record<string, string> = {
+		'dnd-table': 'DnD задание',
+		'dropdown-table': 'Таблица',
+		'free-input': 'Задание со свободным ответом',
+		standard: 'Тест'
+	}
 
 	const percentageCorrect =
 		totalAnswers > 0
 			? ((correctAnswers / totalAnswers) * 100).toFixed(2)
 			: '0.00'
+
+	const trigger = useMemo(() => {
+		return cloneElement(triggerButton, {
+			onClick: (e: React.MouseEvent) => {
+				if (typeof triggerButton.props.onClick === 'function') {
+					triggerButton.props.onClick(e)
+				}
+				setIsModalOpen(true)
+			}
+		})
+	}, [triggerButton])
 
 	const handleRestart = () => {
 		localStorage.removeItem('ddtAnswers')
@@ -29,13 +47,28 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		localStorage.removeItem('testResults')
 		localStorage.removeItem('freeInputBlock_answers_clinical-case-1-1')
 		localStorage.removeItem('freeInputBlock_submitted_clinical-case-1-1')
+
+		const keysToRemove: string[] = []
+		const prefixesToClear = [
+			'quizResults_',
+			'freeInputBlock_answers_',
+			'freeInputBlock_submitted_'
+		]
+		for (let i = 0; i < localStorage.length; i++) {
+			const key = localStorage.key(i)
+			if (key && prefixesToClear.some(prefix => key.startsWith(prefix))) {
+				keysToRemove.push(key)
+			}
+		}
+		keysToRemove.forEach(key => localStorage.removeItem(key))
+
 		// Очистка статуса лекций (прочитано)
 		localStorage.removeItem('lectureReadStatus')
 		window.dispatchEvent(new Event('lectureReadStatusUpdated'))
 		resetReadStatus()
 		onRestart()
 		setIsModalOpen(false)
-		window.location.reload()
+		window.dispatchEvent(new Event('resultsUpdated'))
 	}
 
 	const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -69,18 +102,43 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 
 					<div className='px-6 py-5 space-y-4 text-left'>
 						<div className='space-y-2'>
-							<p className='text-sm text-gray-700 dark:text-gray-200'>
-								{t('lab_modal.correctAnswers')}:{' '}
+							<p className='text-sm font-semibold text-gray-900 dark:text-white'>
+								Результаты прохождения темы:
+							</p>
+							{quizResults.length === 0 && (
+								<p className='text-sm text-gray-700 dark:text-gray-200'>
+									Результаты тестов пока отсутствуют.
+								</p>
+							)}
+							<ul className='space-y-1'>
+								{quizResults.map(result => (
+									<li
+										key={result.id}
+										className='text-sm text-gray-800 dark:text-gray-100'
+									>
+										<span className='font-medium'>
+											{result.title ||
+												typeLabels[result.quizType || ''] ||
+												`Тест #${result.id}`}
+											:
+										</span>{' '}
+										<span>
+											{result.correct}/{result.total}
+										</span>
+									</li>
+								))}
+							</ul>
+							<p className='text-sm text-gray-700 dark:text-gray-200 pt-2'>
+								Всего правильных ответов:{' '}
 								<span className='font-semibold'>{correctAnswers}</span>
 							</p>
 							<p className='text-sm text-gray-700 dark:text-gray-200'>
-								{t('lab_modal.totalAnswers')}:{' '}
+								Всего вопросов:{' '}
 								<span className='font-semibold'>{totalAnswers}</span>
 							</p>
 							<p className='text-sm text-gray-700 dark:text-gray-200'>
-								{t('lab_modal.percentageCorrect', {
-									percentage: percentageCorrect
-								})}
+								Процент правильных ответов:{' '}
+								<span className='font-semibold'>{percentageCorrect}%</span>
 							</p>
 						</div>
 
@@ -97,7 +155,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 								onClick={handleRestart}
 								className='px-5 py-2 text-sm rounded-lg bg-purple-600 text-white hover:bg-purple-700 focus:ring-2 focus:ring-purple-400 transition'
 							>
-								{t('lab_modal.restart')}
+								Пройти тему заново
 							</button>
 						</div>
 					</div>
@@ -108,7 +166,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 
 	return (
 		<>
-			<div onClick={() => handleRestart()}>{triggerButton}</div>
+			{trigger}
 			{modalContent && createPortal(modalContent, document.body)}
 		</>
 	)

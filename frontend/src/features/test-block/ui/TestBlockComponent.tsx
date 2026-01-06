@@ -1,10 +1,6 @@
 import { DropdownTableComponent } from '@/features/dropdown-table'
 import { useTestBlock } from '../model/hooks/useTestBlock'
-import {
-	DropdownTableBlock,
-	QuestionBlock,
-	TestBlockProps
-} from '../model/types'
+import { QuestionBlock, TestBlockProps } from '../model/types'
 import { QuestionComponent } from './QuestionComponent'
 import { TestResultComponent } from './TestResultComponent'
 
@@ -73,7 +69,7 @@ export const TestBlockComponent: React.FC<TestBlockProps> = ({
 					</h3>
 				</div>
 				<DropdownTableComponent
-					block={block as DropdownTableBlock}
+					question={block as any}
 					onComplete={isCorrect => {
 						if (isCorrect) handleNext()
 					}}

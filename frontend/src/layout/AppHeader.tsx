@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 
-import { LanguageToggleButton } from '@/components/common'
 import { ThemeToggleButton } from '../components/common'
 import { useSidebar } from '../context/SidebarContext'
 
@@ -121,7 +120,6 @@ const AppHeader: React.FC = () => {
 				>
 					<div className='flex items-center gap-2 2xsm:gap-3'>
 						<ThemeToggleButton />
-						<LanguageToggleButton />
 					</div>
 				</div>
 			</div>

@@ -376,6 +376,11 @@ export const DragDropQuizForm = ({
 						})
 						.filter((index: number) => index >= 0)
 
+					console.log('=== SAVING ROW ===')
+					console.log('row.correctOptions (IDs):', row.correctOptions)
+					console.log('correctOptionIds (индексы):', correctOptionIds)
+					console.log('question.options.length:', question.options.length)
+
 					return {
 						cells: row.cells.map((cell, cellIndex) => {
 							const column = question.columns[cellIndex]
@@ -408,6 +413,23 @@ export const DragDropQuizForm = ({
 				})
 			})
 		}
+
+		console.log('=== FINAL PAYLOAD ===')
+		console.log('questionPayload:', questionPayload)
+
+		// Parse metadata to see the actual structure
+		const metadata =
+			typeof questionPayload.metadata === 'string'
+				? JSON.parse(questionPayload.metadata)
+				: questionPayload.metadata || {}
+		console.log('metadata.rows с correct_option_ids:')
+		metadata.rows.forEach((row: any, idx: number) => {
+			console.log(`  Row ${idx}:`, {
+				correct_option_ids: row.correct_option_ids,
+				cells_count: row.cells.length,
+				answer_mode: row.answer_mode
+			})
+		})
 
 		return {
 			title: title.trim(),

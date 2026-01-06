@@ -1,4 +1,3 @@
-import { LanguageToggleButton } from '@/components/common/LanguageToggleButton'
 import { LoginButton, LoginModal } from '@/features/auth-modal'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -40,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
 				<div className='flex items-center gap-2 sm:gap-4'>
 					<div className='flex items-center gap-2 2xsm:gap-3'>
 						{/* <ThemeToggleButton /> */}
-						<LanguageToggleButton />
+						{/* <LanguageToggleButton /> */}
 						<LoginButton onClick={toggleModal} />
 					</div>
 				</div>

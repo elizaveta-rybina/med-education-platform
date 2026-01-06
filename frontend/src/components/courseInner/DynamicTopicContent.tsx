@@ -115,7 +115,14 @@ const DynamicTopicContent: React.FC = () => {
 													onComplete={isCorrect => {
 														console.log('Table completed:', isCorrect)
 														if (displayedQuiz.id)
-															handleTableComplete(displayedQuiz.id)
+															handleTableComplete(
+																displayedQuiz.id,
+																{
+																	correct: isCorrect ? 1 : 0,
+																	total: 1
+																},
+																'dropdown-table'
+															)
 													}}
 												/>
 											</div>
@@ -149,6 +156,13 @@ const DynamicTopicContent: React.FC = () => {
 												<DropdownTableComponent
 													question={questionWithMeta as any}
 													chapterHash={`quiz_${displayedQuiz.id}`}
+													onComplete={isCorrect => {
+														if (displayedQuiz.id)
+															handleTableComplete(displayedQuiz.id, {
+																correct: isCorrect ? 1 : 0,
+																total: 1
+															})
+													}}
 												/>
 											</div>
 										)
@@ -188,7 +202,14 @@ const DynamicTopicContent: React.FC = () => {
 										chapterHash={`quiz_${displayedQuiz.id}`}
 										onComplete={isCorrect => {
 											if (displayedQuiz.id)
-												handleTableComplete(displayedQuiz.id)
+												handleTableComplete(
+													displayedQuiz.id,
+													{
+														correct: isCorrect ? 1 : 0,
+														total: 1
+													},
+													'dropdown-table'
+												)
 										}}
 									/>
 								)
@@ -232,8 +253,9 @@ const DynamicTopicContent: React.FC = () => {
 							chapterHash={
 								displayedQuiz?.id ? `quiz_${displayedQuiz.id}` : undefined
 							}
-							onComplete={isCorrect => {
-								if (displayedQuiz?.id) handleTableComplete(displayedQuiz.id)
+							onComplete={(_isCorrect, stats) => {
+								if (displayedQuiz?.id)
+									handleTableComplete(displayedQuiz.id, stats, 'dnd-table')
 							}}
 						/>
 					</div>
@@ -269,7 +291,14 @@ const DynamicTopicContent: React.FC = () => {
 										}}
 										onComplete={() => {
 											if (displayedQuiz.id)
-												handleTableComplete(displayedQuiz.id)
+												handleTableComplete(
+													displayedQuiz.id,
+													{
+														correct: 1,
+														total: 1
+													},
+													'free-input'
+												)
 										}}
 									/>
 								)}
@@ -284,18 +313,34 @@ const DynamicTopicContent: React.FC = () => {
 							<h3 className='text-lg font-medium mb-4'>
 								Задание с вводом ответа
 							</h3>
-							<p className='text-gray-600'>
+							<p className='text-gray-600 mb-4'>
 								Компонент для ввода ответа будет добавлен позже
 							</p>
+							<button
+								onClick={() => {
+									if (displayedQuiz?.id)
+										handleTableComplete(
+											displayedQuiz.id,
+											{
+												correct: 1,
+												total: 1
+											},
+											'input'
+										)
+								}}
+								className='px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700'
+							>
+								Отметить как выполнено
+							</button>
 						</div>
 					</div>
 				)}
 
 				{/* --- 6. STANDARD QUIZ --- */}
-				{assignmentType === 'standard' && activeQuiz && (
+				{assignmentType === 'standard' && displayedQuiz && (
 					<div className='mt-4'>
 						<QuizView
-							quiz={activeQuiz}
+							quiz={displayedQuiz}
 							showResults={showResults}
 							userAnswers={userAnswers}
 							onSelect={handleAnswerSelect}

@@ -34,5 +34,8 @@ export interface DroppableCellProps {
 
 export interface DragDropTableComponentProps {
 	block: DragDropTableBlock
-	onComplete?: (isCorrect: boolean) => void
+	onComplete?: (
+		isCorrect: boolean,
+		stats?: { correct: number; total: number }
+	) => void
 }

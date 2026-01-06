@@ -31,7 +31,7 @@ export const useDynamicTopicContent = () => {
 	const [currentTableIndex, setCurrentTableIndex] = useState(0)
 	const [userAnswers, setUserAnswers] = useState<Record<number, number[]>>({})
 	const [showResults, setShowResults] = useState(false)
-	const [quizScore, setQuizScore] = useState<{
+	const [_quizScore, setQuizScore] = useState<{
 		correct: number
 		total: number
 	} | null>(null)
@@ -92,6 +92,12 @@ export const useDynamicTopicContent = () => {
 				const rawMeta = q.metadata as any
 				const metadata =
 					typeof rawMeta === 'string' ? JSON.parse(rawMeta) : rawMeta
+				// Опции приходят с id из БД, но в типах они без id, поэтому приводим к any[]
+				const options = (q.options as any[]) || []
+
+				console.log('=== PROCESSING QUIZ ===')
+				console.log('q.metadata:', q.metadata)
+				console.log('metadata.rows:', metadata.rows)
 
 				const correctAnswers: Record<string, string[] | { anyOf: string[] }> =
 					{}
@@ -99,15 +105,37 @@ export const useDynamicTopicContent = () => {
 					const cellId = `row_${rowIdx}_effects`
 					const correctOptionIds = row.correct_option_ids || []
 					const answerMode = row.answer_mode || 'all'
-					const correctAnswerIds = correctOptionIds.map(
-						(idx: number) => `ans_${idx}`
-					)
+
+					console.log(`Row ${rowIdx}:`)
+					console.log('  row объект:', row)
+					console.log('  row.correct_option_ids:', row.correct_option_ids)
+					console.log('  correctOptionIds from API:', correctOptionIds)
+					console.log('  answerMode:', answerMode)
+
+					// correct_option_ids могут быть как индексами (0,1,2...), так и DB ID опций.
+					// answers.id сейчас формата ans_<dbId>. Пробуем найти по DB ID, иначе по индексу.
+					const correctAnswerIds = correctOptionIds.map((value: number) => {
+						// Поиск по DB ID
+						const byDbId = options.find(opt => opt?.id === value)
+						if (byDbId?.id) return `ans_${byDbId.id}`
+
+						// По индексу (старый формат)
+						const byIndex = options[value]
+						if (byIndex?.id) return `ans_${byIndex.id}`
+
+						// Фоллбек
+						return `ans_${value}`
+					})
+
+					console.log('  correctAnswerIds (mapped):', correctAnswerIds)
 
 					if (answerMode === 'any') {
 						correctAnswers[cellId] = { anyOf: correctAnswerIds }
 					} else {
 						correctAnswers[cellId] = correctAnswerIds
 					}
+
+					console.log('  final correctAnswers:', correctAnswers[cellId])
 				})
 
 				return {
@@ -126,12 +154,18 @@ export const useDynamicTopicContent = () => {
 						title: getCellValue(row.cells?.[0]),
 						characteristic: getCellValue(row.cells?.[1])
 					})),
-					answers: (metadata.answers || q.options || []).map(
-						(ans: any, i: number) => ({
-							id: `ans_${i}`,
-							content: ans.text || ans.content || ''
-						})
-					),
+					answers: (Array.isArray(metadata.answers)
+						? metadata.answers
+						: options
+					).map((ans: any, i: number) => {
+						const answerDbId =
+							ans?.id ?? ans?.option_id ?? ans?.original_id ?? i
+						return {
+							// ID формата ans_<dbId>, чтобы совпадало с correct_option_ids
+							id: `ans_${answerDbId}`,
+							content: ans.text || ans.content || ans.title || ''
+						}
+					}),
 					correctAnswers
 				} as DragDropTableBlock
 			})
@@ -234,15 +268,16 @@ export const useDynamicTopicContent = () => {
 
 	// 4. Load Results
 	useEffect(() => {
-		if (!activeQuiz?.id) return
-		const savedResults = localStorage.getItem(`quizResults_${activeQuiz.id}`)
+		const quiz = assignmentQuiz || activeQuiz
+		if (!quiz?.id) return
+		const savedResults = localStorage.getItem(`quizResults_${quiz.id}`)
 		if (savedResults) {
 			const parsed = JSON.parse(savedResults)
 			setUserAnswers(parsed.userAnswers || {})
 			setQuizScore(parsed.quizScore || null)
 			setShowResults(parsed.showResults || false)
 		}
-	}, [activeQuiz?.id])
+	}, [activeQuiz?.id, assignmentQuiz?.id])
 
 	// --- Handlers ---
 
@@ -286,11 +321,11 @@ export const useDynamicTopicContent = () => {
 		})
 	}
 
-	console.log('displayedQuiz', displayedQuiz)	
 	const handleSubmitQuiz = () => {
-		if (!activeQuiz?.questions) return
+		const quiz = assignmentQuiz || activeQuiz
+		if (!quiz?.questions) return
 		let correct = 0
-		activeQuiz.questions.forEach((q, idx) => {
+		quiz.questions.forEach((q, idx) => {
 			const userAnswer = userAnswers[idx] || []
 			const correctIndices = (q.options || [])
 				.map((opt, i) => (opt.is_correct ? i : -1))
@@ -301,15 +336,22 @@ export const useDynamicTopicContent = () => {
 			if (isCorrect) correct++
 		})
 
-		const score = { correct, total: activeQuiz.questions.length }
+		const score = { correct, total: quiz.questions.length }
 		setQuizScore(score)
 		setShowResults(true)
 
-		if (activeQuiz.id) {
+		if (quiz.id) {
 			localStorage.setItem(
-				`quizResults_${activeQuiz.id}`,
-				JSON.stringify({ userAnswers, quizScore: score, showResults: true })
+				`quizResults_${quiz.id}`,
+				JSON.stringify({
+					userAnswers,
+					quizScore: score,
+					showResults: true,
+					title: quiz.title,
+					quizType: 'standard'
+				})
 			)
+			window.dispatchEvent(new Event('resultsUpdated'))
 		}
 	}
 
@@ -327,20 +369,38 @@ export const useDynamicTopicContent = () => {
 
 	const resetActiveQuiz = () => {
 		setActiveQuiz(null)
+		setAssignmentQuiz(null)
 		setShowResults(false)
 		setUserAnswers({})
 		setQuizScore(null)
 	}
 
-	const handleTableComplete = (quizId: number) => {
+	const handleTableComplete = (
+		quizId: number,
+		stats?: { correct: number; total: number },
+		quizType?: string
+	) => {
+		const quizTitle =
+			quizzes.find(q => Number(q.id) === Number(quizId))?.title ||
+			activeQuiz?.title ||
+			assignmentQuiz?.title
+
+		const quizScore = {
+			correct: stats?.correct ?? (stats ? 0 : 1),
+			total: stats?.total ?? 1
+		}
+
 		localStorage.setItem(
 			`quizResults_${quizId}`,
 			JSON.stringify({
 				userAnswers: {},
-				quizScore: { correct: 1, total: 1 },
-				showResults: true
+				quizScore,
+				showResults: true,
+				title: quizTitle,
+				quizType
 			})
 		)
+		window.dispatchEvent(new Event('resultsUpdated'))
 	}
 
 	return {
