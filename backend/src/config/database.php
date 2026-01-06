@@ -50,7 +50,7 @@ return [
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'ogarev-lab_db'),
             'username' => env('DB_USERNAME', 'ogarev-lab_user'),
-            'password' => env('DB_PASSWORD', 'PIrmIy0z9itL$HB/'),
+            'password' => env('DB_PASSWORD', 'Ogarev-lab1!'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
