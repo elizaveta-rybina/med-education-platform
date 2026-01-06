@@ -1,7 +1,6 @@
 import { MainProviders } from '@/app/providers'
 import { AppRouter } from '@/app/routes'
 import { AutoLogin } from '@/components/AutoLogin'
-import GoogleTranslate from '@/components/GoogleTranslate'
 import { SidebarProvider } from '@/context/SidebarContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
