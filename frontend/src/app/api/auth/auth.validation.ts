@@ -98,12 +98,13 @@ export const loginRequestSchema = z
 
 /**
  * Login response validation
+ * Server may not always provide token_type and expires_in
  */
 export const loginResponseSchema = z
 	.object({
 		token: jwtSchema,
-		token_type: z.string().default('Bearer'),
-		expires_in: z.number().positive().default(900)
+		token_type: z.string().optional(),
+		expires_in: z.number().positive().optional()
 	})
 	.strict()
 

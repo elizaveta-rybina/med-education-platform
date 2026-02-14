@@ -3,7 +3,7 @@ import type {
 	LoginRequest,
 	RegisterRequest,
 	User
-} from '@/app/api/auth/auth.types'
+} from '@/app/api/auth/auth.validation'
 import { isTokenValid } from '@/app/api/auth/authToken'
 import { useCallback, useEffect, useState } from 'react'
 
