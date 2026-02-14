@@ -17,7 +17,6 @@
  * - HttpOnly cookies recommended for refresh tokens (future improvement)
  * - Refresh tokens are one-time use (implemented in interceptors)
  *
- * @module auth.api
  * @requires apiClient - HTTP client for making requests
  * @requires authToken - Token storage and management
  * @requires auth.validation - Zod schemas for runtime validation

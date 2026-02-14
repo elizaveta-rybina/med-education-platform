@@ -1,8 +1,24 @@
 {
-  "entryPoints": ["./src"],
-  "out": "../docs/frontend-docs",
-  "excludePrivate": true,
-  "excludeExternals": true,
-  "includeVersion": true,
-	"entryPointStrategy": "expand"
+	"entryPoints": ["./src"],
+	"entryPointStrategy": "expand",
+	"out": "../docs/frontend-docs",
+	"excludePrivate": true,
+	"excludeExternals": true,
+	"includeVersion": true,
+	"navigation": {
+		"includeCategories": true,
+		"includeFolders": true
+	},
+	"categorizeByGroup": true,
+	"groupOrder": [
+		"App",
+		"Pages",
+		"Features",
+		"Entities",
+		"Shared",
+		"Components",
+		"Hooks",
+		"*"
+	],
+	"sort": ["source-order", "required-first", "kind"]
 }

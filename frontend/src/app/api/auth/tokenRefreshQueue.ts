@@ -14,7 +14,6 @@
  * - Subsequent requests wait for same promise
  * - All requests retry with new token after refresh succeeds
  *
- * @module tokenRefreshQueue
  */
 
 /** Cached promise for in-progress refresh operation */

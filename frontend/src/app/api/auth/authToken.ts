@@ -4,7 +4,6 @@
  * Manages authentication tokens in localStorage with expiration tracking.
  * Uses types from auth.validation.ts for consistency.
  *
- * @module authToken
  */
 
 import type { LoginResponse } from './auth.validation'

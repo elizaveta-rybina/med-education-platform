@@ -10,7 +10,6 @@
  * - Better error messages for API contract violations
  * - TypeScript inference from schemas
  *
- * @module auth.validation
  */
 
 import { z } from 'zod'
