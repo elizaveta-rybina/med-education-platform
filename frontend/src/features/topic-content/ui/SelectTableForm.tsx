@@ -123,15 +123,13 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 	})
 
 	// 2. Options
-	// !!! ИСПРАВЛЕНИЕ ЗДЕСЬ !!!
 	const [options, setOptions] = useState<Option[]>(() => {
 		if (initialValues?.questions?.[0]?.options) {
 			return (initialValues.questions[0].options as any[]).map((opt, idx) => ({
 				id: `opt_${idx}`,
 				text: opt.text || '',
-				// ЕСЛИ есть реальный ID из базы (opt.id), используем его как order.
-				// Потому что метаданные (correct_answers) ссылаются именно на ID базы данных.
-				order: opt.id ? Number(opt.id) : idx
+				// В options.order храним тот же порядок/ID, что и в metadata.available_option_ids
+				order: opt.order ?? idx
 			}))
 		}
 		return [
@@ -330,30 +328,20 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 
 		// 1. Подготовка опций для отправки
 		// order = index. Бэкенд будет использовать индексы массива (0, 1, 2) для маппинга.
-		const payloadOptions = options.map((opt, index) => ({
+		const payloadOptions = options.map(opt => ({
 			text: opt.text,
-			order: index, // Для удовлетворения TS и логики бэкенда
+			order: opt.order,
 			is_correct: false,
 			matching_data: null
 		}))
 
-		// 2. Карта перевода "Текущий UI order" -> "Будущий индекс массива"
-		// "Текущий UI order" может быть ID из базы (271) или временным (0, 1).
-		const orderToIndexMap: Record<number, number> = {}
-		options.forEach((opt, index) => {
-			orderToIndexMap[opt.order] = index
-		})
-
-		const remapIds = (ids: number[] = []) => {
-			return ids
-				.map(oldOrder => orderToIndexMap[oldOrder])
-				.filter(idx => idx !== undefined)
-		}
+		// 2. В available_option_ids и correct_answers пишем те же order, что в options.order
+		const remapIds = (ids: number[] = []) => ids
 
 		const payload: QuizPayload = {
 			title,
 			description: description.trim(),
-			quiz_type: 'module_final',
+			quiz_type: 'embedded',
 			max_attempts: 3,
 			passing_score: 70,
 			time_limit_minutes: 30,
@@ -363,7 +351,7 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 			questions: [
 				{
 					text: 'Заполните таблицу',
-					question_type: 'table',
+					question_type: 'ordering',
 					is_auto_graded: true,
 					points: 10,
 					options: payloadOptions,
@@ -449,9 +437,11 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 						onImageUpload={handleImageUpload}
 						renderHTML={text => (
 							<div className='markdown-preview'>
-								<ReactMarkdown remarkPlugins={[remarkGfm]}>
-									{text}
-								</ReactMarkdown>
+								<div className='prose prose-base max-w-none [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300 [&_table]:my-6 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-2'>
+									<ReactMarkdown remarkPlugins={[remarkGfm]}>
+										{text}
+									</ReactMarkdown>
+								</div>
 							</div>
 						)}
 						config={{
@@ -695,7 +685,7 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 																						? [...current, opt.order]
 																						: current.filter(
 																								id => id !== opt.order
-																						  )
+																							)
 																					handleUpdateCell(
 																						rowIdx,
 																						cellIdx,
@@ -827,8 +817,8 @@ export const SelectTableForm: React.FC<SelectTableFormProps> = ({
 					{isLoading
 						? 'Сохранение...'
 						: initialValues
-						? 'Обновить тест'
-						: 'Сохранить тест'}
+							? 'Обновить тест'
+							: 'Сохранить тест'}
 				</button>
 				<button
 					type='button'

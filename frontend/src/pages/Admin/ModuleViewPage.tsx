@@ -118,10 +118,6 @@ const ModuleViewPage = () => {
 				// Получаем ID созданной темы
 				const createdTopic = (createResult as any).data?.[0]
 				if (createdTopic?.id && values.cover_image) {
-					const uploadResult = await topicsApi.uploadCover(
-						createdTopic.id,
-						values.cover_image
-					)
 				}
 			}
 
@@ -282,7 +278,7 @@ const ModuleViewPage = () => {
 												is_published: !!editingTopic.is_published,
 												existing_cover_url:
 													editingTopic.cover_image ?? undefined
-										  }
+											}
 										: undefined
 								}
 								defaultOrderNumber={editingTopic ? undefined : nextOrder}

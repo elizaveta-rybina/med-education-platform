@@ -1,4 +1,5 @@
-import { DragDropTableBlock, QuestionBlock } from '@/data/types'
+import { DragDropTableBlock } from '@/features/drag-drop-table/model'
+import { QuestionBlock } from '@/features/test-block'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { Answer, TestState } from './slice'
 
@@ -16,15 +17,21 @@ export const submitTestAnswers = createAsyncThunk<
 			)
 			const courseData = module.courseData
 
-			const chapters = courseData.modules.flatMap((module: { chapters: any; }) => module.chapters)
+			const chapters = courseData.modules.flatMap(
+				(module: { chapters: any }) => module.chapters
+			)
 
-			const chapter = chapters.find((chapter: { id: string; }) => chapter.id === chapterId)
+			const chapter = chapters.find(
+				(chapter: { id: string }) => chapter.id === chapterId
+			)
 			if (!chapter) {
 				throw new Error(`Chapter with ID ${chapterId} not found`)
 			}
 
 			const questions = chapter.blocks.filter(
-				(block: { type: string; }): block is QuestionBlock | DragDropTableBlock =>
+				(block: {
+					type: string
+				}): block is QuestionBlock | DragDropTableBlock =>
 					block.type === 'question' || block.type === 'drag-drop-table'
 			)
 
@@ -32,25 +39,32 @@ export const submitTestAnswers = createAsyncThunk<
 			let totalCorrect = 0
 
 			for (const answer of answers) {
-				const question = questions.find((q: { id: string; }) => q.id === answer.questionId)
+				const question = questions.find(
+					(q: { id: string }) => q.id === answer.questionId
+				)
 				if (!question) {
 					throw new Error(`Question with ID ${answer.questionId} not found`)
 				}
 
 				if (question.type === 'question') {
 					const correctOptionIds = question.options
-						.filter((option: { isCorrect: any; }) => option.isCorrect)
-						.map((option: { id: any; }) => option.id)
+						.filter((option: { isCorrect: any }) => option.isCorrect)
+						.map((option: { id: any }) => option.id)
 					const userOptionIds = answer.selectedOptionIds
 
 					const isCorrect =
 						correctOptionIds.length === userOptionIds.length &&
-						correctOptionIds.every((id: string) => userOptionIds.includes(id)) &&
+						correctOptionIds.every((id: string) =>
+							userOptionIds.includes(id)
+						) &&
 						userOptionIds.every(id => correctOptionIds.includes(id))
 
 					if (isCorrect) totalCorrect += 1
 				} else if (question.type === 'drag-drop-table') {
-					const correctAnswers = question.correctAnswers as Record<string, string[]>
+					const correctAnswers = question.correctAnswers as Record<
+						string,
+						string[]
+					>
 					const userAnswers = answer.selectedOptionIds
 
 					const isCorrect = Object.entries(correctAnswers).every(
@@ -63,8 +77,12 @@ export const submitTestAnswers = createAsyncThunk<
 							)
 							return (
 								correctIds.length === normalizedUserAnswers.length &&
-								correctIds.every((id: string) => normalizedUserAnswers.includes(id)) &&
-								normalizedUserAnswers.every(id => (correctIds as string[]).includes(id))
+								correctIds.every((id: string) =>
+									normalizedUserAnswers.includes(id)
+								) &&
+								normalizedUserAnswers.every(id =>
+									(correctIds as string[]).includes(id)
+								)
 							)
 						}
 					)

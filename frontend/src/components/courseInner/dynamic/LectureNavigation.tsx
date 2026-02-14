@@ -12,13 +12,19 @@ export const LectureNavigation: React.FC<LectureNavigationProps> = ({
 	return (
 		<div className='ml-auto flex gap-2'>
 			<button
-				onClick={onPrev}
+				onClick={() => {
+					window.scrollTo({ top: 0, behavior: 'smooth' })
+					onPrev()
+				}}
 				className='px-4 py-2 bg-gray-800 text-white rounded-xl shadow-sm hover:bg-gray-700'
 			>
 				Предыдущая лекция
 			</button>
 			<button
-				onClick={onNext}
+				onClick={() => {
+					window.scrollTo({ top: 0, behavior: 'smooth' })
+					onNext()
+				}}
 				className='px-4 py-2 bg-fuchsia-700 text-white rounded-xl shadow-sm hover:bg-fuchsia-500'
 			>
 				Следующая лекция

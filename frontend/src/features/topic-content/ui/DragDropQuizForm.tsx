@@ -74,7 +74,7 @@ export const DragDropQuizForm = ({
 }: DragDropQuizFormProps) => {
 	const [title, setTitle] = useState('')
 	const [description, setDescription] = useState('')
-	const [quizType, setQuizType] = useState<QuizType>('topic_final')
+	const [quizType, setQuizType] = useState<QuizType>('additional')
 	const [maxAttempts, setMaxAttempts] = useState('1')
 	const [passingScore, setPassingScore] = useState('80')
 	const [timeLimit, setTimeLimit] = useState('30')
@@ -198,8 +198,8 @@ export const DragDropQuizForm = ({
 			question.columns.length === 0
 				? 'text'
 				: question.columns[question.columns.length - 1].type === 'multi_select'
-				? 'text'
-				: 'multi_select'
+					? 'text'
+					: 'multi_select'
 
 		setQuestion(prev => ({
 			...prev,
@@ -309,7 +309,7 @@ export const DragDropQuizForm = ({
 							cells: row.cells.map((cell, idx) =>
 								idx === cellIndex ? value : cell
 							)
-					  }
+						}
 					: row
 			)
 		}))
@@ -376,11 +376,6 @@ export const DragDropQuizForm = ({
 						})
 						.filter((index: number) => index >= 0)
 
-					console.log('=== SAVING ROW ===')
-					console.log('row.correctOptions (IDs):', row.correctOptions)
-					console.log('correctOptionIds (индексы):', correctOptionIds)
-					console.log('question.options.length:', question.options.length)
-
 					return {
 						cells: row.cells.map((cell, cellIndex) => {
 							const column = question.columns[cellIndex]
@@ -418,18 +413,6 @@ export const DragDropQuizForm = ({
 		console.log('questionPayload:', questionPayload)
 
 		// Parse metadata to see the actual structure
-		const metadata =
-			typeof questionPayload.metadata === 'string'
-				? JSON.parse(questionPayload.metadata)
-				: questionPayload.metadata || {}
-		console.log('metadata.rows с correct_option_ids:')
-		metadata.rows.forEach((row: any, idx: number) => {
-			console.log(`  Row ${idx}:`, {
-				correct_option_ids: row.correct_option_ids,
-				cells_count: row.cells.length,
-				answer_mode: row.answer_mode
-			})
-		})
 
 		return {
 			title: title.trim(),

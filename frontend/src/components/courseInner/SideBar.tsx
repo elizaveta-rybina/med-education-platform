@@ -86,7 +86,7 @@ const SideBarCourse = () => {
 						// --- НОВАЯ ПРОВЕРКА НА ИСКЛЮЧЕНИЕ ---
 						// Если тип теста 'module_final' И в нем есть вопросы типа 'table' — пропускаем его
 						if (
-							q?.quiz_type === 'module_final' &&
+							q?.quiz_type === 'embedded' &&
 							Array.isArray(q?.questions) &&
 							q.questions.some((qq: any) => qq?.question_type === 'table')
 						) {
@@ -178,7 +178,7 @@ const SideBarCourse = () => {
 						<h2 className='text-lg font-bold text-gray-800 dark:text-gray-200 truncate'>
 							{topicIdParam
 								? topicTitle || 'Загрузка темы...'
-								: course?.title ?? 'Загрузка...'}
+								: (course?.title ?? 'Загрузка...')}
 						</h2>
 					)}
 					<button
@@ -252,11 +252,12 @@ const SideBarCourse = () => {
 											const isRead = isLecture
 												? !!lectureReadStatus[String(item.id)]
 												: !!chapterReadStatus[`quiz_${item.id}`] ||
-												  !!localStorage.getItem(`quizResults_${item.id}`)
+													!!localStorage.getItem(`quizResults_${item.id}`)
 											return (
 												<li key={`${item.type}_${item.id}`}>
 													<button
 														onClick={() => {
+															window.scrollTo({ top: 0, behavior: 'smooth' })
 															const next = new URLSearchParams(searchParams)
 															if (isLecture) {
 																next.set('lecture', String(item.id))
@@ -287,17 +288,20 @@ const SideBarCourse = () => {
 												</li>
 											)
 										})
-								  })()
+									})()
 								: chaptersWithReadStatus.map((chapter: any) => (
 										<li key={chapter.id}>
 											<a
 												href={`#${chapter.hash}`}
+												onClick={() => {
+													window.scrollTo({ top: 0, behavior: 'smooth' })
+												}}
 												className={`flex items-center w-full px-4 py-3 text-sm rounded-lg transition-colors ${
 													currentHash === chapter.hash
 														? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400'
 														: chapter.isRead
-														? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
-														: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+															? 'bg-green-50 text-gray-600 dark:bg-green-900/20 dark:text-gray-300'
+															: 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
 												}`}
 											>
 												<span className='flex-shrink-0 mr-3'>
@@ -316,7 +320,7 @@ const SideBarCourse = () => {
 												</span>
 											</a>
 										</li>
-								  ))}
+									))}
 						</ul>
 					</nav>
 				)}

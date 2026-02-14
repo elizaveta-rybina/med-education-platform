@@ -144,7 +144,7 @@ const TopicContentPage = () => {
 	const [showQuizForm, setShowQuizForm] = useState(false)
 	const [showQuizTypeSelection, setShowQuizTypeSelection] = useState(false)
 	const [quizType, setQuizType] = useState<
-		'standard' | 'table' | 'select-table' | 'interactive' | 'input' | null
+		'standard' | 'table' | 'ordering' | 'interactive' | 'input' | null
 	>(null)
 	const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null)
 	const [editingLecture, setEditingLecture] = useState<Lecture | null>(null)
@@ -348,7 +348,7 @@ const TopicContentPage = () => {
 									...updated,
 									file_name: updated.file_name ?? undefined,
 									game_path: updated.game_path ?? undefined
-							  }
+								}
 							: q
 					)
 				)
@@ -643,15 +643,15 @@ const TopicContentPage = () => {
 							{deletingLectureId
 								? 'Удалить лекцию?'
 								: deletingQuizId
-								? 'Удалить тест?'
-								: 'Удалить тему?'}
+									? 'Удалить тест?'
+									: 'Удалить тему?'}
 						</h3>
 						<p className='text-gray-600 dark:text-gray-300 mb-6'>
 							{deletingLectureId
 								? 'Вы уверены, что хотите удалить эту лекцию? Это действие нельзя отменить.'
 								: deletingQuizId
-								? 'Вы уверены, что хотите удалить этот тест? Это действие нельзя отменить.'
-								: `Вы уверены, что хотите удалить тему "${topic?.title}"? Это действие нельзя отменить.`}
+									? 'Вы уверены, что хотите удалить этот тест? Это действие нельзя отменить.'
+									: `Вы уверены, что хотите удалить тему "${topic?.title}"? Это действие нельзя отменить.`}
 						</p>
 						<div className='flex gap-3 justify-end'>
 							<button
@@ -770,7 +770,7 @@ const TopicContentPage = () => {
 													| 'markdown'
 													| 'html'
 													| 'plaintext'
-										  }
+											}
 										: undefined
 								}
 								defaultOrderNumber={editingLecture ? undefined : nextOrder}
@@ -828,7 +828,7 @@ const TopicContentPage = () => {
 									uploadedImages={uploadedImages}
 								/>
 							)}{' '}
-							{quizType === 'select-table' && (
+							{quizType === 'ordering' && (
 								<SelectTableForm
 									topicId={Number(topicId)}
 									defaultOrderNumber={nextOrder}
@@ -930,7 +930,7 @@ const TopicContentPage = () => {
 								</button>{' '}
 								<button
 									onClick={() => {
-										setQuizType('select-table')
+										setQuizType('ordering')
 										setShowQuizTypeSelection(false)
 										setShowQuizForm(true)
 										// Прокручиваем страницу наверх, чтобы форма была видна
@@ -994,30 +994,26 @@ const TopicContentPage = () => {
 						onDeleteLecture={handleDeleteLecture}
 						onEditQuiz={quiz => {
 							setEditingQuiz(quiz)
-							// Determine quiz type: prefer select-table when metadata columns indicate multi/select choices
+							// Determine quiz type: dropdown if metadata has available_option_ids or question_type says ordering
 							const question = quiz.questions?.[0]
 							try {
-								if (question?.question_type === 'select-table') {
-									setQuizType('select-table')
-								} else if (
-									question?.question_type === 'table' &&
-									question.metadata
+								const meta =
+									question?.metadata && typeof question.metadata === 'string'
+										? JSON.parse(question.metadata)
+										: question?.metadata
+
+								// SelectTableForm использует correct_answers в метаданных строк
+								const hasCorrectAnswers =
+									Array.isArray(meta?.rows) &&
+									meta.rows.some((r: any) => r.correct_answers)
+
+								if (
+									question?.question_type === 'ordering' ||
+									(question?.question_type === 'table' && hasCorrectAnswers)
 								) {
-									const meta =
-										typeof question.metadata === 'string'
-											? JSON.parse(question.metadata)
-											: question.metadata
-									const hasSelectCol =
-										Array.isArray(meta?.columns) &&
-										meta.columns.some(
-											(c: any) =>
-												c.type === 'multi_select' || c.type === 'select'
-										)
-									if (hasSelectCol) {
-										setQuizType('select-table')
-									} else {
-										setQuizType('table')
-									}
+									setQuizType('ordering')
+								} else if (question?.question_type === 'table') {
+									setQuizType('table')
 								} else if (
 									question?.question_type === 'free-input' ||
 									question?.question_type === 'input_answer'
@@ -1029,13 +1025,13 @@ const TopicContentPage = () => {
 									setQuizType('standard')
 								}
 							} catch (err) {
-								// Fallback: if metadata parsing fails, fall back to previous checks
+								// Fallback: use question_type directly if parsing fails
 								if (
 									quiz.questions?.some(
-										(q: any) => q.question_type === 'select-table'
+										(q: any) => q.question_type === 'ordering'
 									)
 								) {
-									setQuizType('select-table')
+									setQuizType('ordering')
 								} else if (
 									quiz.questions?.some((q: any) => q.question_type === 'table')
 								) {

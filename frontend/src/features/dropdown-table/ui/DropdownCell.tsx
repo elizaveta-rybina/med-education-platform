@@ -34,7 +34,11 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 	// 2. Если тип select - формируем список доступных опций
 	// Фильтруем глобальный список опций по ID, доступным для этой конкретной ячейки
 	const cellOptions = cell.available_option_ids
-		? allOptions.filter(opt => cell.available_option_ids?.includes(opt.id))
+		? allOptions.filter(opt =>
+				cell.available_option_ids?.includes(
+					opt.order !== undefined ? opt.order : (opt as any).id
+				)
+			)
 		: []
 
 	// Определение стилей для валидации
@@ -51,6 +55,9 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 		}
 	}
 
+	const optionValue = (opt: any) =>
+		opt.order !== undefined ? String(opt.order) : String(opt.id)
+
 	return (
 		<td className='px-4 py-2 border-b border-gray-200'>
 			<select
@@ -59,7 +66,7 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 					cell.cell_key && onSelectChange(cell.cell_key, e.target.value)
 				}
 				disabled={disabled}
-				className={`w-full px-3 py-2 border ${borderClass} ${bgClass} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm transition-colors ${
+				className={`w-full min-w-[160px] px-3 py-2 border ${borderClass} ${bgClass} rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm transition-colors ${
 					disabled ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'
 				}`}
 			>
@@ -67,7 +74,7 @@ export const DropdownCell: React.FC<DropdownCellProps> = ({
 					Выберите ответ
 				</option>
 				{cellOptions.map(option => (
-					<option key={option.id} value={option.id}>
+					<option key={option.id} value={optionValue(option)}>
 						{option.text}
 					</option>
 				))}

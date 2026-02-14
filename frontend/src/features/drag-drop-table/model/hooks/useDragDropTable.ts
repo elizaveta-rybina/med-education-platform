@@ -40,7 +40,7 @@ export const useDragDropTable = (
 			blockData.assigned
 				? block.answers.filter(
 						a => !Object.values(blockData.assigned).flat().includes(a.id)
-				  )
+					)
 				: block.answers
 		)
 		setErrors(
@@ -116,17 +116,11 @@ export const useDragDropTable = (
 		block.answers.forEach((ans, idx) => {
 			dbIdToIndex[(ans as any).id] = idx
 		})
-		console.log('dbIdToIndex маппинг:', dbIdToIndex)
 
 		block.rows.forEach(row => {
 			const cellId = `${row.id}_effects`
 			const userAnswers = (assigned[cellId] || []).map(String)
 			const correctValue = block.correctAnswers[cellId]
-
-			console.log(`\n--- Row: ${row.id} (cellId: ${cellId}) ---`)
-			console.log('userAnswers (ваши ответы):', userAnswers)
-			console.log('correctValue (из блока):', correctValue)
-			console.log('correctValue type:', typeof correctValue)
 
 			let isCorrect = false
 

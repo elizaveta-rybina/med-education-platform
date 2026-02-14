@@ -52,7 +52,8 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		const prefixesToClear = [
 			'quizResults_',
 			'freeInputBlock_answers_',
-			'freeInputBlock_submitted_'
+			'freeInputBlock_submitted_',
+			'quiz_table_'
 		]
 		for (let i = 0; i < localStorage.length; i++) {
 			const key = localStorage.key(i)
@@ -69,6 +70,7 @@ export const LabResultModal: React.FC<LabResultModalProps> = ({
 		onRestart()
 		setIsModalOpen(false)
 		window.dispatchEvent(new Event('resultsUpdated'))
+		window.dispatchEvent(new Event('labReset'))
 	}
 
 	const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {

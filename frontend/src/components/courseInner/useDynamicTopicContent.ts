@@ -63,9 +63,10 @@ export const useDynamicTopicContent = () => {
 	// --- Helpers ---
 
 	const getAssignmentType = (quiz: Quiz) => {
+		// Dropdown / ordering таблицы тоже считаем интерактивными, чтобы рендерить под iframe
 		if (quiz.file_name || quiz.game_path) return 'interactive'
-		if (quiz.questions?.some(q => q.question_type === 'select-table'))
-			return 'select-table'
+		if (quiz.questions?.some(q => q.question_type === 'ordering'))
+			return 'interactive'
 		if (quiz.questions?.some(q => q.question_type === 'table')) return 'table'
 		if (quiz.questions?.some(q => q.question_type === 'free-input'))
 			return 'free-input'
@@ -95,22 +96,12 @@ export const useDynamicTopicContent = () => {
 				// Опции приходят с id из БД, но в типах они без id, поэтому приводим к any[]
 				const options = (q.options as any[]) || []
 
-				console.log('=== PROCESSING QUIZ ===')
-				console.log('q.metadata:', q.metadata)
-				console.log('metadata.rows:', metadata.rows)
-
 				const correctAnswers: Record<string, string[] | { anyOf: string[] }> =
 					{}
 				;(metadata.rows || []).forEach((row: any, rowIdx: number) => {
 					const cellId = `row_${rowIdx}_effects`
 					const correctOptionIds = row.correct_option_ids || []
 					const answerMode = row.answer_mode || 'all'
-
-					console.log(`Row ${rowIdx}:`)
-					console.log('  row объект:', row)
-					console.log('  row.correct_option_ids:', row.correct_option_ids)
-					console.log('  correctOptionIds from API:', correctOptionIds)
-					console.log('  answerMode:', answerMode)
 
 					// correct_option_ids могут быть как индексами (0,1,2...), так и DB ID опций.
 					// answers.id сейчас формата ans_<dbId>. Пробуем найти по DB ID, иначе по индексу.
@@ -177,7 +168,7 @@ export const useDynamicTopicContent = () => {
 		return quizzes
 			.flatMap(q => q.questions || [])
 			.filter(
-				q => q.question_type === 'table' || q.question_type === 'select-table'
+				q => q.question_type === 'table' || q.question_type === 'ordering'
 			)
 			.filter(q => {
 				const meta: any =

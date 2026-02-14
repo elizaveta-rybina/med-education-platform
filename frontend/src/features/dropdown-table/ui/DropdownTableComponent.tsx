@@ -50,6 +50,19 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 		}
 	}, [question.id])
 
+	// Listen for reset event from LabResultModal
+	useEffect(() => {
+		const handleReset = () => {
+			setSelectedAnswers({})
+			setIsChecked(false)
+			setErrors({})
+			setIsLocked(false)
+		}
+
+		window.addEventListener('labReset', handleReset)
+		return () => window.removeEventListener('labReset', handleReset)
+	}, [])
+
 	const saveToStorage = (
 		answers: Record<string, string>,
 		locked: boolean,
@@ -140,7 +153,7 @@ export const DropdownTableComponent: React.FC<DropdownTableComponentProps> = ({
 	// --- Render ---
 
 	return (
-		<div className='max-w-6xl mx-auto bg-white p-6 shadow-sm border border-gray-200 rounded-lg'>
+		<div className='w-full max-w-6xl mx-auto bg-white p-6 shadow-sm border border-gray-200 rounded-lg'>
 			<h4 className='text-xl font-semibold mb-6 text-gray-800'>
 				{question.text}
 			</h4>

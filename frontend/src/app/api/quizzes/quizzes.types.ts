@@ -11,13 +11,13 @@ export type QuizType =
 	| 'interactive'
 	| 'input'
 	| 'free-input'
-	| 'select-table'
+	| 'ordering'
 
 export type QuizQuestionType =
 	| 'single_choice'
 	| 'multiple_choice'
 	| 'table'
-	| 'select-table'
+	| 'ordering'
 	| 'interactive_experience'
 	| 'input_answer'
 	| 'text_input'

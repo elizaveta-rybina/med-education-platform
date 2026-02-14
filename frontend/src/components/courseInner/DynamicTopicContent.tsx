@@ -51,7 +51,7 @@ const DynamicTopicContent: React.FC = () => {
 		return <div className='p-6 text-center text-gray-500'>Тема не найдена</div>
 
 	return (
-		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t-1'>
+		<div className='flex-1 p-4 sm:p-6 min-h-screen border-t'>
 			<div className='max-w-9xl mx-auto pb-20'>
 				<ChapterHeader
 					title={assignmentQuiz?.title || selectedLecture?.title || topic.title}
@@ -65,157 +65,108 @@ const DynamicTopicContent: React.FC = () => {
 
 				{/* --- 1. ИНТЕРАКТИВНОЕ ЗАДАНИЕ (ИГРА + ТАБЛИЦА) --- */}
 				{assignmentType === 'interactive' && displayedQuiz && (
-					<div className='mt-4'>
-						<div className='p-6 bg-gray-50 rounded-lg'>
-							<h3 className='text-lg font-medium mb-4'>
+					<div className='mt-4 w-full'>
+						<div className='p-4 sm:p-6 lg:p-8 bg-gray-50 rounded-lg'>
+							<h3 className='text-lg sm:text-xl font-medium mb-4'>
 								Пройдите интерактивное задание, а после заполните таблицу под
 								ним.
 							</h3>
 
 							{/* Iframe игры */}
 							{displayedQuiz.game_path || displayedQuiz.file_name ? (
-								<div className='space-y-2'>
-									<div className='flex gap-2'>
-										<iframe
-											src={`http://localhost:8000${
-												displayedQuiz.game_path ||
-												`/games/semester_one/${displayedQuiz.file_name}`
-											}/index.html`}
-											className='w-full h-[578px] border border-gray-300 rounded-lg mt-4'
-											title={displayedQuiz.file_name || displayedQuiz.title}
-											allow='fullscreen; autoplay; encrypted-media'
-										/>
-									</div>
+								<div className='w-full aspect-video bg-white'>
+									<iframe
+										src={`https://ogarev-lab.mrsu.ru/api/v1/storage${
+											displayedQuiz.game_path ||
+											`/games/semester_one/${displayedQuiz.file_name}`
+										}/index.html`}
+										className='w-full h-full border border-gray-300 rounded-lg'
+										title={displayedQuiz.file_name || displayedQuiz.title}
+										allow='fullscreen; autoplay; encrypted-media'
+									/>
 								</div>
 							) : (
-								<div className='p-4 bg-yellow-100 border border-yellow-400 rounded-lg text-yellow-800'>
-									<p>Не удалось загрузить игру: отсутствуют данные пути</p>
-									<p className='text-sm mt-2'>Quiz ID: {displayedQuiz.id}</p>
-								</div>
+								<div className='p-4 sm:p-6 bg-yellow-100 border border-yellow-400 rounded-lg text-yellow-800'></div>
 							)}
 
 							{/* Рендерим таблицы, найденные в теме */}
-							{allTableQuestionsInTopic.length > 0
-								? allTableQuestionsInTopic.map(q => {
-										let metadata: any = q.metadata
-										if (typeof metadata === 'string') {
-											try {
-												metadata = JSON.parse(metadata)
-											} catch (e) {
-												return null
-											}
-										}
-										const questionWithMeta = { ...q, metadata }
+							<div className='w-full'>
+								{allTableQuestionsInTopic.length > 0
+									? allTableQuestionsInTopic.map(q => {
+											if (String(q.question_type) !== 'ordering') return null
 
-										return (
-											<div key={q.id} className='mt-8 border-t pt-6'>
-												<DropdownTableComponent
-													question={questionWithMeta as any}
-													chapterHash={`quiz_q_${q.id}`}
-													onComplete={isCorrect => {
-														console.log('Table completed:', isCorrect)
-														if (displayedQuiz.id)
-															handleTableComplete(
-																displayedQuiz.id,
-																{
+											let metadata: any = q.metadata
+											if (typeof metadata === 'string') {
+												try {
+													metadata = JSON.parse(metadata)
+												} catch (e) {
+													return null
+												}
+											}
+
+											const questionWithMeta = { ...q, metadata }
+
+											return (
+												<div
+													key={q.id}
+													className='mt-6 sm:mt-8 border-t pt-4 sm:pt-6 w-full'
+												>
+													<DropdownTableComponent
+														question={questionWithMeta as any}
+														chapterHash={`quiz_q_${q.id}`}
+														onComplete={isCorrect => {
+															if (displayedQuiz.id) {
+																handleTableComplete(
+																	displayedQuiz.id,
+																	{
+																		correct: isCorrect ? 1 : 0,
+																		total: 1
+																	},
+																	'dropdown-table'
+																)
+															}
+														}}
+													/>
+												</div>
+											)
+										})
+									: displayedQuiz.questions?.map(q => {
+											if (String(q.question_type) !== 'ordering') return null
+
+											let metadata: any = q.metadata
+											if (typeof metadata === 'string') {
+												try {
+													metadata = JSON.parse(metadata)
+												} catch (e) {
+													return null
+												}
+											}
+
+											const questionWithMeta = { ...q, metadata }
+											return (
+												<div
+													key={q.id}
+													className='mt-6 sm:mt-8 border-t pt-4 sm:pt-6 w-full'
+												>
+													<DropdownTableComponent
+														question={questionWithMeta as any}
+														chapterHash={`quiz_${displayedQuiz.id}`}
+														onComplete={isCorrect => {
+															if (displayedQuiz.id) {
+																handleTableComplete(displayedQuiz.id, {
 																	correct: isCorrect ? 1 : 0,
 																	total: 1
-																},
-																'dropdown-table'
-															)
-													}}
-												/>
-											</div>
-										)
-								  })
-								: // Fallback: рендер таблиц внутри самого квиза
-								  displayedQuiz.questions?.map(q => {
-										if (
-											q.question_type !== 'select-table' &&
-											q.question_type !== 'table'
-										)
-											return null
-										let metadata: any = q.metadata
-										if (typeof metadata === 'string') {
-											try {
-												metadata = JSON.parse(metadata)
-											} catch (e) {
-												return null
-											}
-										}
-										if (
-											!metadata?.rows?.[0]?.cells?.some(
-												(c: any) => c.available_option_ids
+																})
+															}
+														}}
+													/>
+												</div>
 											)
-										)
-											return null
-
-										const questionWithMeta = { ...q, metadata }
-										return (
-											<div key={q.id} className='mt-8 border-t pt-6'>
-												<DropdownTableComponent
-													question={questionWithMeta as any}
-													chapterHash={`quiz_${displayedQuiz.id}`}
-													onComplete={isCorrect => {
-														if (displayedQuiz.id)
-															handleTableComplete(displayedQuiz.id, {
-																correct: isCorrect ? 1 : 0,
-																total: 1
-															})
-													}}
-												/>
-											</div>
-										)
-								  })}
+										})}
+							</div>
 						</div>
 					</div>
 				)}
-
-				{/* --- 2. НОВАЯ ТАБЛИЦА БЕЗ ИГРЫ (Select Table) --- */}
-				{(assignmentType === 'select-table' ||
-					(assignmentType === 'table' && dndTableBlocks.length === 0)) &&
-					displayedQuiz && (
-						<div className='mt-4 space-y-8'>
-							{displayedQuiz.questions?.map(q => {
-								let metadata: any = q.metadata
-								if (typeof metadata === 'string') {
-									try {
-										metadata = JSON.parse(metadata)
-									} catch (e) {
-										return null
-									}
-								}
-
-								// Фильтр только для Dropdown формата
-								if (
-									!metadata?.rows?.[0]?.cells?.some(
-										(c: any) => c.available_option_ids
-									)
-								)
-									return null
-
-								const questionWithMeta = { ...q, metadata }
-								return (
-									<DropdownTableComponent
-										key={q.id}
-										question={questionWithMeta as any}
-										chapterHash={`quiz_${displayedQuiz.id}`}
-										onComplete={isCorrect => {
-											if (displayedQuiz.id)
-												handleTableComplete(
-													displayedQuiz.id,
-													{
-														correct: isCorrect ? 1 : 0,
-														total: 1
-													},
-													'dropdown-table'
-												)
-										}}
-									/>
-								)
-							})}
-						</div>
-					)}
 
 				{/* --- 3. СТАРАЯ DND ТАБЛИЦА --- */}
 				{assignmentType === 'table' && dndTableBlocks.length > 0 && (
@@ -266,10 +217,12 @@ const DynamicTopicContent: React.FC = () => {
 					<div className='mt-4'>
 						<div className='p-1 rounded-lg'>
 							{displayedQuiz.description && (
-								<div className='mb-6 p-4 bg-white rounded-lg border border-gray-200 prose prose-sm max-w-none'>
-									<ReactMarkdown remarkPlugins={[remarkGfm]}>
-										{displayedQuiz.description}
-									</ReactMarkdown>
+								<div className='mb-6 p-4 bg-white rounded-lg border border-gray-200 overflow-x-auto'>
+									<div className='prose prose-base max-w-none [&_table]:w-full [&_table]:border-collapse [&_table]:border [&_table]:border-gray-300 [&_table]:my-6 [&_th]:border [&_th]:border-gray-300 [&_th]:bg-gray-100 [&_th]:px-4 [&_th]:py-2 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-gray-300 [&_td]:px-4 [&_td]:py-2'>
+										<ReactMarkdown remarkPlugins={[remarkGfm]}>
+											{displayedQuiz.description}
+										</ReactMarkdown>
+									</div>
 								</div>
 							)}
 							{displayedQuiz.questions &&
