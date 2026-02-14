@@ -1,10 +1,16 @@
 {
-	"extends": "./tsconfig.json",
+	"extends": "./tsconfig.app.json",
 	"compilerOptions": {
 		"types": ["jest", "node", "@testing-library/jest-dom"],
 		"noEmit": true,
-		"module": "ESNext",
-		"moduleResolution": "node"
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"]
+		}
 	},
 	"include": ["src/**/*", "tests/**/*", "**/*.test.tsx", "**/*.test.ts"],
 	"exclude": ["node_modules"]
